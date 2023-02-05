@@ -1,0 +1,12 @@
+{
+	"injected": {
+		"stop-blocking.js": true
+	},
+	"injected_and_loaded": {
+		"autofill-otps.js": true,
+		"auto-login.js": true
+	},
+	"loaded": {
+		"autofill-captcha.js": true
+	}
+}

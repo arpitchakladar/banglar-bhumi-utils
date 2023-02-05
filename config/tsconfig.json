@@ -16,9 +16,6 @@
 			"@/*": ["src/*"]
 		}
 	},
-	"files": [
-		"./src/types/import-raw-text.d.ts"
-	],
 	"exclude": [
 		"./node_modules/**/*"
 	]

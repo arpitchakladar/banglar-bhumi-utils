@@ -1,6 +1,7 @@
 const proxiedPost = $.post;
 
 $.post = function() {
+	console.log(arguments);
 	let element: HTMLInputElement | null = null;
 	if (arguments[0].endsWith("MISPetitionSmsSend.action")) {
 		element = document.querySelector("input[name=mobile_Code]") as HTMLInputElement;
@@ -8,7 +9,7 @@ $.post = function() {
 		element = document.querySelector("input[name=txtemail_Code]") as HTMLInputElement;
 	}
 
-	if (element !== null) {
+	if (element) {
 		const callback = arguments[2];
 		arguments[2] = (data: any) => {
 			element!.value = data?.messageShow || "";
