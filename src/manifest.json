@@ -1,15 +1,15 @@
 {
 	"before": {
-		"block-unnecessary": true
+		"block-unnecessary": "*"
 	},
 	"injected": {
-		"stop-blocking": true
+		"stop-blocking": "*"
 	},
 	"injected_and_loaded": {
-		"autofill-otps": true,
-		"auto-login": true
+		"autofill-otps": "*",
+		"auto-login": "*"
 	},
 	"loaded": {
-		"autofill-captcha": true
+		"autofill-captcha": "*"
 	}
 }

@@ -29,11 +29,24 @@ class CreateManifestPlugin {
 
 					for (const scriptType in this.scripts) {
 						if (Object.keys(this.scripts[scriptType]).length > 0) {
-							this.manifest.content_scripts.push({
-								matches: ["https://banglarbhumi.gov.in/*", "http://banglarbhumi.gov.in/*"],
-								js: Object.keys(this.scripts[scriptType]).map(scriptName => `${scriptName}.js`),
-								run_at: scriptType
-							});
+							const currentScripts = this.scripts[scriptType];
+
+							let paths = {};
+							for (const scriptName in currentScripts) {
+								const scriptPath = currentScripts[scriptName];
+								if (!path[scriptPath]) {
+									paths[scriptPath] = [];
+								}
+								paths[scriptPath].push(scriptName);
+							}
+
+							for (const scriptPath in paths) {
+								this.manifest.content_scripts.push({
+									matches: [`*://banglarbhumi.gov.in/${scriptPath}`],
+									js: paths[scriptPath].map(scriptName => `${scriptName}.js`),
+									run_at: scriptType
+								});
+							}
 						}
 					}
 
