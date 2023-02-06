@@ -1,7 +1,6 @@
 const proxiedPost = $.post;
 
 $.post = function() {
-	console.log(arguments);
 	let element: HTMLInputElement | null = null;
 	if (arguments[0].endsWith("MISPetitionSmsSend.action")) {
 		element = document.querySelector("input[name=mobile_Code]") as HTMLInputElement;

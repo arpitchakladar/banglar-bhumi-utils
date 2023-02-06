@@ -1,12 +1,15 @@
 {
+	"before": {
+		"block-unnecessary": true
+	},
 	"injected": {
-		"stop-blocking.js": true
+		"stop-blocking": true
 	},
 	"injected_and_loaded": {
-		"autofill-otps.js": true,
-		"auto-login.js": true
+		"autofill-otps": true,
+		"auto-login": true
 	},
 	"loaded": {
-		"autofill-captcha.js": true
+		"autofill-captcha": true
 	}
 }
