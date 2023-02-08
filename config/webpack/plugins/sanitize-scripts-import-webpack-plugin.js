@@ -1,15 +1,13 @@
 const { sources } = require("webpack");
 
-const propectualIndexOf = (string, characterList, start) => {
+const perpectualIndexOf = (string, characterList, start) => {
 	if (start > 0) {
-		let i = 0;
 		let x = start;
-		while (i < characterList.length) {
+		for (let i = 0; i < characterList.length; i++) {
 			x = string.indexOf(characterList[i], x + 1);
 			if (x < 0) {
 				return -1;
 			}
-			i++;
 		}
 		return x;
 	} else {
@@ -33,8 +31,8 @@ class SanitizeScriptsImportPlugin {
 							let previouslyEnded = 0;
 							let code = "";
 							while (true) {
-								const start = propectualIndexOf(currentAssetContent, ["\n/***/", "\n/***/", "\n"], previouslyEnded + 1);
-								previouslyEnded = propectualIndexOf(currentAssetContent, ["\n/***/"], start + 1);
+								const start = perpectualIndexOf(currentAssetContent, ["\n/***/", "\n/***/", "\n"], previouslyEnded + 1);
+								previouslyEnded = perpectualIndexOf(currentAssetContent, ["\n/***/"], start + 1);
 								if (previouslyEnded < 0) {
 									break;
 								} else {

@@ -7,23 +7,31 @@ process.env.SOURCE_DIR = path.resolve(process.env.ROOT_DIR, "src");
 
 const CreateManifestPlugin = require("./webpack/plugins/create-manifest-webpack-plugin");
 const generateScriptBuildConfig = require("./webpack/utils/generate-script-build-config");
+const inlineJavascript = require("./webpack/utils/inline-javascript");
 
-const manifest = require(path.resolve(process.env.SOURCE_DIR, "manifest.json"));
+const scripts = require(path.resolve(process.env.SOURCE_DIR, "scripts.json"));
 
-let scripts = [];
+let scriptBuildConfigs = [];
 
-for (const scriptType in manifest) {
-	scripts.push(generateScriptBuildConfig(scriptType));
+for (const scriptType in scripts) {
+	scriptBuildConfigs.push(generateScriptBuildConfig(scriptType));
 }
 
-scripts[scripts.length - 1].plugins = (scripts[scripts.length - 1].plugins || []).concat([
-	new CopyPlugin({
-		patterns: [{
-			from: path.resolve(process.env.ROOT_DIR, "static"),
-			to: "./"
-		}]
-	}),
-	new CreateManifestPlugin({ scripts: manifest })
-]);
+scriptBuildConfigs.push({
+	name: "manifest",
+	entry: inlineJavascript(""),
+	output: {
+		filename: `manifest.json`
+	},
+	plugins: [
+		new CopyPlugin({
+			patterns: [{
+				from: path.resolve(process.env.ROOT_DIR, "static"),
+				to: "./"
+			}]
+		}),
+		new CreateManifestPlugin({ scripts })
+	]
+});
 
-module.exports = scripts;
+module.exports = scriptBuildConfigs;

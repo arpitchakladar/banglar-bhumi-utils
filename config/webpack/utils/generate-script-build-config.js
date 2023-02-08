@@ -3,10 +3,9 @@ const path = require("path");
 
 const SanitizeScriptsImportPlugin = require("../plugins/sanitize-scripts-import-webpack-plugin");
 const InjectScriptPlugin = require("../plugins/inject-script-webpack-plugin");
+const inlineJavascript = require("./inline-javascript");
 
-const manifest = require(path.resolve(process.env.SOURCE_DIR, "manifest.json"));
-
-let count = 0;
+const scripts = require(path.resolve(process.env.SOURCE_DIR, "scripts.json"));
 
 const getImportStatementForScript = script => {
 	const importPath = path.resolve(process.env.SOURCE_DIR, "scripts", script);
@@ -14,15 +13,16 @@ const getImportStatementForScript = script => {
 };
 
 const getVirtualEntry = scriptType => {
-	const string = Object.keys(manifest[scriptType]).map(getImportStatementForScript).join("\n");
+	const importStatements = Object.keys(scripts[scriptType]).map(getImportStatementForScript).join("\n");
 
-	const base64 = Buffer.from(string).toString("base64");
-	return `data:text/javascript;base64,${base64}`;
+	return inlineJavascript(importStatements);
 }
 
+let injectedScriptsCount = 0;
 const generateScriptBuildConfig = scriptType => {
 	return {
 		entry: getVirtualEntry(scriptType),
+		name: scriptType,
 		mode: "production",
 		output: {
 			filename: `${scriptType}.js`
@@ -54,7 +54,7 @@ const generateScriptBuildConfig = scriptType => {
 			scriptType.startsWith("injected")
 			? [new InjectScriptPlugin({
 				onload: scriptType === "injected_and_loaded",
-				isFirst: count++ <= 0
+				isFirst: injectedScriptsCount++ <= 0
 			})]
 			: []
 		)

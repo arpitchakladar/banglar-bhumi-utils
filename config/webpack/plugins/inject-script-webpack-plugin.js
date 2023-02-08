@@ -1,23 +1,6 @@
 const { sources } = require("webpack");
 const terser = require("terser");
 
-const propectualIndexOf = (string, characterList, start) => {
-	if (start > 0) {
-		let i = 0;
-		let x = start;
-		while (i < characterList.length) {
-			x = string.indexOf(characterList[i], x + 1);
-			if (x < 0) {
-				return -1;
-			}
-			i++;
-		}
-		return x;
-	} else {
-		return -1;
-	}
-};
-
 class InjectScriptPlugin {
 	constructor({ onload, isFirst }) {
 		this.onload = !!onload;
@@ -36,11 +19,11 @@ class InjectScriptPlugin {
 					for (const assetName in assets) {
 						if (assetName.endsWith(".js")) {
 							let currentAssetContent = compilation.getAsset(assetName).source.source();
-							let start = `
-								const observer = new MutationObserver(mutations => {
-								const script = document.querySelector("head > script:nth-child(54)");
-								if (script) {
-									script.innerHTML 
+							let start = `(() => {
+								const o = new MutationObserver(() => {
+								const s = document.querySelector("head > script:nth-child(54)");
+								if (s) {
+									s.innerHTML 
 							`;
 							let end = "";
 							if (!this.isFirst) {
@@ -52,11 +35,11 @@ class InjectScriptPlugin {
 								end += "});";
 							}
 							end += `\`;
-										observer.disconnect();
+										o.disconnect();
 									}
 								});
-								observer.observe(document, {childList: true, subtree: true});
-							`;
+								o.observe(document, {childList: true, subtree: true});
+							})();`;
 							const content = (await terser.minify(currentAssetContent.replaceAll("`", "\\`"))).code;
 							compilation.updateAsset(
 								assetName,

@@ -1,3 +1,4 @@
+const { sources } = require("webpack");
 const path = require("path");
 
 const { version } = require(path.resolve(process.env.ROOT_DIR, "package.json"));
@@ -34,10 +35,10 @@ class CreateManifestPlugin {
 			compilation.hooks.processAssets.tap(
 				{
 					name: "CreateManifestPlugin",
-					stage: compiler.webpack.Compilation.PROCESS_ASSETS_STAGE_OPTIMIZE_SIZE,
+					stage: compiler.webpack.Compilation.PROCESS_ASSETS_ADDITIONAL,
 					additionalAssets: true
 				},
-				assets => {
+				() => {
 					this.manifest.version = version;
 					this.manifest.content_scripts = []
 
@@ -64,8 +65,10 @@ class CreateManifestPlugin {
 						}
 					}
 
-					const { RawSource } = compiler.webpack.sources;
-					assets["manifest.json"] = new RawSource(Buffer.from(JSON.stringify(this.manifest)));
+					compilation.updateAsset(
+						"manifest.json",
+						new sources.RawSource(JSON.stringify(this.manifest))
+					);
 				}
 			);
 		});
