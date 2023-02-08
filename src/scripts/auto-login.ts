@@ -1,6 +1,6 @@
 const proxiedPost = $.post;
 
-let loginData: any = null;
+let loginData: any | null = null;
 
 $.post = function() {
 	if (arguments[0].endsWith("login.action")) {

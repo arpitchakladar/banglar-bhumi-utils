@@ -1,19 +1,23 @@
 type ConditionalString = string | undefined;
-let scriptsToBlock: ConditionalString[] = [
+let blocked: ConditionalString[] = [
 	"head > script:nth-child(34)",
 	"head > script:nth-child(43)"
 ];
 let count = 0;
 
 const observer = new MutationObserver(mutations => {
-	for (let i = 0; i < scriptsToBlock.length; i++) {
-		if (scriptsToBlock[i]) {
-			const script = document.querySelector(scriptsToBlock[i]!) as HTMLScriptElement;
-			if (script) {
-				script.src = "";
+	for (let i = 0; i < blocked.length; i++) {
+		if (blocked[i]) {
+			const element = document.querySelector(blocked[i]!) as HTMLElement | null;
+			if (element) {
+				if (element instanceof HTMLScriptElement) {
+					element.src = "";
+				} else if (element instanceof HTMLLinkElement && element.getAttribute("rel") === "stylesheet") {
+					element.href = "";
+				}
+				blocked[i] = undefined;
 				count++;
-				scriptsToBlock[i] = undefined;
-				if (count >= scriptsToBlock.length) {
+				if (count >= blocked.length) {
 					observer.disconnect();
 					break;
 				}

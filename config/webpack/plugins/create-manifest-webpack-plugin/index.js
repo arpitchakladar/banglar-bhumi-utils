@@ -2,17 +2,31 @@ const path = require("path");
 
 const { version } = require(path.resolve(process.env.ROOT_DIR, "package.json"));
 
+const getRunAt = scriptType => {
+	switch (scriptType) {
+		case "before":
+		case "injected":
+		case "injected_and_loaded":
+			return "document_start";
+
+		case "rendered":
+			return "document_end";
+
+		case "loaded":
+		default:
+			return "document_idle";
+	}
+};
+
 class CreateManifestPlugin {
-	constructor(scripts) {
+	constructor({ scripts }) {
 		this.scripts = {};
 		this.manifest = require("./manifest-template.json");
-		this.scripts.document_start = {
-			...(scripts.before || {}),
-			...(scripts.injected || {}),
-			...(scripts.injected_and_loaded || {})
-		};
-		this.scripts.document_end = scripts.rendered || {};
-		this.scripts.document_idle = scripts.loaded || {};
+		this.scripts.before = scripts.before || {};
+		this.scripts.injected = scripts.injected || {};
+		this.scripts.injected_and_loaded = scripts.injected_and_loaded || {};
+		this.scripts.rendered = scripts.rendered || {};
+		this.scripts.loaded = scripts.loaded || {};
 	}
 
 	apply(compiler) {
@@ -43,8 +57,8 @@ class CreateManifestPlugin {
 							for (const scriptPath in paths) {
 								this.manifest.content_scripts.push({
 									matches: [`*://banglarbhumi.gov.in/${scriptPath}`],
-									js: paths[scriptPath].map(scriptName => `${scriptName}.js`),
-									run_at: scriptType
+									js: [`${scriptType}.js`],
+									run_at: getRunAt(scriptType)
 								});
 							}
 						}

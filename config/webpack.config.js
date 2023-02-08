@@ -2,6 +2,7 @@ const path = require("path");
 const CopyPlugin = require("copy-webpack-plugin");
 
 process.env.ROOT_DIR = path.resolve(__dirname, "..");
+process.env.CONFIG_DIR = path.resolve(process.env.ROOT_DIR, "config");
 process.env.SOURCE_DIR = path.resolve(process.env.ROOT_DIR, "src");
 
 const CreateManifestPlugin = require("./webpack/plugins/create-manifest-webpack-plugin");
@@ -12,9 +13,7 @@ const manifest = require(path.resolve(process.env.SOURCE_DIR, "manifest.json"));
 let scripts = [];
 
 for (const scriptType in manifest) {
-	for (const scriptName in manifest[scriptType]) {
-		scripts.push(generateScriptBuildConfig(scriptName, scriptType));
-	}
+	scripts.push(generateScriptBuildConfig(scriptType));
 }
 
 scripts[scripts.length - 1].plugins = (scripts[scripts.length - 1].plugins || []).concat([
@@ -24,7 +23,7 @@ scripts[scripts.length - 1].plugins = (scripts[scripts.length - 1].plugins || []
 			to: "./"
 		}]
 	}),
-	new CreateManifestPlugin(manifest)
+	new CreateManifestPlugin({ scripts: manifest })
 ]);
 
 module.exports = scripts;

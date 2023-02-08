@@ -1,26 +1,31 @@
 const fs = require("fs");
 const path = require("path");
 
+const SanitizeScriptsImportPlugin = require("../plugins/sanitize-scripts-import-webpack-plugin");
 const InjectScriptPlugin = require("../plugins/inject-script-webpack-plugin");
 
 const manifest = require(path.resolve(process.env.SOURCE_DIR, "manifest.json"));
 
 let count = 0;
 
-const generateScriptBuildConfig = (scriptName, scriptType) => {
-	let entry = path.resolve(process.env.SOURCE_DIR, `scripts/${scriptName}.ts`);
-	if (!fs.existsSync(entry)) {
-		entry = path.resolve(process.env.SOURCE_DIR, `scripts/${scriptName}/index.ts`);
-		if (!fs.existsSync(entry)) {
-			entry = path.resolve(process.env.SOURCE_DIR, `scripts/${scriptName}.js`);
-		}
-	}
+const getImportStatementForScript = script => {
+	const importPath = path.resolve(process.env.SOURCE_DIR, "scripts", script);
+	return `import "${importPath}";`;
+};
 
+const getVirtualEntry = scriptType => {
+	const string = Object.keys(manifest[scriptType]).map(getImportStatementForScript).join("\n");
+
+	const base64 = Buffer.from(string).toString("base64");
+	return `data:text/javascript;base64,${base64}`;
+}
+
+const generateScriptBuildConfig = scriptType => {
 	return {
-		entry,
+		entry: getVirtualEntry(scriptType),
 		mode: "production",
 		output: {
-			filename: `${scriptName}.js`
+			filename: `${scriptType}.js`
 		},
 		resolve: {
 			extensions: ["", ".ts", ".js"],
@@ -36,15 +41,23 @@ const generateScriptBuildConfig = (scriptName, scriptType) => {
 					options: {
 						configFile: "config/tsconfig.json"
 					}
+				},
+				{
+					test: new RegExp(`^${path.resolve(process.env.SOURCE_DIR, "scripts")}`),
+					loader: path.resolve(process.env.CONFIG_DIR, "webpack/loaders/scoped-loader")
 				}
 			]
 		},
-		plugins: scriptType.startsWith("injected")
+		plugins: [
+			new SanitizeScriptsImportPlugin()
+		].concat(
+			scriptType.startsWith("injected")
 			? [new InjectScriptPlugin({
 				onload: scriptType === "injected_and_loaded",
 				isFirst: count++ <= 0
 			})]
-			: undefined
+			: []
+		)
 	};
 };
 
