@@ -10,6 +10,7 @@ const SanitizeScriptsImportPlugin = require(path.resolve(process.env.CONFIG_DIR,
 const InjectScriptPlugin = require(path.resolve(process.env.CONFIG_DIR, "webpack/plugins/inject-script-webpack-plugin"));
 const { inlineJavascript } = require(path.resolve(process.env.CONFIG_DIR, "webpack/utils/inline-javascript"));
 const { getScriptRuntimeFromType } = require(path.resolve(process.env.CONFIG_DIR, "webpack/utils/script-runtime"));
+const { getFileNameHash } = require(path.resolve(process.env.CONFIG_DIR, "webpack/utils/file-name-hash"));
 
 const scripts = require(path.resolve(process.env.SOURCE_DIR, "scripts.json"));
 
@@ -38,7 +39,7 @@ for (const scriptRuntime in allScripts) {
 			name: scriptRuntime,
 			mode: "production",
 			output: {
-				filename: `scripts/${scriptRuntime}.js`
+				filename: `scripts/${getFileNameHash(Object.values(allScripts[scriptRuntime])[0])}/${scriptRuntime}.js`
 			},
 			resolve: {
 				extensions: ["", ".ts", ".js"],

@@ -3,6 +3,7 @@ const path = require("path");
 
 const { version } = require(path.resolve(process.env.ROOT_DIR, "package.json"));
 const { getScriptRuntimeFromType } = require(path.resolve(process.env.CONFIG_DIR, "webpack/utils/script-runtime"));
+const { getFileNameHash } = require(path.resolve(process.env.CONFIG_DIR, "webpack/utils/file-name-hash"));
 
 class CreateManifestPlugin {
 	constructor({ scripts }) {
@@ -42,7 +43,7 @@ class CreateManifestPlugin {
 							for (const scriptPath in paths) {
 								this.manifest.content_scripts.push({
 									matches: [`*://banglarbhumi.gov.in/${scriptPath}`],
-									js: [`scripts/${scriptRuntime}.js`],
+									js: [`scripts/${getFileNameHash(scriptPath)}/${scriptRuntime}.js`],
 									run_at: scriptRuntime
 								});
 							}
