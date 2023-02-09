@@ -18,58 +18,64 @@ let scriptBuildConfigs = [];
 
 let injectedScriptsCount = 0;
 
-const allScripts = {
-	document_start: {
-		...(scripts.before || {}),
-		...(scripts.injected || {}),
-		...(scripts.injected_and_loaded || {})
-	},
-	document_end: scripts.rendered,
-	document_idle: scripts.loaded
-};
+const allScripts = {};
 
-for (const scriptRuntime in allScripts) {
-	if (allScripts[scriptRuntime]) {
-		const importStatements = Object.keys(allScripts[scriptRuntime]).map(script =>
-			`import "${path.resolve(process.env.SOURCE_DIR, "scripts", script)}";`
-		).join("\n");
+for (const scriptType in scripts) {
+	const currentScripts = scripts[scriptType];
+	for (const script in currentScripts) {
+		allScripts[currentScripts[script]] = allScripts[currentScripts[script]] || {};
+		allScripts[currentScripts[script]][getScriptRuntimeFromType(scriptType)] = [
+			...(allScripts[currentScripts[script]][getScriptRuntimeFromType(scriptType)] || []),
+			script
+		]
+	}
+}
 
-		scriptBuildConfigs.push({
-			entry: inlineJavascript(importStatements),
-			name: scriptRuntime,
-			mode: "production",
-			output: {
-				filename: `scripts/${getFileNameHash(Object.values(allScripts[scriptRuntime])[0])}/${scriptRuntime}.js`
-			},
-			resolve: {
-				extensions: ["", ".ts", ".js"],
-				alias: {
-					"@": process.env.SOURCE_DIR
-				}
-			},
-			module: {
-				rules: [
-					{
-						test: /\.tsx?$/,
-						loader: "ts-loader",
-						options: {
-							configFile: "config/tsconfig.json"
-						}
-					},
-					{
-						test: new RegExp(`^${path.resolve(process.env.SOURCE_DIR, "scripts")}`),
-						loader: path.resolve(process.env.CONFIG_DIR, "webpack/loaders/scoped-loader")
+for (const scriptPath in allScripts) {
+	for (const scriptRuntime in allScripts[scriptPath]) {
+		const scripts = allScripts[scriptPath];
+		if (scripts[scriptRuntime]) {
+			const importStatements = scripts[scriptRuntime].map(script =>
+				`import "${path.resolve(process.env.SOURCE_DIR, "scripts", script)}";`
+			).join("\n");
+
+			scriptBuildConfigs.push({
+				entry: inlineJavascript(importStatements),
+				name: `${scriptPath} - ${scriptRuntime}`,
+				mode: "production",
+				output: {
+					filename: `scripts/${getFileNameHash(scriptPath)}/${scriptRuntime}.js`
+				},
+				resolve: {
+					extensions: ["", ".ts", ".js"],
+					alias: {
+						"@": process.env.SOURCE_DIR
 					}
-				]
-			},
-			plugins: [
-				new SanitizeScriptsImportPlugin()
-			].concat(
-				scriptRuntime === "document_start"
-				? [new InjectScriptPlugin()]
-				: []
-			)
-		});
+				},
+				module: {
+					rules: [
+						{
+							test: /\.tsx?$/,
+							loader: "ts-loader",
+							options: {
+								configFile: "config/tsconfig.json"
+							}
+						},
+						{
+							test: new RegExp(`^${path.resolve(process.env.SOURCE_DIR, "scripts")}`),
+							loader: path.resolve(process.env.CONFIG_DIR, "webpack/loaders/scoped-loader")
+						}
+					]
+				},
+				plugins: [
+					new SanitizeScriptsImportPlugin()
+				].concat(
+					scriptRuntime === "document_start"
+					? [new InjectScriptPlugin()]
+					: []
+				)
+			});
+		}
 	}
 }
 
