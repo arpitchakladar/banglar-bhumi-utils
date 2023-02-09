@@ -19,13 +19,13 @@ class InjectScriptPlugin {
 				async assets => {
 					for (const assetName in assets) {
 						if (assetName.endsWith(".js")) {
-							let scriptEnd = 0;
 							const currentAssetContent = compilation.getAsset(assetName).source.source();
 							const scripts = {
 								before: "",
 								injected: "",
 								injected_and_loaded: ""
 							};
+							let scriptEnd = 0;
 							while (true) {
 								const start = currentAssetContent.indexOf("/*<--\t", scriptEnd + 1);
 								if (start < 0) {
@@ -33,13 +33,13 @@ class InjectScriptPlugin {
 								} else {
 									const end = currentAssetContent.indexOf("\t-->*/", start + 1);
 									if (end < 0) {
-										throw Error("Failed to parse some scripts");
+										throw Error("Failed to parse scripts with document_start runtime");
 									} else {
-										const scriptType = currentAssetContent.substring(start + 6, end);
-										scriptEnd = currentAssetContent.indexOf("\n/*<---->*/", end + 1)
+										scriptEnd = currentAssetContent.indexOf("\n/*<---->*/", end + 1);
 										if (scriptEnd < 0) {
-											break;
+											throw Error("Failed to parse scripts with document_start runtime");
 										}
+										const scriptType = currentAssetContent.substring(start + 6, end);
 										scripts[scriptType.trim()] += currentAssetContent.substring(end + 6, scriptEnd);
 										scriptEnd += 11;
 									}

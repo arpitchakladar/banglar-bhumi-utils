@@ -42,7 +42,7 @@ class CreateManifestPlugin {
 							for (const scriptPath in paths) {
 								this.manifest.content_scripts.push({
 									matches: [`*://banglarbhumi.gov.in/${scriptPath}`],
-									js: [`${scriptRuntime}.js`],
+									js: [`scripts/${scriptRuntime}.js`],
 									run_at: scriptRuntime
 								});
 							}

@@ -38,7 +38,7 @@ for (const scriptRuntime in allScripts) {
 			name: scriptRuntime,
 			mode: "production",
 			output: {
-				filename: `${scriptRuntime}.js`
+				filename: `scripts/${scriptRuntime}.js`
 			},
 			resolve: {
 				extensions: ["", ".ts", ".js"],
