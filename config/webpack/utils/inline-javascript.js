@@ -1,4 +1,1 @@
-module.exports = code => {
-	const base64 = Buffer.from(code).toString("base64");
-	return `data:text/javascript;base64,${base64}`;
-};
+module.exports.inlineJavascript = code => `data:text/javascript;base64,${Buffer.from(code).toString("base64")}`;

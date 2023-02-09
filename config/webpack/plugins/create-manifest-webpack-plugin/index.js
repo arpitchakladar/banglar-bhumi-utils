@@ -2,32 +2,16 @@ const { sources } = require("webpack");
 const path = require("path");
 
 const { version } = require(path.resolve(process.env.ROOT_DIR, "package.json"));
-
-const getRunAt = scriptType => {
-	switch (scriptType) {
-		case "before":
-		case "injected":
-		case "injected_and_loaded":
-			return "document_start";
-
-		case "rendered":
-			return "document_end";
-
-		case "loaded":
-		default:
-			return "document_idle";
-	}
-};
+const { getScriptRuntimeFromType } = require(path.resolve(process.env.CONFIG_DIR, "webpack/utils/script-runtime"));
 
 class CreateManifestPlugin {
 	constructor({ scripts }) {
 		this.scripts = {};
 		this.manifest = require("./manifest-template.json");
-		this.scripts.before = scripts.before || {};
-		this.scripts.injected = scripts.injected || {};
-		this.scripts.injected_and_loaded = scripts.injected_and_loaded || {};
-		this.scripts.rendered = scripts.rendered || {};
-		this.scripts.loaded = scripts.loaded || {};
+		for (const scriptType in scripts) {
+			const scriptRuntime = getScriptRuntimeFromType(scriptType);
+			this.scripts[scriptRuntime] = { ...this.scripts[scriptRuntime], ...scripts[scriptType] };
+		}
 	}
 
 	apply(compiler) {
@@ -42,9 +26,9 @@ class CreateManifestPlugin {
 					this.manifest.version = version;
 					this.manifest.content_scripts = []
 
-					for (const scriptType in this.scripts) {
-						if (Object.keys(this.scripts[scriptType]).length > 0) {
-							const currentScripts = this.scripts[scriptType];
+					for (const scriptRuntime in this.scripts) {
+						if (Object.keys(this.scripts[scriptRuntime]).length > 0) {
+							const currentScripts = this.scripts[scriptRuntime];
 
 							let paths = {};
 							for (const scriptName in currentScripts) {
@@ -58,8 +42,8 @@ class CreateManifestPlugin {
 							for (const scriptPath in paths) {
 								this.manifest.content_scripts.push({
 									matches: [`*://banglarbhumi.gov.in/${scriptPath}`],
-									js: [`${scriptType}.js`],
-									run_at: getRunAt(scriptType)
+									js: [`${scriptRuntime}.js`],
+									run_at: scriptRuntime
 								});
 							}
 						}
