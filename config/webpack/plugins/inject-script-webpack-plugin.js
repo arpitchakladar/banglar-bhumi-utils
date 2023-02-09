@@ -18,7 +18,7 @@ class InjectScriptPlugin {
 				},
 				async assets => {
 					for (const assetName in assets) {
-						if (assetName.endsWith(".js")) {
+						if (assetName.endsWith("document_start.js")) {
 							const currentAssetContent = compilation.getAsset(assetName).source.source();
 							const scripts = {
 								before: "",
