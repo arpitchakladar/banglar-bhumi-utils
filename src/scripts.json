@@ -1,6 +1,6 @@
 {
 	"before": {
-		"block-unnecessary.ts": "*"
+		"optimize.ts": "*"
 	},
 	"injected": {
 		"stop-blocking.js": "*"
