@@ -1,16 +1,16 @@
 const { sources } = require("webpack");
 const path = require("path");
 
-const scripts = require(path.resolve(process.env.SOURCE_DIR, "scripts.json"));
+const scripts = require(path.resolve(SOURCE_DIR, "scripts.json"));
 
-const { version } = require(path.resolve(process.env.ROOT_DIR, "package.json"));
+const { version } = require(path.resolve(ROOT_DIR, "package.json"));
 const { getScriptRuntimeFromType } = webpackRequire("utils/script-runtime");
 const { getFileNameHash } = webpackRequire("utils/file-name-hash");
 
 class CreateManifestPlugin {
 	constructor() {
 		this.scripts = {};
-		this.manifest = require("./manifest-template.json");
+		this.manifest = webpackRequire("plugins/create-manifest-webpack-plugin/manifest-template.json");
 		for (const scriptType in scripts) {
 			const scriptRuntime = getScriptRuntimeFromType(scriptType);
 			this.scripts[scriptRuntime] = { ...this.scripts[scriptRuntime], ...scripts[scriptType] };

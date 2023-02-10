@@ -1,6 +1,6 @@
 const path = require("path");
 
-const scripts = require(path.resolve(process.env.SOURCE_DIR, "scripts.json"));
+const scripts = require(path.resolve(SOURCE_DIR, "scripts.json"));
 
 const getScriptType = scriptName => {
 	for (const scriptType in scripts) {

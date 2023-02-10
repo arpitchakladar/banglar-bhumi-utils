@@ -4,7 +4,7 @@ let replace: (any[] | undefined)[] = [
 	["head > script:nth-child(43)", { src: "" }]
 ];
 let count = 0;
-let notDone = false;
+let notDone = true;
 
 const observer = new MutationObserver(() => {
 	if (notDone) {
@@ -12,6 +12,7 @@ const observer = new MutationObserver(() => {
 		if (meta) {
 			meta.setAttribute("http-equiv", "Content-Security-Policy");
 			meta.setAttribute("content", "default-src 'self' data: gap: https://ssl.gstatic.com 'unsafe-eval'; style-src 'self' 'unsafe-inline'; media-src *");
+			notDone = false;
 		}
 	}
 	for (let i = 0; i < replace.length; i++) {

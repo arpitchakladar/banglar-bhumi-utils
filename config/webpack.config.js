@@ -1,11 +1,11 @@
 const path = require("path");
 const CopyPlugin = require("copy-webpack-plugin");
 
-process.env.ROOT_DIR = path.resolve(__dirname, "..");
-process.env.CONFIG_DIR = path.resolve(process.env.ROOT_DIR, "config");
-process.env.SOURCE_DIR = path.resolve(process.env.ROOT_DIR, "src");
+global.ROOT_DIR = path.resolve(__dirname, "..");
+global.CONFIG_DIR = path.resolve(ROOT_DIR, "config");
+global.SOURCE_DIR = path.resolve(ROOT_DIR, "src");
 
-global.webpackRequire = modulePath => require(path.resolve(process.env.CONFIG_DIR, "webpack", modulePath));
+global.webpackRequire = modulePath => require(path.resolve(CONFIG_DIR, "webpack", modulePath));
 
 const CreateManifestPlugin = webpackRequire("plugins/create-manifest-webpack-plugin");
 const SanitizeScriptsImportPlugin = webpackRequire("plugins/sanitize-scripts-import-webpack-plugin");
@@ -15,7 +15,7 @@ const { inlineJavascript } = webpackRequire("utils/inline-javascript");
 const { getScriptRuntimeFromType } = webpackRequire("utils/script-runtime");
 const { getFileNameHash } = webpackRequire("utils/file-name-hash");
 
-const scripts = require(path.resolve(process.env.SOURCE_DIR, "scripts.json"));
+const scripts = require(path.resolve(SOURCE_DIR, "scripts.json"));
 
 const entries = {};
 
@@ -33,7 +33,7 @@ for (const scriptRuntime in _scripts) {
 	for (const script in scripts) {
 		const scriptPath = scripts[script];
 		entries[`${scriptRuntime} - "${scriptPath}"`] = {
-			import: inlineJavascript(Object.keys(scripts).map(script => `import "${path.resolve(process.env.SOURCE_DIR, "scripts", script)}";`).join("\n")),
+			import: inlineJavascript(Object.keys(scripts).map(script => `import "${path.resolve(SOURCE_DIR, "scripts", script)}";`).join("\n")),
 			filename: `scripts/${getFileNameHash(scriptPath)}/${scriptRuntime}.js`
 		};
 	}
@@ -45,7 +45,7 @@ module.exports = {
 	resolve: {
 		extensions: ["", ".ts", ".js"],
 		alias: {
-			"@": process.env.SOURCE_DIR
+			"@": global.SOURCE_DIR
 		}
 	},
 	module: {
@@ -58,8 +58,8 @@ module.exports = {
 				}
 			},
 			{
-				test: new RegExp(`^${path.resolve(process.env.SOURCE_DIR, "scripts")}`),
-				loader: path.resolve(process.env.CONFIG_DIR, "webpack/loaders/scoped-loader")
+				test: new RegExp(`^${path.resolve(SOURCE_DIR, "scripts")}`),
+				loader: path.resolve(CONFIG_DIR, "webpack/loaders/scoped-loader")
 			}
 		]
 	},
@@ -68,7 +68,7 @@ module.exports = {
 		new InjectScriptPlugin(),
 		new CopyPlugin({
 			patterns: [{
-				from: path.resolve(process.env.ROOT_DIR, "static"),
+				from: path.resolve(ROOT_DIR, "static"),
 				to: "./"
 			}]
 		}),
