@@ -5,18 +5,17 @@ process.env.ROOT_DIR = path.resolve(__dirname, "..");
 process.env.CONFIG_DIR = path.resolve(process.env.ROOT_DIR, "config");
 process.env.SOURCE_DIR = path.resolve(process.env.ROOT_DIR, "src");
 
-const CreateManifestPlugin = require(path.resolve(process.env.CONFIG_DIR, "webpack/plugins/create-manifest-webpack-plugin"));
-const SanitizeScriptsImportPlugin = require(path.resolve(process.env.CONFIG_DIR, "webpack/plugins/sanitize-scripts-import-webpack-plugin"));
-const InjectScriptPlugin = require(path.resolve(process.env.CONFIG_DIR, "webpack/plugins/inject-script-webpack-plugin"));
-const { inlineJavascript } = require(path.resolve(process.env.CONFIG_DIR, "webpack/utils/inline-javascript"));
-const { getScriptRuntimeFromType } = require(path.resolve(process.env.CONFIG_DIR, "webpack/utils/script-runtime"));
-const { getFileNameHash } = require(path.resolve(process.env.CONFIG_DIR, "webpack/utils/file-name-hash"));
+global.webpackRequire = modulePath => require(path.resolve(process.env.CONFIG_DIR, "webpack", modulePath));
+
+const CreateManifestPlugin = webpackRequire("plugins/create-manifest-webpack-plugin");
+const SanitizeScriptsImportPlugin = webpackRequire("plugins/sanitize-scripts-import-webpack-plugin");
+const InjectScriptPlugin = webpackRequire("plugins/inject-script-webpack-plugin");
+
+const { inlineJavascript } = webpackRequire("utils/inline-javascript");
+const { getScriptRuntimeFromType } = webpackRequire("utils/script-runtime");
+const { getFileNameHash } = webpackRequire("utils/file-name-hash");
 
 const scripts = require(path.resolve(process.env.SOURCE_DIR, "scripts.json"));
-
-let scriptBuildConfigs = [];
-
-let injectedScriptsCount = 0;
 
 const entries = {};
 
@@ -34,9 +33,7 @@ for (const scriptRuntime in _scripts) {
 	for (const script in scripts) {
 		const scriptPath = scripts[script];
 		entries[`${scriptRuntime} - "${scriptPath}"`] = {
-			import: inlineJavascript(Object.keys(scripts).map(script =>
-				`import "${path.resolve(process.env.SOURCE_DIR, "scripts", script)}";`
-			).join("\n")),
+			import: inlineJavascript(Object.keys(scripts).map(script => `import "${path.resolve(process.env.SOURCE_DIR, "scripts", script)}";`).join("\n")),
 			filename: `scripts/${getFileNameHash(scriptPath)}/${scriptRuntime}.js`
 		};
 	}

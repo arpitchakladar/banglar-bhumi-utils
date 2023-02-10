@@ -4,8 +4,8 @@ const path = require("path");
 const scripts = require(path.resolve(process.env.SOURCE_DIR, "scripts.json"));
 
 const { version } = require(path.resolve(process.env.ROOT_DIR, "package.json"));
-const { getScriptRuntimeFromType } = require(path.resolve(process.env.CONFIG_DIR, "webpack/utils/script-runtime"));
-const { getFileNameHash } = require(path.resolve(process.env.CONFIG_DIR, "webpack/utils/file-name-hash"));
+const { getScriptRuntimeFromType } = webpackRequire("utils/script-runtime");
+const { getFileNameHash } = webpackRequire("utils/file-name-hash");
 
 class CreateManifestPlugin {
 	constructor() {
