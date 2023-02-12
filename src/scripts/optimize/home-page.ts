@@ -1,6 +1,6 @@
 const replace: (any[] | undefined)[] = [
-	["head > script:nth-child(34)", { src: "" }],
-	["head > script:nth-child(43)", { src: "" }]
+	["#slider > img", { src: "" }],
+	["#slider > img.nivo-main-image", { src: "" }]
 ];
 let count = 0;
 
@@ -13,7 +13,7 @@ const observer = new MutationObserver(() => {
 				if (attributes.innerHTML) {
 					element.innerHTML = attributes.innerHTML;
 				}
-				attributes.innerHTML = undefined;
+				delete attributes.innerHTML;
 				for (const attribute in attributes) {
 					element.setAttribute(attribute, attributes[attribute]);
 				}

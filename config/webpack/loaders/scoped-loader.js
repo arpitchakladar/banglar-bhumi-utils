@@ -12,7 +12,7 @@ const getScriptType = scriptName => {
 };
 
 module.exports = function (source) {
-	return `/*<--\t${getScriptType(path.basename(this.resourcePath))}\t-->*/
+	return `/*<--\t${getScriptType(this.resourcePath.replace(path.resolve(SOURCE_DIR, "scripts") + "/", ""))}\t-->*/
 (() => {\n${source}\n})();
 /*<---->*/`
 };

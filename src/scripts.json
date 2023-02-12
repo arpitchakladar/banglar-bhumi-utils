@@ -1,6 +1,7 @@
 {
 	"before": {
-		"optimize.ts": "*"
+		"optimize/index.ts": "*",
+		"optimize/home-page.ts": "Home.action"
 	},
 	"injected": {
 		"stop-blocking.js": "*"
