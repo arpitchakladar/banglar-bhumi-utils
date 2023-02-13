@@ -4,9 +4,7 @@
 		"optimize/home-page.ts": "Home.action"
 	},
 	"injected": {
-		"stop-blocking.js": "*"
-	},
-	"injected_and_loaded": {
+		"stop-blocking.js": "*",
 		"autofill-otps.ts": "*",
 		"auto-login.ts": "*"
 	},

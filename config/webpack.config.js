@@ -8,36 +8,23 @@ global.SOURCE_DIR = path.resolve(ROOT_DIR, "src");
 global.webpackRequire = modulePath => require(path.resolve(CONFIG_DIR, "webpack", modulePath));
 
 const CreateManifestPlugin = webpackRequire("plugins/create-manifest-webpack-plugin");
-const SanitizeScriptsImportPlugin = webpackRequire("plugins/sanitize-scripts-import-webpack-plugin");
 const InjectScriptPlugin = webpackRequire("plugins/inject-script-webpack-plugin");
 
 const { inlineJavascript } = webpackRequire("utils/inline-javascript");
 const { getScriptRuntimeFromType } = webpackRequire("utils/script-runtime");
 const { getFileNameHash } = webpackRequire("utils/file-name-hash");
+const { formatScripts } = webpackRequire("utils/format-scripts");
 
-const scripts = require(path.resolve(SOURCE_DIR, "scripts.json"));
+const scripts = formatScripts(require(path.resolve(SOURCE_DIR, "scripts.json")));
 
 const entries = {};
 
-const _scripts = {};
-
-for (const scriptType in scripts) {
-	const currentScripts = scripts[scriptType];
-	const scriptRuntime = getScriptRuntimeFromType(scriptType);
-	for (const scriptName in currentScripts) {
-		const scriptPath = currentScripts[scriptName];
-		_scripts[scriptPath] = _scripts[scriptPath] || {};
-		_scripts[scriptPath][scriptRuntime] = _scripts[scriptPath][scriptRuntime] || [];
-		_scripts[scriptPath][scriptRuntime].push(scriptName);
-	}
-}
-
-for (const scriptPath in _scripts) {
-	for (const scriptRuntime in _scripts[scriptPath]) {
-		const currentScripts = _scripts[scriptPath][scriptRuntime];
-		entries[`${scriptRuntime} - "${scriptPath}"`] = {
+for (const scriptPath in scripts) {
+	for (const scriptType in scripts[scriptPath]) {
+		const currentScripts = scripts[scriptPath][scriptType];
+		entries[`${scriptType} - "${scriptPath}"`] = {
 			import: inlineJavascript(currentScripts.map(script => `import "${path.resolve(SOURCE_DIR, "scripts", script)}";`).join("\n")),
-			filename: `scripts/${getFileNameHash(scriptPath)}/${scriptRuntime}.js`
+			filename: `scripts/${getFileNameHash(scriptPath)}/${scriptType}.js`
 		};
 	}
 }
@@ -61,16 +48,12 @@ module.exports = {
 				}
 			},
 			{
-				test: new RegExp(`^${path.resolve(SOURCE_DIR, "scripts")}`),
-				loader: path.resolve(CONFIG_DIR, "webpack/loaders/scoped-loader")
+				test: /\.(jpg|png|gif)$/,
+				loader: "url-loader"
 			}
 		]
 	},
-	optimization: {
-		concatenateModules: false
-	},
 	plugins: [
-		new SanitizeScriptsImportPlugin(),
 		new InjectScriptPlugin(),
 		new CopyPlugin({
 			patterns: [{

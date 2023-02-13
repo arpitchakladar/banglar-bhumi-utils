@@ -1,10 +1,12 @@
+import observeDOM from "@/utils/observe-dom";
+
 const replace: (any[] | undefined)[] = [
 	["#slider > img", { src: "" }],
 	["#slider > img.nivo-main-image", { src: "" }]
 ];
 let count = 0;
 
-const observer = new MutationObserver(() => {
+observeDOM(() => {
 	for (let i = 0; i < replace.length; i++) {
 		if (replace[i]) {
 			const element = document.querySelector(replace[i]![0]) as HTMLElement | null;
@@ -20,11 +22,11 @@ const observer = new MutationObserver(() => {
 				replace[i] = undefined;
 				count++;
 				if (count >= replace.length) {
-					observer.disconnect();
-					break;
+					return true;
 				}
 			}
 		}
 	}
+
+	return false;
 });
-observer.observe(document, {childList: true, subtree: true});
