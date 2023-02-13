@@ -22,18 +22,21 @@ const entries = {};
 const _scripts = {};
 
 for (const scriptType in scripts) {
-	_scripts[getScriptRuntimeFromType(scriptType)] = {
-		..._scripts[getScriptRuntimeFromType(scriptType)],
-		...scripts[scriptType]
-	};
+	const currentScripts = scripts[scriptType];
+	const scriptRuntime = getScriptRuntimeFromType(scriptType);
+	for (const scriptName in currentScripts) {
+		const scriptPath = currentScripts[scriptName];
+		_scripts[scriptPath] = _scripts[scriptPath] || {};
+		_scripts[scriptPath][scriptRuntime] = _scripts[scriptPath][scriptRuntime] || [];
+		_scripts[scriptPath][scriptRuntime].push(scriptName);
+	}
 }
 
-for (const scriptRuntime in _scripts) {
-	const scripts = _scripts[scriptRuntime];
-	for (const script in scripts) {
-		const scriptPath = scripts[script];
+for (const scriptPath in _scripts) {
+	for (const scriptRuntime in _scripts[scriptPath]) {
+		const currentScripts = _scripts[scriptPath][scriptRuntime];
 		entries[`${scriptRuntime} - "${scriptPath}"`] = {
-			import: inlineJavascript(Object.keys(scripts).map(script => `import "${path.resolve(SOURCE_DIR, "scripts", script)}";`).join("\n")),
+			import: inlineJavascript(currentScripts.map(script => `import "${path.resolve(SOURCE_DIR, "scripts", script)}";`).join("\n")),
 			filename: `scripts/${getFileNameHash(scriptPath)}/${scriptRuntime}.js`
 		};
 	}
@@ -62,6 +65,9 @@ module.exports = {
 				loader: path.resolve(CONFIG_DIR, "webpack/loaders/scoped-loader")
 			}
 		]
+	},
+	optimization: {
+		concatenateModules: false
 	},
 	plugins: [
 		new SanitizeScriptsImportPlugin(),
