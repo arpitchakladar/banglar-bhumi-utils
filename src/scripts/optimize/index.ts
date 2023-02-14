@@ -1,7 +1,7 @@
-import { replaceAttributes } from "@/utils/replace-attributes";
+import { modifyDOM, DOMModifier } from "@/utils/modify-dom";
 
-replaceAttributes([
-	["head > script:nth-child(34)", { src: null }],
-	["head > script:nth-child(36)", { src: null, innerHTML: "$.prototype.nivoSlider = () => {};" }],
-	["head > script:nth-child(43)", { src: null }]
+modifyDOM([
+	new DOMModifier("head > script:nth-child(34)", { src: null }),
+	new DOMModifier("head > script:nth-child(36)", { src: null, innerHTML: "$.prototype.nivoSlider = () => {};" }),
+	new DOMModifier("head > script:nth-child(43)", { src: null })
 ]);

@@ -1,8 +1,12 @@
-export const observeDOM = (callback: () => boolean) => {
+export const observeDOM = (callback: () => boolean, element: HTMLElement = document as unknown as HTMLElement) => {
 	const observer = new MutationObserver(() => {
 		if (callback()) {
 			observer.disconnect();
 		}
 	});
-	observer.observe(document, {childList: true, subtree: true});
+
+	observer.observe(element, {
+		childList: true,
+		subtree: true
+	});
 };
