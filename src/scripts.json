@@ -1,7 +1,7 @@
 {
 	"before": {
 		"optimize/index.ts": "*",
-		"optimize/home-page.ts": "Home.action"
+		"optimize/home-page/index.ts": "Home.action"
 	},
 	"injected": {
 		"stop-blocking.js": "*",
@@ -9,6 +9,7 @@
 		"auto-login.ts": "*"
 	},
 	"loaded": {
-		"autofill-captcha.ts": "*"
+		"autofill-captcha.ts": "*",
+		"optimize/home-page/styles.ts": "Home.action"
 	}
 }

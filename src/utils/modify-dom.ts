@@ -1,20 +1,15 @@
 import { observeDOM } from "@/utils/observe-dom";
 
 type Replacements = {
-	innerHTML?: string;
-	styles?: {
-		[key: string]: string
-	};
-} | {
 	[key: string]: string | null
 };
 
 export class DOMModifier {
 	selector: string;
-	replaced: Replacements;
-	constructor(selector: string, replaced: Replacements) {
+	attributes: Replacements;
+	constructor(selector: string, attributes: Replacements) {
 		this.selector = selector;
-		this.replaced = replaced;
+		this.attributes = attributes;
 	}
 }
 
@@ -26,17 +21,11 @@ export const modifyDOM = (elements: (DOMModifier | null)[]) => {
 			if (elements[i]) {
 				const element = document.querySelector(elements[i]!.selector) as HTMLElement | null;
 				if (element) {
-					const attributes = elements[i]!.replaced as any;
+					const attributes = elements[i]!.attributes as any;
 					if (attributes.innerHTML) {
 						element.innerHTML = attributes.innerHTML;
 					}
-					if (attributes.styles) {
-						for (const styleType in attributes.styles) {
-							element.style[styleType as any] = attributes.styles[styleType];
-						}
-					}
 					delete attributes.innerHTML;
-					delete attributes.styles;
 					for (const attribute in attributes) {
 						if (attributes[attribute] === null) {
 							element.removeAttribute(attribute);
