@@ -14,7 +14,7 @@ class CreateManifestPlugin {
 					stage: compiler.webpack.Compilation.PROCESS_ASSETS_ADDITIONAL,
 					additionalAssets: true
 				},
-				() => {
+				assets => {
 					const scripts = formatScripts(require(path.resolve(SOURCE_DIR, "scripts.json")));
 					const manifest = webpackRequire("plugins/create-manifest-webpack-plugin/manifest-template.json");
 					manifest.version = require(path.resolve(ROOT_DIR, "package.json")).version;
@@ -28,6 +28,23 @@ class CreateManifestPlugin {
 								run_at: getScriptRuntimeFromType(scriptType)
 							});
 						}
+					}
+
+					const resources = [];
+
+					for (const assetName in assets) {
+						if (/^assets\/.*\.(jpg|png|gif)$/.test(assetName)) {
+							resources.push(assetName);
+						}
+					}
+
+					if (resources.length > 0) {
+						manifest.web_accessible_resources = [
+							{
+								resources,
+								matches: [ "<all_urls>" ]
+							}
+						];
 					}
 
 					compilation.emitAsset(
