@@ -1,7 +1,7 @@
 {
 	"before": {
 		"optimize/index.ts": "*",
-		"optimize/home-page/index.ts": "Home.action"
+		"optimize/home-page/index.ts": "Home"
 	},
 	"injected": {
 		"stop-blocking.js": "*",
@@ -10,6 +10,7 @@
 	},
 	"loaded": {
 		"autofill-captcha.ts": "*",
-		"optimize/home-page/styles.ts": "Home.action"
+		"optimize/home-page/styles.ts": "Home",
+		"fix-application-receipt.ts": "Apprecrep"
 	}
 }

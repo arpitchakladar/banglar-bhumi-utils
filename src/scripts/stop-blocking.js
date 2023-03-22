@@ -70,141 +70,141 @@ $(document).ready(() => {
 	}
 });
 
-function homePage() {
+window.homePage = () => {
 	window.location.href = contextPath + "/Home.action";
 }
 
-function ProfilePage() {
+window.ProfilePage = () => {
 	$("#form_MainMenuPage").attr("action", contextPath + "/Profile.action");
 	$("#form_MainMenuPage").submit();
 }
 
-function AdministrativePage() {
+window.AdministrativePage = () => {
 	$("#form_MainMenuPage").attr("action", contextPath + "/Administrative.action");
 	$("#form_MainMenuPage").submit();
 }
 
-function RefugeeReliefRehabilationPage() {
+window.RefugeeReliefRehabilationPage = () => {
 	$("#form_MainMenuPage").attr("action", contextPath + "/RefugeeReliefRehabilation.action");
 	$("#form_MainMenuPage").submit();
 }
 
-function AgricultureCensusPage() {
+window.AgricultureCensusPage = () => {
 	$("#form_MainMenuPage").attr("action", contextPath + "/AgricultureCensus.action");
 	$("#form_MainMenuPage").submit();
 }
 
-function LandPolicyBranchPage() {
+window.LandPolicyBranchPage = () => {
 	$("#form_MainMenuPage").attr("action", contextPath + "/LandPolicyBranch.action");
 	$("#form_MainMenuPage").submit();
 }
 
-function LRISBranchPage() {
+window.LRISBranchPage = () => {
 	$("#form_MainMenuPage").attr("action", contextPath + "/LRISBranch.action");
 	$("#form_MainMenuPage").submit();
 }
 
-function RentControlPage() {
+window.RentControlPage = () => {
 	$("#form_MainMenuPage").attr("action", contextPath + "/rent.action");
 	$("#form_MainMenuPage").submit();
 }
 
-function ThikaPage() {
+window.ThikaPage = () => {
 	$("#form_MainMenuPage").attr("action", contextPath + "/Thika.action");
 	$("#form_MainMenuPage").submit();
 }
 
-function IndoBanglaPage() {
+window.IndoBanglaPage = () => {
 	$("#form_MainMenuPage").attr("action", contextPath + "/IndoBangla.action");
 	$("#form_MainMenuPage").submit();
 }
 
-function StateLandUseBoardPage() {
+window.StateLandUseBoardPage = () => {
 	$("#form_MainMenuPage").attr("action", contextPath + "/StateLandUseBoard.action");
 	$("#form_MainMenuPage").submit();
 }
 
-function GEMBranchPage() {
+window.GEMBranchPage = () => {
 	$("#form_MainMenuPage").attr("action", contextPath + "/GEMBranch.action");
 	$("#form_MainMenuPage").submit();
 }
 
-function RequisitionBranchPage() {
+window.RequisitionBranchPage = () => {
 	$("#form_MainMenuPage").attr("action", contextPath + "/RequisitionBranch.action");
 	$("#form_MainMenuPage").submit();
 }
 
-function MMBbranchPage() {
+window.MMBbranchPage = () => {
 	$("#form_MainMenuPage").attr("action", contextPath + "/MMBbranchPage.action");
 	$("#form_MainMenuPage").submit();
 }
 
-function SurveySetelmentBranchPage() {
+window.SurveySetelmentBranchPage = () => {
 	$("#form_MainMenuPage").attr("action", contextPath + "/SurveySetelmentBranch.action");
 	$("#form_MainMenuPage").submit();
 }
 
-function CitizenCentricServicesPage() {
+window.CitizenCentricServicesPage = () => {
 	$("#form_MainMenuPage").attr("action", contextPath + "/CitizenCentricServices.action");
 	$("#form_MainMenuPage").submit();
 }
 
-function ARTIPage() {
+window.ARTIPage = () => {
 	$("#form_MainMenuPage").attr("action", contextPath + "/ARTI.action");
 	$("#form_MainMenuPage").submit();
 }
 
-function LMTCPage() {
+window.LMTCPage = () => {
 	$("#form_MainMenuPage").attr("action", contextPath + "/LMTC.action");
 	$("#form_MainMenuPage").submit();
 }
 
-function EstablishmentPage() {
+window.EstablishmentPage = () => {
 	$("#form_MainMenuPage").attr("action", contextPath + "/Establishment.action");
 	$("#form_MainMenuPage").submit();
 }
 
-function LawBranch() {
+window.LawBranch = () => {
 	$("#form_MainMenuPage").attr("action", contextPath + "/LawBranch.action");
 	$("#form_MainMenuPage").submit();
 }
 
-function DistributionLandPage() {
+window.DistributionLandPage = () => {
 	$("#form_MainMenuPage").attr("action", contextPath + "/DistributionLand.action");
 	$("#form_MainMenuPage").submit();
 }
 
-function ManagementISUPage() {
+window.ManagementISUPage = () => {
 	$("#form_MainMenuPage").attr("action", contextPath + "/ManagementISU.action");
 	$("#form_MainMenuPage").submit();
 }
 
-function KeyPersonnelPage() {
+window.KeyPersonnelPage = () => {
 	$("#form_MainMenuPage").attr("action", contextPath + "/KeyPersonnel.action");
 	$("#form_MainMenuPage").submit();
 }
 
-function LandReformPage() {
+window.LandReformPage = () => {
 	$("#form_MainMenuPage").attr("action", contextPath + "/LandReform.action");
 	$("#form_MainMenuPage").submit();
 }
 
-function DigitisationMapRecordsPage() {
+window.DigitisationMapRecordsPage = () => {
 	$("#form_MainMenuPage").attr("action", contextPath + "/DigitisationMapRecords.action");
 	$("#form_MainMenuPage").submit();
 }
 
-function LandManagementPage() {
+window.LandManagementPage = () => {
 	$("#form_MainMenuPage").attr("action", contextPath + "/LandManagement.action");
 	$("#form_MainMenuPage").submit();
 }
 
-function PreparationUpdationMaintenancePage() {
+window.PreparationUpdationMaintenancePage = () => {
 	$("#form_MainMenuPage").attr("action", contextPath + "/PreparationUpdationMaintenance.action");
 	$("#form_MainMenuPage").submit();
 }
 
-function challanGeneratePage() {
+window.challanGeneratePage = () => {
 	if (user == "") {
 		$.post(
 			"putTargetMenuActionName.action",
@@ -233,7 +233,7 @@ function challanGeneratePage() {
 	}
 }
 
-function challanReprintPage() {
+window.challanReprintPage = () => {
 	if (user == "") {
 		$.post(
 			"putTargetMenuActionName.action",
@@ -262,7 +262,7 @@ function challanReprintPage() {
 	}
 }
 
-function knowYourPropertyPage() {
+window.knowYourPropertyPage = () => {
 	if (user == "") {
 		$.post(
 			"putTargetMenuActionName.action",
@@ -291,7 +291,7 @@ function knowYourPropertyPage() {
 	}
 }
 
-function serviceStatusLocWise() {
+window.serviceStatusLocWise = () => {
 	if (user == "") {
 		$.post(
 			"putTargetMenuActionName.action",
@@ -320,7 +320,7 @@ function serviceStatusLocWise() {
 	}
 }
 
-function MuteApplicationPage() {
+window.MuteApplicationPage = () => {
 	if (user == "") {
 		$.post(
 			"putTargetMenuActionName.action",
@@ -349,7 +349,7 @@ function MuteApplicationPage() {
 	}
 }
 
-function RORReqPage() {
+window.RORReqPage = () => {
 	if (user == "") {
 		$.post(
 			"putTargetMenuActionName.action",
@@ -375,7 +375,7 @@ function RORReqPage() {
 	}
 }
 
-function PIReqPage() {
+window.PIReqPage = () => {
 	if (user == "") {
 		$.post(
 			"putTargetMenuActionName.action",
@@ -401,7 +401,7 @@ function PIReqPage() {
 	}
 }
 
-function PlotMapReqPage() {
+window.PlotMapReqPage = () => {
 	if (user == "") {
 		$.post(
 			"putTargetMenuActionName.action",
@@ -427,7 +427,7 @@ function PlotMapReqPage() {
 	}
 }
 
-function MouzaMapReqPage() {
+window.MouzaMapReqPage = () => {
 	if (user == "") {
 		$.post(
 			"putTargetMenuActionName.action",
@@ -452,7 +452,7 @@ function MouzaMapReqPage() {
 		$("#form_MainMenuPage").submit();
 	}
 }
-function MouzaMapAvailabilityPage() {
+window.MouzaMapAvailabilityPage = () => {
 	if (user == "") {
 		$.post(
 			"putTargetMenuActionName.action",
@@ -480,7 +480,7 @@ function MouzaMapAvailabilityPage() {
 		$("#form_MainMenuPage").submit();
 	}
 }
-function revenueApplicationPage() {
+window.revenueApplicationPage = () => {
 	if (user == "") {
 		$.post(
 			"putTargetMenuActionName.action",
@@ -509,7 +509,7 @@ function revenueApplicationPage() {
 	}
 }
 
-function revenueApplicationListPage() {
+window.revenueApplicationListPage = () => {
 	if (user == "") {
 		$.post(
 			"putTargetMenuActionName.action",
@@ -538,7 +538,7 @@ function revenueApplicationListPage() {
 	}
 }
 
-function revenueNoDueCertificatePage() {
+window.revenueNoDueCertificatePage = () => {
 	if (user == "") {
 		$.post(
 			"putTargetMenuActionName.action",
@@ -567,7 +567,7 @@ function revenueNoDueCertificatePage() {
 	}
 }
 
-function privateAminApplicationPage() {
+window.privateAminApplicationPage = () => {
 	if (user == "") {
 		$.post(
 			"putTargetMenuActionName.action",
@@ -596,7 +596,7 @@ function privateAminApplicationPage() {
 	}
 }
 
-function privateAminRegistrationPage() {
+window.privateAminRegistrationPage = () => {
 	if (user == "") {
 		$.post(
 			"putTargetMenuActionName.action",
@@ -624,11 +624,11 @@ function privateAminRegistrationPage() {
 		$("#form_MainMenuPage").submit();
 	}
 }
-function revenueCollectionReportPage() {
+window.revenueCollectionReportPage = () => {
 	$("#form_MainMenuPage").attr("action", contextPath + "/revenueCollectionReportAction.action");
 	$("#form_MainMenuPage").submit();
 }
-function Apprec_rep() {
+window.Apprec_rep = () => {
 	if (user == "") {
 		$.post(
 			"putTargetMenuActionName.action",
@@ -654,7 +654,7 @@ function Apprec_rep() {
 	}
 }
 
-function FeesCollectionPage(applicationNo) {
+window.FeesCollectionPage = (applicationNo) => {
 	if (user == "") {
 		$.post(
 			"putTargetMenuActionName.action",
@@ -688,7 +688,7 @@ function FeesCollectionPage(applicationNo) {
 		$("#form_MainMenuPage").submit();
 	}
 }
-function muteStatusPage() {
+window.muteStatusPage = () => {
 	if (user == "") {
 		$.post(
 			"putTargetMenuActionName.action",
@@ -714,7 +714,7 @@ function muteStatusPage() {
 	}
 }
 
-function convStatusPage() {
+window.convStatusPage = () => {
 	if (user == "") {
 		$.post(
 			"putTargetMenuActionName.action",
@@ -740,7 +740,7 @@ function convStatusPage() {
 	}
 }
 
-function warishStatusPage() {
+window.warishStatusPage = () => {
 	if (user == "") {
 		$.post(
 			"putTargetMenuActionName.action",
@@ -769,7 +769,7 @@ function warishStatusPage() {
 	}
 }
 
-function plotKhatianStatusPage() {
+window.plotKhatianStatusPage = () => {
 	if (user == "") {
 		$.post(
 			"putTargetMenuActionName.action",
@@ -798,7 +798,7 @@ function plotKhatianStatusPage() {
 	}
 }
 
-function rslrPlotInfoPage() {
+window.rslrPlotInfoPage = () => {
 	if (user == "") {
 		$.post(
 			"putTargetMenuActionName.action",
@@ -827,7 +827,7 @@ function rslrPlotInfoPage() {
 	}
 }
 
-function landClassPage() {
+window.landClassPage = () => {
 	if (user == "") {
 		$.post(
 			"putTargetMenuActionName.action",
@@ -853,7 +853,7 @@ function landClassPage() {
 	}
 }
 
-function signedPdfPage() {
+window.signedPdfPage = () => {
 	if (user == "") {
 		$.post(
 			"putTargetMenuActionName.action",
@@ -882,7 +882,7 @@ function signedPdfPage() {
 	}
 }
 
-function convAppViewPage() {
+window.convAppViewPage = () => {
 	if (user == "") {
 		$.post(
 			"putTargetMenuActionName.action",
@@ -911,7 +911,7 @@ function convAppViewPage() {
 	}
 }
 
-function warishAppViewPage() {
+window.warishAppViewPage = () => {
 	if (user == "") {
 		$.post(
 			"putTargetMenuActionName.action",
@@ -940,116 +940,116 @@ function warishAppViewPage() {
 	}
 }
 
-function GrievApplicationPage() {
+window.GrievApplicationPage = () => {
 	$("#form_MainMenuPage").attr("action", contextPath + "/GrievAppViewAction.action");
 	$("#form_MainMenuPage").submit();
 }
 
-function GrievStatusViewPage() {
+window.GrievStatusViewPage = () => {
 	$("#form_MainMenuPage").attr("action", contextPath + "/GrievStatusViewAction.action");
 	$("#form_MainMenuPage").submit();
 }
 
-function querySearchPage() {
+window.querySearchPage = () => {
 	$("#form_MainMenuPage").attr("action", contextPath + "/QuerySearchAction.action");
 	$("#form_MainMenuPage").submit();
 }
 
-function SiteMapPage() {
+window.SiteMapPage = () => {
 	$("#form_MainMenuPage").attr("action", contextPath + "/Sitemap.action");
 	$("#form_MainMenuPage").submit();
 }
 
-function termuse() {
+window.termuse = () => {
 	$("#form_MainMenuPage").attr("action", contextPath + "/termsofuse.action");
 	$("#form_MainMenuPage").submit();
 }
 
-function linkpol() {
+window.linkpol = () => {
 	$("#form_MainMenuPage").attr("action", contextPath + "/linkingpolicy.action");
 	$("#form_MainMenuPage").submit();
 }
 
-function pripol() {
+window.pripol = () => {
 	window.location.href = contextPath + "/privacypolicy.action";
 }
 
-function loadDashboard() {
+window.loadDashboard = () => {
 	$("#form_MainMenuPage").attr("action", contextPath + "/dashboard.action");
 	$("#form_MainMenuPage").submit();
 }
 
-function RegRenew_DashboardPage() {
+window.RegRenew_DashboardPage = () => {
 	$("#form_MainMenuPage").attr("action", contextPath + "/RegRenew_Dashboard.action");
 	$("#form_MainMenuPage").submit();
 }
 
-function feedback() {
+window.feedback = () => {
 	$("#form_MainMenuPage").attr("action", contextPath + "/feedBackPage.action");
 	$("#form_MainMenuPage").submit();
 }
 
-function searchActionChange() {
+window.searchActionChange = () => {
 	const functionChange = $(".search_select").val();
 	eval(functionChange + "()");
 }
 
-function webInformationManger() {
+window.webInformationManger = () => {
 	$("#form_MainMenuPage").attr("action", contextPath + "/webInformationManager.action");
 	$("#form_MainMenuPage").submit();
 }
 
-function helpPage() {
+window.helpPage = () => {
 	$("#form_MainMenuPage").attr("action", contextPath + "/help.action");
 	$("#form_MainMenuPage").submit();
 }
 
-function ApplnsearchPageGrn() {
+window.ApplnsearchPageGrn = () => {
 	$("#form_MainMenuPage").attr("action", contextPath + "/appliSearchGrn.action");
 	$("#form_MainMenuPage").submit();
 }
 
-function LandAcquisitionPage() {
+window.LandAcquisitionPage = () => {
 	$("#form_MainMenuPage").attr("action", contextPath + "/LandAcquisition.action");
 	$("#form_MainMenuPage").submit();
 }
 
-function LACollector() {
+window.LACollector = () => {
 	$("#form_MainMenuPage").attr("action", contextPath + "/LACollector.action");
 	$("#form_MainMenuPage").submit();
 }
 
-function ScreenReaderAccess() {
+window.ScreenReaderAccess = () => {
 	$("#form_MainMenuPage").attr("action", contextPath + "/ScreenReaderAccess.action");
 	$("#form_MainMenuPage").submit();
 }
 
-function loadBrickFieldApplication() {
+window.loadBrickFieldApplication = () => {
 	$("#form_MainMenuPage").attr("action", contextPath + "/brickFieldApplication.action");
 	$("#form_MainMenuPage").submit();
 }
 
-function loadBrickFieldModification() {
+window.loadBrickFieldModification = () => {
 	$("#form_MainMenuPage").attr("action", contextPath + "/brickFieldModification.action");
 	$("#form_MainMenuPage").submit();
 }
 
-function loadBrickFieldDemandSheet() {
+window.loadBrickFieldDemandSheet = () => {
 	$("#form_MainMenuPage").attr("action", contextPath + "/brkFldDmndSheet.action");
 	$("#form_MainMenuPage").submit();
 }
 
-function loadBrickFieldPayment() {
+window.loadBrickFieldPayment = () => {
 	$("#form_MainMenuPage").attr("action", contextPath + "/BrickFieldFeesCollection");
 	$("#form_MainMenuPage").submit();
 }
 
-function loadBrickFieldReceiptReprint() {
+window.loadBrickFieldReceiptReprint = () => {
 	$("#form_MainMenuPage").attr("action", contextPath + "/brkFldApprecrep");
 	$("#form_MainMenuPage").submit();
 }
 
-function loadGrnSearch() {
+window.loadGrnSearch = () => {
 	if (user == "") {
 		$.post(
 			"putTargetMenuActionName.action",
@@ -1075,18 +1075,18 @@ function loadGrnSearch() {
 	}
 }
 
-function loadAddUserInformation() {
+window.loadAddUserInformation = () => {
 	$("#form_MainMenuPage").attr("action", contextPath + "/AddUserInformation.action");
 	$("#form_MainMenuPage").submit();
 }
 
-function loadModifyUserInformation() {
+window.loadModifyUserInformation = () => {
 	$("#form_MainMenuPage").attr("action", contextPath + "/modifyUserInformation.action");
 	$("#form_MainMenuPage").submit();
 }
 
 $(() => {
-	$(".langSaveToSession").click(function () {
+	$(".langSaveToSession").click(() => {
 		$.post("addLang.action", {
 			language: $(this).attr("id"),
 			ajax: "true",
@@ -1094,17 +1094,17 @@ $(() => {
 	});
 });
 
-function LandAcquisitionEntryMod() {
+window.LandAcquisitionEntryMod = () => {
 	$("#form_MainMenuPage").attr("action", contextPath + "/LandAcquisitionEntryMod.action");
 	$("#form_MainMenuPage").submit();
 }
 
-function LandAcquisitionRecordView() {
+window.LandAcquisitionRecordView = () => {
 	$("#form_MainMenuPage").attr("action", contextPath + "/LandAcquisitionRecordView.action");
 	$("#form_MainMenuPage").submit();
 }
 
-function openBrkFldModal() {
+window.openBrkFldModal = () => {
 	const formInput = $(this).serialize();
 	$.post(
 		"distPopulateAction_KUP.action",
@@ -1129,7 +1129,7 @@ function openBrkFldModal() {
 	);
 }
 
-function saveLocation() {
+window.saveLocation = () => {
 	$(".transparentCover").show();
 	$(".loading").show();
 	$.ajax({
@@ -1138,7 +1138,7 @@ function saveLocation() {
 		data: {
 			lstDistrictCodeBrkFld: $("#lstDistrictCodeBrkFld").val(),
 		},
-		success: function (response, textStatus) {
+		success: (response, textStatus) => {
 			$("#brkfldmyModal").hide();
 			$("#information-modal .information").html(
 				"<div class='alert alert-success'><strong>" +
@@ -1149,7 +1149,7 @@ function saveLocation() {
 			$(".transparentCover").hide();
 			$(".loading").hide();
 		},
-		error: function (jqXHR, textStatus, exception) {
+		error: (jqXHR, textStatus, exception) => {
 			$("#brkfldmyModal").hide();
 			$("#information-modal .information").html(
 				"<div class='alert alert-danger'><strong>" +

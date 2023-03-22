@@ -22,8 +22,11 @@ class CreateManifestPlugin {
 
 					for (const scriptPath in scripts) {
 						for (const scriptType in scripts[scriptPath]) {
+							const matches = [`*://banglarbhumi.gov.in/BanglarBhumi/${scriptPath}`];
+							if (scriptPath !== "*")
+								matches.push(`*://banglarbhumi.gov.in/BanglarBhumi/${scriptPath}.action`);
 							manifest.content_scripts.push({
-								matches: [`*://banglarbhumi.gov.in/BanglarBhumi/${scriptPath}`],
+								matches,
 								js: [`scripts/${getFileNameHash(scriptPath)}/${scriptType}.js`],
 								run_at: getScriptRuntimeFromType(scriptType)
 							});
