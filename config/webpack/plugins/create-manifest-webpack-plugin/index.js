@@ -23,8 +23,10 @@ class CreateManifestPlugin {
 					for (const scriptPath in scripts) {
 						for (const scriptType in scripts[scriptPath]) {
 							const matches = [`*://banglarbhumi.gov.in/BanglarBhumi/${scriptPath}`];
-							if (scriptPath !== "*")
+
+							if (scriptPath === "Home")
 								matches.push(`*://banglarbhumi.gov.in/BanglarBhumi/${scriptPath}.action`);
+
 							manifest.content_scripts.push({
 								matches,
 								js: [`scripts/${getFileNameHash(scriptPath)}/${scriptType}.js`],
@@ -35,17 +37,15 @@ class CreateManifestPlugin {
 
 					const resources = [];
 
-					for (const assetName in assets) {
-						if (/^assets\/.*\.(jpg|png|gif)$/.test(assetName)) {
+					for (const assetName in assets)
+						if (/^assets\/.*\.(jpg|png|gif)$/.test(assetName))
 							resources.push(assetName);
-						}
-					}
 
 					if (resources.length > 0) {
 						manifest.web_accessible_resources = [
 							{
 								resources,
-								matches: [ "<all_urls>" ]
+								matches: ["<all_urls>"]
 							}
 						];
 					}

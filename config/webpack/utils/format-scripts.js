@@ -11,7 +11,5 @@ module.exports.formatScripts = scripts => {
 		}
 	}
 
-
-
 	return _scripts;
 };

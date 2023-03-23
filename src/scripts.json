@@ -5,12 +5,13 @@
 	},
 	"injected": {
 		"stop-blocking.js": "*",
-		"autofill-otps.ts": "*",
-		"auto-login.ts": "*"
+		"auto-login.ts": "*",
+		"autofill-otps/grievance-application.ts": "GrievAppViewAction.action",
+		"show-plot-information.ts": "KnowYourProperty.action"
 	},
 	"loaded": {
 		"autofill-captcha.ts": "*",
 		"optimize/home-page/styles.ts": "Home",
-		"fix-application-receipt.ts": "Apprecrep"
+		"fix-application-receipt.ts": "Apprecrep.action"
 	}
 }

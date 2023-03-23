@@ -1,4 +1,4 @@
-setInterval(() => {
+const autofillCaptcha = () => {
 	let captchas = Array.from(document.querySelectorAll("#txtCaptcha")) as HTMLInputElement[];
 
 	for (const captcha of captchas) {
@@ -21,4 +21,8 @@ setInterval(() => {
 			}
 		}
 	}
-}, 5000);
+
+	setTimeout(autofillCaptcha, 1000);
+};
+
+autofillCaptcha();
