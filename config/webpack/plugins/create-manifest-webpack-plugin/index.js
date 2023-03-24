@@ -29,7 +29,7 @@ class CreateManifestPlugin {
 
 							manifest.content_scripts.push({
 								matches,
-								js: [`scripts/${getFileNameHash(scriptPath)}/${scriptType}.js`],
+								js: [`scripts/${getFileNameHash(scriptPath)}-${scriptType}.js`],
 								run_at: getScriptRuntimeFromType(scriptType)
 							});
 						}

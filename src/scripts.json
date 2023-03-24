@@ -1,17 +1,18 @@
 {
 	"before": {
-		"optimize/index.ts": "*",
-		"optimize/home-page/modify-dom.ts": "Home"
+		"optimize.ts": "*"
+	},
+	"injected-before": {
+		"stop-blocking.ts": "*"
 	},
 	"injected": {
-		"stop-blocking.js": "*",
 		"login.ts": "*",
 		"otps/grievance-application.ts": "GrievAppViewAction.action",
 		"functionality/view-khatian.ts": "KnowYourProperty.action"
 	},
 	"loaded": {
 		"captcha.ts": "*",
-		"optimize/home-page/styles.ts": "Home",
+		"functionality/home-page-banner.ts": "Home",
 		"functionality/application-receipt.ts": "Apprecrep.action"
 	}
 }

@@ -24,7 +24,7 @@ for (const scriptPath in scripts) {
 		const currentScripts = scripts[scriptPath][scriptType];
 		entries[`${scriptType} - "${scriptPath}"`] = {
 			import: inlineJavascript(currentScripts.map(script => `import "${path.resolve(SOURCE_DIR, "scripts", script)}";`).join("\n")),
-			filename: `scripts/${getFileNameHash(scriptPath)}/${scriptType}.js`
+			filename: `scripts/${getFileNameHash(scriptPath)}-${scriptType}.js`
 		};
 	}
 }
