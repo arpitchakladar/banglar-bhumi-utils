@@ -18,7 +18,7 @@ class CreateManifestPlugin {
 					const scripts = formatScripts(require(path.resolve(SOURCE_DIR, "scripts.json")));
 					const manifest = webpackRequire("plugins/create-manifest-webpack-plugin/manifest-template.json");
 					manifest.version = require(path.resolve(ROOT_DIR, "package.json")).version;
-					manifest.content_scripts = []
+					manifest.content_scripts = [];
 
 					for (const scriptPath in scripts) {
 						for (const scriptType in scripts[scriptPath]) {

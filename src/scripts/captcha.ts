@@ -1,16 +1,5 @@
 const autofillCaptcha = () => {
-	let captchas = Array.from(document.querySelectorAll("#txtCaptcha")) as HTMLInputElement[];
-
-	for (const captcha of captchas) {
-		const captchaInput = captcha.parentElement!.querySelector("#txtInput") as HTMLInputElement | null;
-		if (captchaInput) {
-			captchaInput.value = captcha.value.replaceAll(" ", "");
-			captchaInput.style.display = "none";
-			captcha.style.display = "none";
-		}
-	}
-
-	captchas = Array.from(document.querySelectorAll("#captchaText")) as HTMLInputElement[];
+	const captchas = Array.from(document.querySelectorAll("#captchaText")) as HTMLInputElement[];
 	for (const captcha of captchas) {
 		const captchaParentElement = captcha.parentElement!;
 		if (captchaParentElement.id === "drawTextSpan") {

@@ -1,7 +1,7 @@
 const { sources } = require("webpack");
 const terser = require("terser");
 
-const getInjectionCode = webpackRequire("plugins/inject-script-webpack-plugin/get-injection-code");
+const { getInjectionCode } = webpackRequire("plugins/inject-script-webpack-plugin/get-injection-code");
 
 class InjectScriptPlugin {
 	apply(compiler) {

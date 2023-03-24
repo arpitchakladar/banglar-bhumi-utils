@@ -1,17 +1,17 @@
 {
 	"before": {
 		"optimize/index.ts": "*",
-		"optimize/home-page/index.ts": "Home"
+		"optimize/home-page/modify-dom.ts": "Home"
 	},
 	"injected": {
 		"stop-blocking.js": "*",
-		"auto-login.ts": "*",
-		"autofill-otps/grievance-application.ts": "GrievAppViewAction.action",
-		"show-plot-information.ts": "KnowYourProperty.action"
+		"login.ts": "*",
+		"otps/grievance-application.ts": "GrievAppViewAction.action",
+		"functionality/view-khatian.ts": "KnowYourProperty.action"
 	},
 	"loaded": {
-		"autofill-captcha.ts": "*",
+		"captcha.ts": "*",
 		"optimize/home-page/styles.ts": "Home",
-		"fix-application-receipt.ts": "Apprecrep.action"
+		"functionality/application-receipt.ts": "Apprecrep.action"
 	}
 }
