@@ -7,9 +7,9 @@
 	"author": "Arpit Chakladar",
 	"license": "MIT",
 	"scripts": {
-		"watch": "webpack watch --config config/webpack.config.js --mode production",
-		"build": "webpack build  --config config/webpack.config.js --mode production",
-		"build:dev": "webpack build  --config config/webpack.config.js --mode development"
+		"watch": "NODE_ENV=development webpack watch --config config/webpack.config.js",
+		"build": "NODE_ENV=production webpack build --config config/webpack.config.js",
+		"build:dev": "NODE_ENV=development webpack build --config config/webpack.config.js"
 	},
 	"devDependencies": {
 		"@types/chrome": "^0.0.213",

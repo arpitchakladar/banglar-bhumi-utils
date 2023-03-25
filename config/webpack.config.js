@@ -53,6 +53,9 @@ module.exports = {
 			}
 		]
 	},
+	optimization: {
+		minimize: process.env.NODE_ENV === "production"
+	},
 	plugins: [
 		new InjectScriptPlugin(),
 		new CopyPlugin({
