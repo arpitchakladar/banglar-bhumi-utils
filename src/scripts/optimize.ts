@@ -1,4 +1,4 @@
-import { modifyDOM } from "@/utils/modify-dom";
+const { modifyDOM } = await import(/* webpackIgnore: true */ "/shared/modify-dom.js");
 
 modifyDOM([
 	["head > script:nth-child(34)", { src: null }],

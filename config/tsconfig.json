@@ -5,7 +5,7 @@
 		"strict": true,
 		"noImplicitReturns": true,
 		"noImplicitAny": true,
-		"module": "es6",
+		"module": "es2022",
 		"moduleResolution": "node",
 		"target": "es2021",
 		"allowJs": true,
@@ -14,7 +14,7 @@
 		"moduleDetection": "force",
 		"baseUrl": "../",
 		"paths": {
-			"@/*": ["src/*"]
+			"/shared/*": ["src/shared/*"]
 		}
 	},
 	"exclude": [

@@ -1,4 +1,4 @@
-import { styles } from "@/utils/styling";
+const { styles } = await import(/* webpackIgnore: true */ "/shared/styling.js");
 
 styles("#slider", {
 	overflow: "visible",

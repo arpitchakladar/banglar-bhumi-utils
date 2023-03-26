@@ -3,7 +3,9 @@ const path = require("path");
 
 const { getScriptRuntimeFromType } = webpackRequire("utils/script-runtime");
 const { getFileNameHash } = webpackRequire("utils/file-name-hash");
-const { formatScripts } = webpackRequire("utils/format-scripts");
+const scripts = webpackRequire("utils/scripts");
+const sharedModules = webpackRequire("utils/shared-modules");
+const manifest = webpackRequire("plugins/create-manifest-webpack-plugin/manifest-template.json");
 
 class CreateManifestPlugin {
 	apply(compiler) {
@@ -15,8 +17,6 @@ class CreateManifestPlugin {
 					additionalAssets: true
 				},
 				assets => {
-					const scripts = formatScripts(require(path.resolve(SOURCE_DIR, "scripts.json")));
-					const manifest = webpackRequire("plugins/create-manifest-webpack-plugin/manifest-template.json");
 					manifest.version = require(path.resolve(ROOT_DIR, "package.json")).version;
 					manifest.content_scripts = [];
 
@@ -37,9 +37,13 @@ class CreateManifestPlugin {
 
 					const resources = [];
 
-					for (const assetName in assets)
+					for (const assetName in assets) {
 						if (/^assets\/.*\.(jpg|png|gif)$/.test(assetName))
 							resources.push(assetName);
+					}
+
+					for (const sharedModule of sharedModules)
+						resources.push(`shared/${sharedModule}.js`);
 
 					if (resources.length > 0) {
 						manifest.web_accessible_resources = [
