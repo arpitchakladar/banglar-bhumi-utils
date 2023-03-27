@@ -1,5 +1,6 @@
 const path = require("path");
 const fs = require("fs");
+const { merge } = require("webpack-merge");
 const CopyPlugin = require("copy-webpack-plugin");
 
 global.ROOT_DIR = path.resolve(__dirname, "..");
@@ -76,49 +77,63 @@ const ecmaScriptModuleOptions = {
 	}
 };
 
-const uninjectedScriptConfiguration = {
-	...commonOptions,
-	...ecmaScriptModuleOptions,
-	entry: uninjectedScriptEntries,
-	plugins: [
-		new CopyPlugin({
-			patterns: [{
-				from: path.resolve(ROOT_DIR, "static"),
-				to: "./"
-			}]
-		}),
-		new CreateManifestPlugin()
-	],
-	module: {
-		rules: [
-			{
-				test: /\.(js|ts)$/,
-				loader: "./config/webpack/loader/dynamic-imports-loader"
-			},
-			...commonOptions.module.rules
-		]
+const scriptOptions = {
+	output: {
+		iife: true
 	}
 };
 
-const injectedScriptConfiguration = {
-	...commonOptions,
-	entry: injectedScriptEntries,
-	plugins: [
-		new InjectScriptPlugin(),
-	]
-};
-
-const sharedModulesConfiguration = {
-	...commonOptions,
-	...ecmaScriptModuleOptions,
-	output: {
-		library: {
-			type: "module"
+const uninjectedScriptConfiguration = merge(
+	commonOptions,
+	ecmaScriptModuleOptions,
+	scriptOptions,
+	{
+		entry: uninjectedScriptEntries,
+		plugins: [
+			new CopyPlugin({
+				patterns: [{
+					from: path.resolve(ROOT_DIR, "static"),
+					to: "./"
+				}]
+			}),
+			new CreateManifestPlugin()
+		],
+		module: {
+			rules: [
+				{
+					enforce: "post",
+					test: /\.(js|ts)$/,
+					loader: "./config/webpack/loader/dynamic-imports-loader"
+				}
+			]
 		}
-	},
-	entry: sharedModuleEntries,
-	externals: sharedModuleExternals
-};
+	}
+);
+
+const injectedScriptConfiguration = merge(
+	commonOptions,
+	scriptOptions,
+	{
+		entry: injectedScriptEntries,
+		plugins: [
+			new InjectScriptPlugin()
+		]
+	}
+);
+
+const sharedModulesConfiguration = merge(
+	commonOptions,
+	ecmaScriptModuleOptions,
+	{
+		output: {
+			library: {
+				type: "module"
+			}
+		},
+		entry: sharedModuleEntries,
+		externals: sharedModuleExternals
+	}
+);
 
 module.exports = [
 	uninjectedScriptConfiguration,

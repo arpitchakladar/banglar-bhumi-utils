@@ -8,6 +8,7 @@
 	"injected": {
 		"login.ts": "*",
 		"otps/grievance-application.ts": "GrievAppViewAction.action",
+		"otps/mutation-application.ts": "MuteApplication.action",
 		"functionality/view-khatian.ts": "KnowYourProperty.action"
 	},
 	"loaded": {

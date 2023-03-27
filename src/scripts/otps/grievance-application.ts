@@ -1,22 +1,6 @@
-document.addEventListener("DOMContentLoaded", () => {
-	const proxiedPost = $.post;
+import { addAutofillOtps } from "@/shared/autofill-otp";
 
-	$.post = function() {
-		let element: HTMLInputElement | null = null;
-		if (arguments[0].endsWith("MISPetitionSmsSend.action")) {
-			element = document.querySelector("input[name=mobile_Code]") as HTMLInputElement;
-		} else if (arguments[0].endsWith("MISPetitionEmailSend.action")) {
-			element = document.querySelector("input[name=txtemail_Code]") as HTMLInputElement;
-		}
-
-		if (element) {
-			const callback = arguments[2];
-			arguments[2] = (data: any) => {
-				element!.value = data?.messageShow || "";
-				callback(data);
-			};
-		}
-
-		return proxiedPost.apply(this, Array.from(arguments) as any);
-	};
-});
+addAutofillOtps([
+	["MISPetitionSmsSend.action", "input[name=mobile_Code]"],
+	["MISPetitionEmailSend.action", "input[name=txtemail_Code]"]
+]);

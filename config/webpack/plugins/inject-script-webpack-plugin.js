@@ -1,5 +1,4 @@
 const { sources } = require("webpack");
-const terser = require("terser");
 
 const { getInjectionCode } = webpackRequire("utils/get-injection-code");
 
