@@ -37,22 +37,20 @@ for (const scriptPath in scripts) {
 }
 
 for (const sharedModule of sharedModules) {
+	const sharedModuleNameHash = getFileNameHash(sharedModule);
 	sharedModuleEntries[sharedModule] = {
 		import: path.resolve(SOURCE_DIR, "shared", sharedModule),
-		filename: `shared/${sharedModule}.js`,
-		library: {
-			type: "module"
-		}
+		filename: `shared/${sharedModuleNameHash}.js`
 	};
-	sharedModuleExternals[`/shared/${sharedModule}`] = `/shared/${sharedModule}.js`;
+	sharedModuleExternals[`@/shared/${sharedModule}`] = `/shared/${sharedModuleNameHash}.js`;
 }
 
-const common = {
+const commonOptions = {
 	mode: "production",
 	resolve: {
 		extensions: [".ts", ".js"],
 		alias: {
-			"/shared": path.resolve(global.SOURCE_DIR, "shared")
+			"@": global.SOURCE_DIR
 		}
 	},
 	module: {
@@ -71,39 +69,59 @@ const common = {
 	}
 };
 
-module.exports = [
-	{
-		...common,
-		experiments: {
-			outputModule: true,
-			topLevelAwait: true
-		},
-		externals: sharedModuleExternals,
-		entry: uninjectedScriptEntries,
-		plugins: [
-			new CopyPlugin({
-				patterns: [{
-					from: path.resolve(ROOT_DIR, "static"),
-					to: "./"
-				}]
-			}),
-			new CreateManifestPlugin()
-		]
-	},
-	{
-		...common,
-		entry: injectedScriptEntries,
-		plugins: [
-			new InjectScriptPlugin(),
-		]
-	},
-	{
-		...common,
-		externals: sharedModuleExternals,
-		experiments: {
-			outputModule: true,
-			topLevelAwait: true
-		},
-		entry: sharedModuleEntries
+const ecmaScriptModuleOptions = {
+	experiments: {
+		outputModule: true,
+		topLevelAwait: true
 	}
+};
+
+const uninjectedScriptConfiguration = {
+	...commonOptions,
+	...ecmaScriptModuleOptions,
+	entry: uninjectedScriptEntries,
+	plugins: [
+		new CopyPlugin({
+			patterns: [{
+				from: path.resolve(ROOT_DIR, "static"),
+				to: "./"
+			}]
+		}),
+		new CreateManifestPlugin()
+	],
+	module: {
+		rules: [
+			{
+				test: /\.(js|ts)$/,
+				loader: "./config/webpack/loader/dynamic-imports-loader"
+			},
+			...commonOptions.module.rules
+		]
+	}
+};
+
+const injectedScriptConfiguration = {
+	...commonOptions,
+	entry: injectedScriptEntries,
+	plugins: [
+		new InjectScriptPlugin(),
+	]
+};
+
+const sharedModulesConfiguration = {
+	...commonOptions,
+	...ecmaScriptModuleOptions,
+	output: {
+		library: {
+			type: "module"
+		}
+	},
+	entry: sharedModuleEntries,
+	externals: sharedModuleExternals
+};
+
+module.exports = [
+	uninjectedScriptConfiguration,
+	injectedScriptConfiguration,
+	sharedModulesConfiguration
 ];

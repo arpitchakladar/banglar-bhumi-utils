@@ -1,4 +1,4 @@
-import { observeDOM } from "/shared/observe-dom";
+import { observeDOM } from "@/shared/observe-dom";
 
 type DOMReplacements = {
 	innerHTML?: string;

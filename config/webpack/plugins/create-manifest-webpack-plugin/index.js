@@ -38,12 +38,14 @@ class CreateManifestPlugin {
 					const resources = [];
 
 					for (const assetName in assets) {
-						if (/^assets\/.*\.(jpg|png|gif)$/.test(assetName))
+						if (/^assets\/.*\.(jpg|png|gif)$/.test(assetName)) {
 							resources.push(assetName);
+						}
 					}
 
-					for (const sharedModule of sharedModules)
-						resources.push(`shared/${sharedModule}.js`);
+					for (const sharedModule of sharedModules) {
+						resources.push(`shared/${getFileNameHash(sharedModule)}.js`);
+					}
 
 					if (resources.length > 0) {
 						manifest.web_accessible_resources = [

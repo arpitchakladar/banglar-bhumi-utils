@@ -14,7 +14,7 @@
 		"moduleDetection": "force",
 		"baseUrl": "../",
 		"paths": {
-			"/shared/*": ["src/shared/*"]
+			"@/*": ["src/*"]
 		}
 	},
 	"exclude": [
