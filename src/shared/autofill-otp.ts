@@ -26,6 +26,6 @@ document.addEventListener("DOMContentLoaded", () => {
 	};
 });
 
-export const addAutofillOtps = (addedOTPAutofillList: AutofillOTPRule[]) => {
+export const addAutofillOtps = (addedOTPAutofillList: readonly AutofillOTPRule[]) => {
 	otpAutofillList = otpAutofillList.concat(addedOTPAutofillList);
 };

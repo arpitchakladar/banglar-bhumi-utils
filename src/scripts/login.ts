@@ -36,6 +36,7 @@ document.addEventListener("DOMContentLoaded", () => {
 				if (!data.exception && data.checkmsg === "success") {
 					loginData = arguments[1];
 				}
+
 				callback(data);
 			};
 		}

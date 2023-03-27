@@ -14,12 +14,16 @@ export const modifyDOM = (modificationRules: (DOMModificaitonRule | null)[]) => 
 		for (let i = 0; i < modificationRules.length; i++) {
 			if (modificationRules[i]) {
 				const element = document.querySelector(modificationRules[i]![0]) as HTMLElement | null;
+
 				if (element) {
-					const attributes = modificationRules[i]![1] as DOMReplacements;
+					const attributes = modificationRules[i]![1];
+
 					if (attributes.innerHTML) {
 						element.innerHTML = attributes.innerHTML as string;
 					}
+
 					delete attributes.innerHTML;
+
 					for (const attribute in attributes) {
 						if (attributes[attribute] === null) {
 							element.removeAttribute(attribute);
@@ -27,8 +31,10 @@ export const modifyDOM = (modificationRules: (DOMModificaitonRule | null)[]) => 
 							element.setAttribute(attribute, attributes[attribute] as string);
 						}
 					}
+
 					modificationRules[i] = null;
 					count++;
+
 					if (count >= modificationRules.length) {
 						return true;
 					}

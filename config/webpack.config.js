@@ -6,6 +6,7 @@ const CopyPlugin = require("copy-webpack-plugin");
 global.ROOT_DIR = path.resolve(__dirname, "..");
 global.CONFIG_DIR = path.resolve(ROOT_DIR, "config");
 global.SOURCE_DIR = path.resolve(ROOT_DIR, "src");
+global.production = process.env.NODE_ENV === "production";
 
 global.webpackRequire = modulePath => require(path.resolve(CONFIG_DIR, "webpack", modulePath));
 
@@ -21,24 +22,38 @@ const scripts = webpackRequire("utils/scripts");
 const sharedModules = webpackRequire("utils/shared-modules");
 
 const uninjectedScriptEntries = {};
-const injectedScriptEntries = {};
+const injectedAfterScriptEntries = {};
+const injectedBeforeScriptEntries = {};
 const sharedModuleEntries = {};
 const sharedModuleExternals = {};
 
 for (const scriptPath in scripts) {
 	for (const scriptType in scripts[scriptPath]) {
 		const currentScripts = scripts[scriptPath][scriptType];
-		const scriptEntries = scriptType.startsWith("injected") ? injectedScriptEntries : uninjectedScriptEntries;
+		let scriptEntries;
+
+		switch (scriptType) {
+		case "injected":
+			scriptEntries = injectedAfterScriptEntries;
+			break;
+
+		case "injected-before":
+			scriptEntries = injectedBeforeScriptEntries;
+			break;
+
+		default:
+			scriptEntries = uninjectedScriptEntries;
+		}
 
 		scriptEntries[`${scriptType} - "${scriptPath}"`] = {
 			import: inlineJavascript(currentScripts.map(script => `import "${path.resolve(SOURCE_DIR, "scripts", script)}";`).join("\n")),
-			filename: `scripts/${getFileNameHash(scriptPath)}-${scriptType}.js`
+			filename: `scripts/${getFileNameHash(scriptType, scriptPath)}.js`
 		};
 	}
 }
 
 for (const sharedModule of sharedModules) {
-	const sharedModuleNameHash = getFileNameHash(sharedModule);
+	const sharedModuleNameHash = getFileNameHash(sharedModule, "shared");
 	sharedModuleEntries[sharedModule] = {
 		import: path.resolve(SOURCE_DIR, "shared", sharedModule),
 		filename: `shared/${sharedModuleNameHash}.js`
@@ -110,13 +125,24 @@ const uninjectedScriptConfiguration = merge(
 	}
 );
 
-const injectedScriptConfiguration = merge(
+const injectedAfterScriptConfiguration = merge(
 	commonOptions,
 	scriptOptions,
 	{
-		entry: injectedScriptEntries,
+		entry: injectedAfterScriptEntries,
 		plugins: [
 			new InjectScriptPlugin()
+		]
+	}
+);
+
+const injectedBeforeScriptConfiguration = merge(
+	commonOptions,
+	scriptOptions,
+	{
+		entry: injectedBeforeScriptEntries,
+		plugins: [
+			new InjectScriptPlugin(true)
 		]
 	}
 );
@@ -137,6 +163,7 @@ const sharedModulesConfiguration = merge(
 
 module.exports = [
 	uninjectedScriptConfiguration,
-	injectedScriptConfiguration,
+	injectedAfterScriptConfiguration,
+	injectedBeforeScriptConfiguration,
 	sharedModulesConfiguration
 ];

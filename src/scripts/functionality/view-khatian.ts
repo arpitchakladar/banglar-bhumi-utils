@@ -9,6 +9,7 @@ document.addEventListener("DOMContentLoaded", () => {
 			arguments[2] = (data: any) => {
 				callback(data);
 				const tableElement = document.querySelector("#khdetails > table > tbody > tr > td:nth-child(1) > div:nth-child(5) > table > tbody") as HTMLElement | null;
+
 				if (tableElement) {
 					tableElement.style.height = "auto";
 					tableElement.style.width = "100%";

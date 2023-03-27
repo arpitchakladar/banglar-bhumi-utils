@@ -5,6 +5,7 @@ const formattedScripts = {};
 
 for (const scriptType in scripts) {
 	const currentScripts = scripts[scriptType];
+
 	for (const scriptName in currentScripts) {
 		const scriptPath = currentScripts[scriptName];
 		formattedScripts[scriptPath] = formattedScripts[scriptPath] || {};

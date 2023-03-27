@@ -3,6 +3,10 @@ const { sources } = require("webpack");
 const { getInjectionCode } = webpackRequire("utils/get-injection-code");
 
 class InjectScriptPlugin {
+	constructor(insertedBefore = false) {
+		this.insertedBefore = insertedBefore;
+	}
+
 	apply(compiler) {
 		compiler.hooks.compilation.tap("InjectScriptPlugin", compilation => {
 			compilation.hooks.processAssets.tapPromise(
@@ -13,21 +17,15 @@ class InjectScriptPlugin {
 				},
 				async assets => {
 					for (const assetName in assets) {
-						let injected = false;
-						let injected_before = false;
-
-						if (assetName.endsWith("injected.js"))
-							injected = true;
-
-						else if (assetName.endsWith("injected-before.js")) {
-							injected = true;
-							injected_before = true;
-						}
-
-						if (injected) {
+						if (/\.js$/.test(assetName)) {
 							compilation.updateAsset(
 								assetName,
-								new sources.RawSource(getInjectionCode(compilation.getAsset(assetName).source.source(), injected_before))
+								new sources.RawSource(
+									getInjectionCode(
+										compilation.getAsset(assetName).source.source(),
+										this.insertedBefore
+									)
+								)
 							);
 						}
 					}

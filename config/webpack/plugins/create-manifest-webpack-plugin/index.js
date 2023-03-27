@@ -29,7 +29,7 @@ class CreateManifestPlugin {
 
 							manifest.content_scripts.push({
 								matches,
-								js: [`scripts/${getFileNameHash(scriptPath)}-${scriptType}.js`],
+								js: [`scripts/${getFileNameHash(scriptType, scriptPath)}.js`],
 								run_at: getScriptRuntimeFromType(scriptType)
 							});
 						}
@@ -44,7 +44,7 @@ class CreateManifestPlugin {
 					}
 
 					for (const sharedModule of sharedModules) {
-						resources.push(`shared/${getFileNameHash(sharedModule)}.js`);
+						resources.push(`shared/${getFileNameHash(sharedModule, "shared")}.js`);
 					}
 
 					if (resources.length > 0) {
