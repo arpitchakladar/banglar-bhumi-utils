@@ -22,6 +22,12 @@ const scripts = webpackRequire("utils/scripts");
 
 const sharedModules = webpackRequire("utils/shared-modules");
 
+const sharedModulesImportedCount = {};
+
+for (const sharedModule of sharedModules) {
+	sharedModulesImportedCount[sharedModule] = 0;
+}
+
 const uninjectedScriptEntries = {};
 const injectedAfterScriptEntries = {};
 const injectedBeforeScriptEntries = {};
@@ -94,20 +100,25 @@ const commonOptions = {
 	}
 };
 
-const ecmaScriptModuleOptions = {
-	experiments: {
-		outputModule: true
-	}
-};
-
 const sharedModuleOptions = {
 	externals: sharedModuleExternals,
-	externalsType: "var"
+	externalsType: "var",
+	module: {
+		rules: [
+			{
+				test: /\.(j|t)s$/,
+				loader: path.resolve(CONFIG_DIR, "webpack/loader/count-imports-loader.js"),
+				options: {
+					sharedModulesImportedCount
+				},
+				enforce: "post"
+			}
+		]
+	},
 };
 
 const uninjectedScriptConfiguration = merge(
 	commonOptions,
-	ecmaScriptModuleOptions,
 	sharedModuleOptions,
 	{
 		entry: uninjectedScriptEntries,
@@ -144,12 +155,13 @@ const injectedBeforeScriptConfiguration = merge(
 
 const sharedModulesConfiguration = merge(
 	commonOptions,
-	ecmaScriptModuleOptions,
 	sharedModuleOptions,
 	{
 		entry: sharedModuleEntries,
 		plugins: [
-			new CreateManifestPlugin(),
+			new CreateManifestPlugin({
+				sharedModulesImportedCount
+			}),
 			new CreateRulesPlugin()
 		]
 	}

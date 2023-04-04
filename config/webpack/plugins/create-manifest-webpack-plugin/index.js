@@ -8,6 +8,10 @@ const sharedModules = webpackRequire("utils/shared-modules");
 const manifest = webpackRequire("plugins/create-manifest-webpack-plugin/manifest-template.json");
 
 class CreateManifestPlugin {
+	constructor({ sharedModulesImportedCount }) {
+		this.sharedModulesImportedCount = sharedModulesImportedCount;
+	}
+
 	apply(compiler) {
 		compiler.hooks.compilation.tap("CreateManifestPlugin", compilation => {
 			compilation.hooks.processAssets.tap(
@@ -19,6 +23,14 @@ class CreateManifestPlugin {
 				assets => {
 					manifest.version = require(path.resolve(ROOT_DIR, "package.json")).version;
 					manifest.content_scripts = [];
+
+					manifest.content_scripts.push({
+						matches: [`*://banglarbhumi.gov.in/BanglarBhumi/*`],
+						js: sharedModules
+							.filter(sharedModule => this.sharedModulesImportedCount[sharedModule] > 0)
+							.map(sharedModule => `shared/${getFileNameHash(sharedModule, "shared")}.js`),
+						run_at: "document_start"
+					});
 
 					for (const scriptPath in scripts) {
 						for (const scriptType in scripts[scriptPath]) {
@@ -33,14 +45,6 @@ class CreateManifestPlugin {
 								run_at: getScriptRuntimeFromType(scriptType)
 							});
 						}
-					}
-
-					for (const sharedModule of sharedModules) {
-						manifest.content_scripts.push({
-							matches: [`*://banglarbhumi.gov.in/BanglarBhumi/*`],
-							js: [`shared/${getFileNameHash(sharedModule, "shared")}.js`],
-							run_at: "document_start"
-						});
 					}
 
 					const resources = [];
