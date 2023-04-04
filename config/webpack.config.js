@@ -153,6 +153,8 @@ const injectedBeforeScriptConfiguration = merge(
 	}
 );
 
+const sortedSharedModules = []
+
 const sharedModulesConfiguration = merge(
 	commonOptions,
 	sharedModuleOptions,
@@ -160,10 +162,23 @@ const sharedModulesConfiguration = merge(
 		entry: sharedModuleEntries,
 		plugins: [
 			new CreateManifestPlugin({
-				sharedModulesImportedCount
+				sharedModulesImportedCount,
+				sortedSharedModules
 			}),
 			new CreateRulesPlugin()
-		]
+		],
+		module: {
+			rules: [
+				{
+					test: /\.(j|t)s$/,
+					loader: path.resolve(CONFIG_DIR, "webpack/loader/arrange-shared-module-loader.js"),
+					options: {
+						sortedSharedModules
+					},
+					enforce: "post"
+				}
+			]
+		}
 	}
 );
 

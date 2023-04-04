@@ -4,12 +4,12 @@ const path = require("path");
 const { getScriptRuntimeFromType } = webpackRequire("utils/script-runtime");
 const { getFileNameHash } = webpackRequire("utils/filename-hash");
 const scripts = webpackRequire("utils/scripts");
-const sharedModules = webpackRequire("utils/shared-modules");
 const manifest = webpackRequire("plugins/create-manifest-webpack-plugin/manifest-template.json");
 
 class CreateManifestPlugin {
-	constructor({ sharedModulesImportedCount }) {
+	constructor({ sharedModulesImportedCount, sortedSharedModules }) {
 		this.sharedModulesImportedCount = sharedModulesImportedCount;
+		this.sortedSharedModules = sortedSharedModules;
 	}
 
 	apply(compiler) {
@@ -26,7 +26,7 @@ class CreateManifestPlugin {
 
 					manifest.content_scripts.push({
 						matches: [`*://banglarbhumi.gov.in/BanglarBhumi/*`],
-						js: sharedModules
+						js: this.sortedSharedModules
 							.filter(sharedModule => this.sharedModulesImportedCount[sharedModule] > 0)
 							.map(sharedModule => `shared/${getFileNameHash(sharedModule, "shared")}.js`),
 						run_at: "document_start"
