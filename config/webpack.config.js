@@ -11,11 +11,12 @@ global.production = process.env.NODE_ENV === "production";
 global.webpackRequire = modulePath => require(path.resolve(CONFIG_DIR, "webpack", modulePath));
 
 const CreateManifestPlugin = webpackRequire("plugins/create-manifest-webpack-plugin");
+const CreateRulesPlugin = webpackRequire("plugins/create-rules-webpack-plugin");
 const InjectScriptPlugin = webpackRequire("plugins/inject-script-webpack-plugin");
 
 const { inlineJavascript } = webpackRequire("utils/inline-javascript");
 const { getScriptRuntimeFromType } = webpackRequire("utils/script-runtime");
-const { getFileNameHash } = webpackRequire("utils/file-name-hash");
+const { getFileNameHash } = webpackRequire("utils/filename-hash");
 
 const scripts = webpackRequire("utils/scripts");
 
@@ -54,11 +55,16 @@ for (const scriptPath in scripts) {
 
 for (const sharedModule of sharedModules) {
 	const sharedModuleNameHash = getFileNameHash(sharedModule, "shared");
+	const sharedModuleGlobalVariableName = `$${sharedModuleNameHash.substring(sharedModuleNameHash.length - 16)}`;
 	sharedModuleEntries[sharedModule] = {
 		import: path.resolve(SOURCE_DIR, "shared", sharedModule),
-		filename: `shared/${sharedModuleNameHash}.js`
+		filename: `shared/${sharedModuleNameHash}.js`,
+		library: {
+			name: sharedModuleGlobalVariableName,
+			type: "var"
+		}
 	};
-	sharedModuleExternals[`@/shared/${sharedModule}`] = `/shared/${sharedModuleNameHash}.js`;
+	sharedModuleExternals[`@/shared/${sharedModule}`] = sharedModuleGlobalVariableName;
 }
 
 const commonOptions = {
@@ -82,26 +88,27 @@ const commonOptions = {
 	},
 	optimization: {
 		minimize: process.env.NODE_ENV === "production"
-	}
-};
-
-const ecmaScriptModuleOptions = {
-	experiments: {
-		outputModule: true,
-		topLevelAwait: true
-	}
-};
-
-const scriptOptions = {
+	},
 	output: {
 		iife: true
 	}
 };
 
+const ecmaScriptModuleOptions = {
+	experiments: {
+		outputModule: true
+	}
+};
+
+const sharedModuleOptions = {
+	externals: sharedModuleExternals,
+	externalsType: "var"
+};
+
 const uninjectedScriptConfiguration = merge(
 	commonOptions,
 	ecmaScriptModuleOptions,
-	scriptOptions,
+	sharedModuleOptions,
 	{
 		entry: uninjectedScriptEntries,
 		plugins: [
@@ -110,24 +117,13 @@ const uninjectedScriptConfiguration = merge(
 					from: path.resolve(ROOT_DIR, "static"),
 					to: "./"
 				}]
-			}),
-			new CreateManifestPlugin()
-		],
-		module: {
-			rules: [
-				{
-					enforce: "post",
-					test: /\.(js|ts)$/,
-					loader: "./config/webpack/loader/dynamic-imports-loader"
-				}
-			]
-		}
+			})
+		]
 	}
 );
 
 const injectedAfterScriptConfiguration = merge(
 	commonOptions,
-	scriptOptions,
 	{
 		entry: injectedAfterScriptEntries,
 		plugins: [
@@ -138,7 +134,6 @@ const injectedAfterScriptConfiguration = merge(
 
 const injectedBeforeScriptConfiguration = merge(
 	commonOptions,
-	scriptOptions,
 	{
 		entry: injectedBeforeScriptEntries,
 		plugins: [
@@ -150,14 +145,13 @@ const injectedBeforeScriptConfiguration = merge(
 const sharedModulesConfiguration = merge(
 	commonOptions,
 	ecmaScriptModuleOptions,
+	sharedModuleOptions,
 	{
-		output: {
-			library: {
-				type: "module"
-			}
-		},
 		entry: sharedModuleEntries,
-		externals: sharedModuleExternals
+		plugins: [
+			new CreateManifestPlugin(),
+			new CreateRulesPlugin()
+		]
 	}
 );
 
