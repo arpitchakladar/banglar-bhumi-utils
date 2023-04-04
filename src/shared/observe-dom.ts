@@ -1,15 +1,17 @@
 type ObserveDOMCallback = () => boolean;
 
 let callbacks: (ObserveDOMCallback | null)[] = [];
-let count = 0;
+let callbacksCalledCount = 0;
 
 const observer = new MutationObserver(() => {
-	for (const callback of callbacks) {
+	for (let i = 0; i < callbacks.length; i++) {
+		const callback = callbacks[i];
 		if (callback && callback()) {
-			count++;
+			callbacksCalledCount++;
+			callbacks[i] = null;
 		}
 
-		if (count >= callbacks.length) {
+		if (callbacksCalledCount >= callbacks.length) {
 			observer.disconnect();
 
 			break;

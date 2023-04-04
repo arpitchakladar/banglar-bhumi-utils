@@ -1,0 +1,12 @@
+{
+	"priority": 1,
+	"action": {
+		"type": "redirect",
+		"redirect": {
+			"url": "https://code.jquery.com/jquery-1.12.4.min.js"
+		}
+	},
+	"condition": {
+		"urlFilter": "https://banglarbhumi.gov.in/BanglarBhumi/js/jquery-1.12.4.min.js"
+	}
+}

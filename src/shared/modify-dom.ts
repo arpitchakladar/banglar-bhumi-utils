@@ -4,44 +4,47 @@ type DOMReplacements = {
 	innerHTML?: string;
 	[key: string]: string | undefined | null;
 };
-
 type DOMModificaitonRule = readonly [string, DOMReplacements];
+type DOMModificationRules = (DOMModificaitonRule | null)[];
 
-export const modifyDOM = (modificationRules: (DOMModificaitonRule | null)[]) => {
-	let count = 0;
+let domModificationRules: DOMModificationRules = [];
+let domModificationFinishedCount = 0;
 
-	observeDOM(() => {
-		for (let i = 0; i < modificationRules.length; i++) {
-			if (modificationRules[i]) {
-				const element = document.querySelector(modificationRules[i]![0]) as HTMLElement | null;
+observeDOM(() => {
+	for (let i = 0; i < domModificationRules.length; i++) {
+		if (domModificationRules[i]) {
+			const element = document.querySelector(domModificationRules[i]![0]) as HTMLElement | null;
 
-				if (element) {
-					const attributes = modificationRules[i]![1];
+			if (element) {
+				const attributes = domModificationRules[i]![1];
 
-					if (attributes.innerHTML) {
-						element.innerHTML = attributes.innerHTML as string;
+				if (attributes.innerHTML) {
+					element.innerHTML = attributes.innerHTML as string;
+				}
+
+				delete attributes.innerHTML;
+
+				for (const attribute in attributes) {
+					if (attributes[attribute] === null) {
+						element.removeAttribute(attribute);
+					} else {
+						element.setAttribute(attribute, attributes[attribute] as string);
 					}
+				}
 
-					delete attributes.innerHTML;
+				domModificationRules[i] = null;
+				domModificationFinishedCount++;
 
-					for (const attribute in attributes) {
-						if (attributes[attribute] === null) {
-							element.removeAttribute(attribute);
-						} else {
-							element.setAttribute(attribute, attributes[attribute] as string);
-						}
-					}
-
-					modificationRules[i] = null;
-					count++;
-
-					if (count >= modificationRules.length) {
-						return true;
-					}
+				if (domModificationFinishedCount >= domModificationRules.length) {
+					return true;
 				}
 			}
 		}
+	}
 
-		return false;
-	});
+	return false;
+});
+
+export const modifyDOM = (modificationRules: DOMModificationRules) => {
+	domModificationRules = domModificationRules.concat(modificationRules);
 };
