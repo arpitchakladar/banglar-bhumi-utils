@@ -24,25 +24,44 @@ class CreateManifestPlugin {
 					manifest.version = require(path.resolve(ROOT_DIR, "package.json")).version;
 					manifest.content_scripts = [];
 
+					const arrangedScripts = {};
+
+					for (const scriptPath in scripts) {
+						arrangedScripts[scriptPath] = {};
+
+						for (const scriptType in scripts[scriptPath]) {
+							const scriptRuntime = getScriptRuntimeFromType(scriptType);
+
+							if (typeof arrangedScripts[scriptPath][scriptRuntime] === "undefined") {
+								arrangedScripts[scriptPath][scriptRuntime] = [];
+							}
+
+							arrangedScripts[scriptPath][scriptRuntime].push(`scripts/${getFileNameHash(scriptType, scriptPath)}.js`);
+						}
+					}
+
 					manifest.content_scripts.push({
 						matches: [`*://banglarbhumi.gov.in/BanglarBhumi/*`],
 						js: this.sortedSharedModules
 							.filter(sharedModule => this.sharedModulesImportedCount[sharedModule] > 0)
-							.map(sharedModule => `shared/${getFileNameHash(sharedModule, "shared")}.js`),
+							.map(sharedModule => `shared/${getFileNameHash(sharedModule, "shared")}.js`)
+							.concat(arrangedScripts["*"]["document_start"]),
 						run_at: "document_start"
 					});
 
-					for (const scriptPath in scripts) {
-						for (const scriptType in scripts[scriptPath]) {
-							const matches = [`*://banglarbhumi.gov.in/BanglarBhumi/${scriptPath}`];
+					delete arrangedScripts["*"]["document_start"];
 
-							if (scriptPath === "Home")
-								matches.push(`*://banglarbhumi.gov.in/BanglarBhumi/${scriptPath}.action`);
+					for (const scriptPath in arrangedScripts) {
+						const matches = [`*://banglarbhumi.gov.in/BanglarBhumi/${scriptPath}`];
 
+						if (scriptPath === "Home")
+							matches.push(`*://banglarbhumi.gov.in/BanglarBhumi/${scriptPath}.action`);
+
+						for (const scriptRuntime in arrangedScripts[scriptPath]) {
 							manifest.content_scripts.push({
 								matches,
-								js: [`scripts/${getFileNameHash(scriptType, scriptPath)}.js`],
-								run_at: getScriptRuntimeFromType(scriptType)
+								js: arrangedScripts[scriptPath][scriptRuntime],
+								run_at: scriptRuntime
 							});
 						}
 					}
