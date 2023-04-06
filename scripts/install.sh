@@ -1,8 +1,11 @@
+$MyPath = $MyInvocation.MyCommand.Path
+$CurrentPath = Split-Path $MyPath -Parent
+
 function Custom-Remove-Item
 {
 	param
 	(
-		[string]$FileName
+		[string] $FileName
 	)
 
 	if (test-path $FileName)
@@ -11,62 +14,30 @@ function Custom-Remove-Item
 	}
 }
 
-echo "Downloading extension."
+echo "Updating install script."
 
-Custom-Remove-Item $HOME\banglar-bhumi-utils.zip
-Invoke-WebRequest -OutFile $HOME\banglar-bhumi-utils.zip "https://drive.google.com/uc?export=download&id=1OmdtVwRsEFrxAQ78gSsrh-qOi5ApUSTB"
-Custom-Remove-Item $HOME\banglar-bhumi-utils
-Expand-Archive $HOME\banglar-bhumi-utils.zip -DestinationPath $HOME\banglar-bhumi-utils
-Custom-Remove-Item $HOME\banglar-bhumi-utils.zip
+Custom-Remove-Item $CurrentPath\banglar-bhumi-install-1.ps1
+Invoke-WebRequest -OutFile $CurrentPath\banglar-bhumi-install-1.ps1 "https://drive.google.com/uc?export=download&id=1iRBnaGFt2wknC0nUcstWNByTO7E7Fa3i&confirm=t&confirm=t&at=ANzk5s5RKHyRj87kkNq0vw1tiI6V:1680658605664" -Method POST
 
-function Find-PSFilePathInRegistry
+if ((Get-FileHash $CurrentPath\banglar-bhumi-install-1.ps1).Hash -eq (Get-FileHash $CurrentPath\banglar-bhumi-install.ps1).Hash)
 {
-	param
-	(
-		[string]$FileName
-	)
+	Custom-Remove-Item $CurrentPath\banglar-bhumi-install-1.ps1
+	echo "Downloading extension."
 
-	$str = reg query HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\ /s /f \$FileName | findstr Default
+	Custom-Remove-Item $HOME\Documents\banglar-bhumi-utils.zip
+	Invoke-WebRequest -OutFile $HOME\Documents\banglar-bhumi-utils.zip "https://drive.google.com/uc?export=download&id=1OmdtVwRsEFrxAQ78gSsrh-qOi5ApUSTB"
+	Custom-Remove-Item $HOME\Documents\banglar-bhumi-utils
+	Expand-Archive $HOME\Documents\banglar-bhumi-utils.zip -DestinationPath $HOME\Documents\banglar-bhumi-utils
+	Custom-Remove-Item $HOME\Documents\banglar-bhumi-utils.zip
 
-	if ($str -match "[A-Z]\:.+$FileName") {
-		return @{
-			success = $true
-			path = $Matches[0]
-		}
-	}
-	else {
-		return @{
-			success = $false
-			path = ""
-		}
-	}
+	echo "Done. Now add the extension manually."
+
+	pause
 }
-
-function HandleInstall
+else
 {
-	param
-	(
-		[string]$Browser
-	)
-
-	$Res = Find-PSFilePathInRegistry ($Browser + ".exe")
-
-	if ($Res.success)
-	{
-		echo ($Browser + " browser found. Installing extension.")
-		Stop-Process -ErrorAction "silentlycontinue" -Name $Browser
-		&$Res.path --disable-extensions="$HOME\banglar-bhumi-utils"
-		Stop-Process -ErrorAction "silentlycontinue" -Name $Browser
-		&$Res.path --load-extension="$HOME\banglar-bhumi-utils"
-		echo ("Installed on " + $Browser + ".")
-	}
+	Custom-Remove-Item $CurrentPath\banglar-bhumi-install.ps1
+	Move-Item -Path $CurrentPath\banglar-bhumi-install-1.ps1 -Destination $CurrentPath\banglar-bhumi-install.ps1 -Force
+	Clear-Host
+	.\banglar-bhumi-install.ps1
 }
-
-echo "Searching for browsers."
-
-HandleInstall brave
-HandleInstall chrome
-
-echo "Done"
-
-pause

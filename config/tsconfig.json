@@ -1,4 +1,7 @@
 {
+	"files": [
+		"../src/types/html2pdf.js.d.ts"
+	],
 	"compilerOptions": {
 		"outDir": "dist",
 		"sourceMap": true,

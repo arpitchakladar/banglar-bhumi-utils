@@ -1,5 +1,6 @@
 const path = require("path");
 const fs = require("fs");
+const webpack = require("webpack");
 const { merge } = require("webpack-merge");
 const CopyPlugin = require("copy-webpack-plugin");
 
@@ -75,6 +76,7 @@ for (const sharedModule of sharedModules) {
 
 const commonOptions = {
 	mode: "production",
+	target: "web",
 	resolve: {
 		extensions: [".ts", ".js"],
 		alias: {
@@ -93,11 +95,17 @@ const commonOptions = {
 		]
 	},
 	optimization: {
-		minimize: process.env.NODE_ENV === "production"
+		minimize: process.env.NODE_ENV === "production",
+		runtimeChunk: false
 	},
 	output: {
 		iife: true
-	}
+	},
+	plugins: [
+		new webpack.optimize.LimitChunkCountPlugin({
+			maxChunks: 1
+		})
+	]
 };
 
 const sharedModuleOptions = {
@@ -106,7 +114,7 @@ const sharedModuleOptions = {
 	module: {
 		rules: [
 			{
-				test: /\.(j|t)s$/,
+				test: /banglar-bhumi-utils\/src\/.*.(^.?|\.[^d]|[^.]d|[^.][^d])\.(t|j)s$/,
 				loader: path.resolve(CONFIG_DIR, "webpack/loader/count-imports-loader.js"),
 				options: {
 					sharedModulesImportedCount
@@ -114,7 +122,7 @@ const sharedModuleOptions = {
 				enforce: "post"
 			}
 		]
-	},
+	}
 };
 
 const uninjectedScriptConfiguration = merge(
@@ -170,7 +178,7 @@ const sharedModulesConfiguration = merge(
 		module: {
 			rules: [
 				{
-					test: /\.(j|t)s$/,
+					test: /banglar-bhumi-utils\/src\/.*.(^.?|\.[^d]|[^.]d|[^.][^d])\.(t|j)s$/,
 					loader: path.resolve(CONFIG_DIR, "webpack/loader/arrange-shared-module-loader.js"),
 					options: {
 						sortedSharedModules

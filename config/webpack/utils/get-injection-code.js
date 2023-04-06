@@ -1,11 +1,8 @@
 module.exports.getInjectionCode = (code, front) => {
-	const escapeSequences = ["b", "f", "n", "r", "t", "v"];
-	let finalCode = code.replaceAll("`","\\`");
-
-	for (const escapeSequence of escapeSequences) {
-		finalCode = finalCode
-			.replaceAll("\\" + escapeSequence, "\\\\" + escapeSequence)
-	}
+	let finalCode = code
+		.replaceAll("\\", "\\\\")
+		.replaceAll("`","\\`")
+		.replaceAll("${", "\\${");
 
 	const concatenationCode = front
 		? "t.innerHTML=i+t.innerHTML"
