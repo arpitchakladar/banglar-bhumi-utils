@@ -1,7 +1,7 @@
 import { downloadPDF } from "@/shared/download-pdf";
-import getKhatinDetailsPDFPageData from "@/scripts/functionality/view-khatian/khatian-download-document";
+import getDetailsPDFContent from "@/scripts/functionality/view-khatian/download-document-content";
 
-declare function loadKhatian(): void;
+declare function load(): void;
 
 document.addEventListener("DOMContentLoaded", () => {
 	const proxiedPost = $.post;
@@ -23,21 +23,33 @@ document.addEventListener("DOMContentLoaded", () => {
 		return element.options[element.selectedIndex].text;
 	};
 
-	const downloadKhatianInformationPDF = () => {
-		const documentStringContent = getKhatinDetailsPDFPageData(document.querySelector("#khdetails")!.innerHTML, {
+	let isPlotInformation: boolean | null = null;
+
+	const downloadInformationPDF = () => {
+		let contentElement = document.getElementById(isPlotInformation ? "plotdetails" : "khdetails");
+		const documentStringContent = getDetailsPDFContent(!!isPlotInformation, contentElement!.innerHTML, {
 			district: getValueOfSelectElement("#lstDistrictCode1"),
 			block: getValueOfSelectElement("#lstBlockCode1"),
 			mouza: getValueOfSelectElement("#lstMouzaList")
 		});
-		downloadPDF(`<div id="content">${documentStringContent}</div>`, "khatian-details.pdf");
+		downloadPDF(`<div id="content">${documentStringContent}</div>`);
 	};
 
 	$.post = function() {
-		if (arguments[0].startsWith("khDetailsAction_LandInfo.action")) {
+		if (arguments[0].startsWith("plotDetailsAction_LandInfo.action")) {
+			isPlotInformation = true;
+		} else if (arguments[0].startsWith("khDetailsAction_LandInfo.action")) {
+			isPlotInformation = false;
+		}
+
+		if (isPlotInformation !== null) {
 			const callback = arguments[2];
 			arguments[2] = (data: any) => {
 				callback(data);
-				const tableElement = document.querySelector("#khdetails > table > tbody > tr > td:nth-child(1) > div:nth-child(5) > table > tbody") as HTMLElement | null;
+				const tableElement = document.querySelector(isPlotInformation
+					? "#plotdetails > div:nth-child(1) > div:nth-child(4) > table > tbody"
+					: "#khdetails > table > tbody > tr > td:nth-child(1) > div:nth-child(5) > table > tbody"
+				) as HTMLElement | null;
 
 				if (tableElement) {
 					tableElement.style.height = "auto";
@@ -48,11 +60,13 @@ document.addEventListener("DOMContentLoaded", () => {
 						downloadPDFButton.innerHTML = "Download PDF";
 						downloadPDFButton.style.cssText = styles;
 						downloadPDFButton.style.width = "auto";
-						downloadPDFButton.addEventListener("click", downloadKhatianInformationPDF);
+						downloadPDFButton.style.marginBottom = "1rem";
+						downloadPDFButton.addEventListener("click", downloadInformationPDF);
 						formElement.insertBefore(downloadPDFButton, separatorElement);
 					}
 				} else if (downloadPDFButton) {
 					formElement.removeChild(downloadPDFButton);
+					isPlotInformation = null;
 					downloadPDFButton = null;
 				}
 			}

@@ -129,15 +129,7 @@ const uninjectedScriptConfiguration = merge(
 	commonOptions,
 	sharedModuleOptions,
 	{
-		entry: uninjectedScriptEntries,
-		plugins: [
-			new CopyPlugin({
-				patterns: [{
-					from: path.resolve(ROOT_DIR, "static"),
-					to: "./"
-				}]
-			})
-		]
+		entry: uninjectedScriptEntries
 	}
 );
 
@@ -169,6 +161,12 @@ const sharedModulesConfiguration = merge(
 	{
 		entry: sharedModuleEntries,
 		plugins: [
+			new CopyPlugin({
+				patterns: [{
+					from: path.resolve(ROOT_DIR, "static"),
+					to: "./"
+				}]
+			}),
 			new CreateManifestPlugin({
 				sharedModulesImportedCount,
 				sortedSharedModules

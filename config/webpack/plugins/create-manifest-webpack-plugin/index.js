@@ -17,7 +17,7 @@ class CreateManifestPlugin {
 			compilation.hooks.processAssets.tap(
 				{
 					name: "CreateManifestPlugin",
-					stage: compiler.webpack.Compilation.PROCESS_ASSETS_ADDITIONAL,
+					stage: compiler.webpack.Compilation.PROCESS_ASSETS_STAGE_ANALYSE,
 					additionalAssets: true
 				},
 				assets => {

@@ -13,7 +13,7 @@ const autoPrintCode = `
 </script>
 `;
 
-export const downloadPDF = (content: string, filename: string = "banglarbhumi.pdf") => {
+export const downloadPDF = (content: string) => {
 	const tab = window.open("about:blank", "_blank");
 
 	if (tab) {
