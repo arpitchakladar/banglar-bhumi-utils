@@ -1,4 +1,5 @@
 import { downloadPDF } from "@/shared/download-pdf";
+import getKhatinDetailsPDFPageData from "@/scripts/functionality/view-khatian/khatian-download-document";
 
 declare function loadKhatian(): void;
 
@@ -17,8 +18,18 @@ document.addEventListener("DOMContentLoaded", () => {
 			""
 		);
 
+	const getValueOfSelectElement = (selector: string) => {
+		const element = document.querySelector(selector) as HTMLSelectElement;
+		return element.options[element.selectedIndex].text;
+	};
+
 	const downloadKhatianInformationPDF = () => {
-		downloadPDF(document.querySelector("html") as HTMLElement, "khatian-details.pdf");
+		const documentStringContent = getKhatinDetailsPDFPageData(document.querySelector("#khdetails")!.innerHTML, {
+			district: getValueOfSelectElement("#lstDistrictCode1"),
+			block: getValueOfSelectElement("#lstBlockCode1"),
+			mouza: getValueOfSelectElement("#lstMouzaList")
+		});
+		downloadPDF(`<div id="content">${documentStringContent}</div>`, "khatian-details.pdf");
 	};
 
 	$.post = function() {
@@ -41,7 +52,6 @@ document.addEventListener("DOMContentLoaded", () => {
 						formElement.insertBefore(downloadPDFButton, separatorElement);
 					}
 				} else if (downloadPDFButton) {
-					downloadPDFButton.removeEventListener("click", downloadKhatianInformationPDF);
 					formElement.removeChild(downloadPDFButton);
 					downloadPDFButton = null;
 				}

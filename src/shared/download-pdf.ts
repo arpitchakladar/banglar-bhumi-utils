@@ -1,22 +1,23 @@
-import html2pdf from "html2pdf.js";
+const autoPrintCode = `
+<script>
+	document.addEventListener("DOMContentLoaded", () => {
+		Promise.all(Array.from(document.images)
+			.filter(img => !img.complete)
+			.map(img => new Promise(resolve => {
+				img.onload = img.onerror = resolve;
+			}))).then(() => {
+				window.print();
+				window.close();
+			});
+	});
+</script>
+`;
 
-export const downloadPDF = (element: HTMLElement, filename: string = "banglarbhumi.pdf") => {
-	html2pdf().set({
-		margin: 0,
-		filename: filename,
-		image: {
-			type: "jpeg",
-			quality: 0.98
-		},
-		html2canvas: {
-			scale: 1
-		},
-		jsPDF: {
-			unit: "in",
-			format: "letter",
-			orientation: "portrait"
-		}
-	})
-		.from(element)
-		.save();
+export const downloadPDF = (content: string, filename: string = "banglarbhumi.pdf") => {
+	const tab = window.open("about:blank", "_blank");
+
+	if (tab) {
+		tab.document.write(content + autoPrintCode);
+		tab.document.close();
+	}
 };
