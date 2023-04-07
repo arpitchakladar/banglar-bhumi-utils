@@ -17,11 +17,8 @@ export default (isPlotInformation: boolean, details: string, { district, block, 
 
 	#content {
 		width: 100%;
-		min-height: calc(100vw * 1.4);
 		margin: 0;
 		padding: 0;
-		display: flex;
-		flex-direction: column;
 	}
 
 	.banner {
@@ -189,7 +186,7 @@ export default (isPlotInformation: boolean, details: string, { district, block, 
 
 	.footer {
 		width: 100%;
-		margin-top: auto;
+		margin-top: 1rem;
 	}
 </style>
 <img class="banner" src="https://banglarbhumi.gov.in/BanglarBhumi/images/bl.png">
