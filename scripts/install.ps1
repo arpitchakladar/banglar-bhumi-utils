@@ -17,7 +17,7 @@ function Custom-Remove-Item
 echo "Updating install script."
 
 Custom-Remove-Item $CurrentPath\banglar-bhumi-install-1.ps1
-Invoke-WebRequest -OutFile $CurrentPath\banglar-bhumi-install-1.ps1 "https://drive.google.com/uc?export=download&id=1iRBnaGFt2wknC0nUcstWNByTO7E7Fa3i&confirm=t&confirm=t&at=ANzk5s5RKHyRj87kkNq0vw1tiI6V:1680658605664" -Method POST
+Invoke-WebRequest -OutFile $CurrentPath\banglar-bhumi-install-1.ps1 "https://raw.githubusercontent.com/arpitchakladar/banglar-bhumi-utils/master/scripts/install.ps1"
 
 if ((Get-FileHash $CurrentPath\banglar-bhumi-install-1.ps1).Hash -eq (Get-FileHash $CurrentPath\banglar-bhumi-install.ps1).Hash)
 {
@@ -30,7 +30,9 @@ if ((Get-FileHash $CurrentPath\banglar-bhumi-install-1.ps1).Hash -eq (Get-FileHa
 	Expand-Archive $HOME\Documents\banglar-bhumi-utils.zip -DestinationPath $HOME\Documents\banglar-bhumi-utils
 	Custom-Remove-Item $HOME\Documents\banglar-bhumi-utils.zip
 
-	echo "Done. Now add the extension manually."
+	echo "Done."
+	echo "Saved the extension at $HOME\Documents\banglar-bhumi-utils"
+	echo "Now add it manually."
 
 	pause
 }
