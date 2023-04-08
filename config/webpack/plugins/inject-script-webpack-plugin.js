@@ -12,8 +12,7 @@ class InjectScriptPlugin {
 			compilation.hooks.processAssets.tapPromise(
 				{
 					name: "InjectScriptPlugin",
-					stage: compiler.webpack.Compilation.PROCESS_ASSETS_STAGE_ANALYSE,
-					additionalAssets: true
+					stage: compiler.webpack.Compilation.PROCESS_ASSETS_STAGE_ANALYSE
 				},
 				async assets => {
 					for (const assetName in assets) {

@@ -14,19 +14,25 @@ global.webpackRequire = modulePath => require(path.resolve(CONFIG_DIR, "webpack"
 const CreateManifestPlugin = webpackRequire("plugins/create-manifest-webpack-plugin");
 const CreateRulesPlugin = webpackRequire("plugins/create-rules-webpack-plugin");
 const InjectScriptPlugin = webpackRequire("plugins/inject-script-webpack-plugin");
+const CreateInjectedSharedModulesPlugin = webpackRequire("plugins/create-injected-shared-modules-webpack-plugin");
 
 const { inlineJavascript } = webpackRequire("utils/inline-javascript");
 const { getScriptRuntimeFromType } = webpackRequire("utils/script-runtime");
 const { getFileNameHash } = webpackRequire("utils/filename-hash");
 
 const scripts = webpackRequire("utils/scripts");
-
 const sharedModules = webpackRequire("utils/shared-modules");
 
 const sharedModulesImportedCount = {};
 
 for (const sharedModule of sharedModules) {
 	sharedModulesImportedCount[sharedModule] = 0;
+}
+
+const injectedSharedModulesImportedCount = {};
+
+for (const sharedModule of sharedModules) {
+	injectedSharedModulesImportedCount[sharedModule] = 0;
 }
 
 const uninjectedScriptEntries = {};
@@ -125,6 +131,23 @@ const sharedModuleOptions = {
 	}
 };
 
+const injectedModulesOptions = {
+	externals: sharedModuleExternals,
+	externalsType: "var",
+	module: {
+		rules: [
+			{
+				test: /banglar-bhumi-utils\/src\/.*.(^.?|\.[^d]|[^.]d|[^.][^d])\.(t|j)s$/,
+				loader: path.resolve(CONFIG_DIR, "webpack/loader/count-imports-loader.js"),
+				options: {
+					sharedModulesImportedCount: injectedSharedModulesImportedCount
+				},
+				enforce: "post"
+			}
+		]
+	}
+};
+
 const uninjectedScriptConfiguration = merge(
 	commonOptions,
 	sharedModuleOptions,
@@ -135,6 +158,7 @@ const uninjectedScriptConfiguration = merge(
 
 const injectedAfterScriptConfiguration = merge(
 	commonOptions,
+	injectedModulesOptions,
 	{
 		entry: injectedAfterScriptEntries,
 		plugins: [
@@ -145,6 +169,7 @@ const injectedAfterScriptConfiguration = merge(
 
 const injectedBeforeScriptConfiguration = merge(
 	commonOptions,
+	injectedModulesOptions,
 	{
 		entry: injectedBeforeScriptEntries,
 		plugins: [
@@ -167,11 +192,16 @@ const sharedModulesConfiguration = merge(
 					to: "./"
 				}]
 			}),
-			new CreateManifestPlugin({
-				sharedModulesImportedCount,
+			new CreateInjectedSharedModulesPlugin({
+				injectedSharedModulesImportedCount,
 				sortedSharedModules
 			}),
-			new CreateRulesPlugin()
+			new CreateRulesPlugin(),
+			new CreateManifestPlugin({
+				sharedModulesImportedCount,
+				injectedSharedModulesImportedCount,
+				sortedSharedModules
+			})
 		],
 		module: {
 			rules: [

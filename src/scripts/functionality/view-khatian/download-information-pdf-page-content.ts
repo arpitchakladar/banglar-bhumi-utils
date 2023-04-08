@@ -75,8 +75,12 @@ export default (isPlotInformation: boolean, details: string, { district, block, 
 		border-right: 0 !important;
 	}
 
-	.details#plot-information > div:nth-child(2) {
-		display: none;
+	.details#plot-information > div:nth-child(2),
+	.details#plot-information > div:nth-child(1) > div:nth-child(3) > table > tbody > tr > td:nth-child(4),
+	.details#plot-information > div:nth-child(1) > div:nth-child(3) > table > tbody > tr > th:nth-child(4),
+	.details#khatian-information > table > tbody > tr > td:nth-child(1) > p:nth-child(3),
+	.details#khatian-information > table > tbody > tr > td:nth-child(2) {
+		display: none !important;
 	}
 
 	.details#plot-information > div:nth-child(1) > div:nth-child(5) > table > tbody > tr {
@@ -86,10 +90,6 @@ export default (isPlotInformation: boolean, details: string, { district, block, 
 	.details#khatian-information > table > tbody > tr > td:nth-child(1),
 	.details#plot-information > div:nth-child(1) > div:nth-child(3) > table {
 		width: 100% !important;
-	}
-
-	.details#khatian-information > table > tbody > tr > td:nth-child(2) {
-		display: none;
 	}
 
 	.details#khatian-information > table > tbody > tr > td:nth-child(1) > div:nth-child(1),
@@ -154,10 +154,9 @@ export default (isPlotInformation: boolean, details: string, { district, block, 
 		border-color: black !important;
 	}
 
-	.details#khatian-information > table > tbody > tr > td:nth-child(1) > div:nth-child(5) > table > tbody > tr:last-child {
-		border: none !important;
-	}
-
+	.details#khatian-information > table > tbody > tr > td:nth-child(1) > div:nth-child(5) > table > tbody > tr:last-child,
+	.details#plot-information > div:nth-child(1) > div:nth-child(3) > table > tbody > tr > td:nth-child(3),
+	.details#plot-information > div:nth-child(1) > div:nth-child(3) > table > tbody > tr > th:nth-child(3),
 	.details#khatian-information > table tbody tr tr th:last-child, .details table tbody tr tr td:last-child,
 	#locater-information tr > td:last-child {
 		border-right: none !important;
@@ -174,10 +173,6 @@ export default (isPlotInformation: boolean, details: string, { district, block, 
 		top: 0 !important;
 		margin: 0 !important;
 		width: 100% !important;
-	}
-
-	.details#khatian-information > table > tbody > tr > td:nth-child(1) > p:nth-child(3) {
-		display: none;
 	}
 
 	.details#khatian-information > table > tbody > tr > td:nth-child(1) > div:nth-child(2) > table > tbody > tr:nth-child(1) > th {
@@ -211,7 +206,6 @@ export default (isPlotInformation: boolean, details: string, { district, block, 
 			tableBodyElement = document.createElement("tbody");
 			tableElement.appendChild(tableBodyElement);
 			const detailsElement = document.querySelector("#plot-information > div:nth-child(1)");
-			console.log(detailsElement.querySelector("div:nth-child(2)"));
 			detailsElement.insertBefore(tableElement, detailsElement.querySelector("div:nth-child(2)"));
 		`
 		: `

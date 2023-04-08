@@ -8,8 +8,7 @@ class CreateRulesPlugin {
 			compilation.hooks.processAssets.tap(
 				{
 					name: "CreateRulesPlugin",
-					stage: compiler.webpack.Compilation.PROCESS_ASSETS_ADDITIONAL,
-					additionalAssets: true
+					stage: compiler.webpack.Compilation.PROCESS_ASSETS_STAGE_ADDITIONAL
 				},
 				assets => {
 					const ruleFileNames = fs.readdirSync(path.resolve(SOURCE_DIR, "rules"));

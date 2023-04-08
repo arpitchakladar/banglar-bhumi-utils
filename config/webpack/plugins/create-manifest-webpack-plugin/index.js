@@ -7,8 +7,9 @@ const scripts = webpackRequire("utils/scripts");
 const manifest = webpackRequire("plugins/create-manifest-webpack-plugin/manifest-template.json");
 
 class CreateManifestPlugin {
-	constructor({ sharedModulesImportedCount, sortedSharedModules }) {
+	constructor({ sharedModulesImportedCount, injectedSharedModulesImportedCount, sortedSharedModules }) {
 		this.sharedModulesImportedCount = sharedModulesImportedCount;
+		this.injectedSharedModulesImportedCount = injectedSharedModulesImportedCount;
 		this.sortedSharedModules = sortedSharedModules;
 	}
 
@@ -17,8 +18,7 @@ class CreateManifestPlugin {
 			compilation.hooks.processAssets.tap(
 				{
 					name: "CreateManifestPlugin",
-					stage: compiler.webpack.Compilation.PROCESS_ASSETS_STAGE_ANALYSE,
-					additionalAssets: true
+					stage: compiler.webpack.Compilation.PROCESS_ASSETS_STAGE_ADDITIONAL
 				},
 				assets => {
 					manifest.version = require(path.resolve(ROOT_DIR, "package.json")).version;
@@ -33,12 +33,12 @@ class CreateManifestPlugin {
 							const scriptRuntime = getScriptRuntimeFromType(scriptType);
 
 							if (typeof arrangedScripts[scriptPath][scriptRuntime] === "undefined") {
-								arrangedScripts[scriptPath][scriptRuntime] = [];
-							}
+									arrangedScripts[scriptPath][scriptRuntime] = [];
+								}
 
-							arrangedScripts[scriptPath][scriptRuntime].push(`scripts/${getFileNameHash(scriptType, scriptPath)}.js`);
+								arrangedScripts[scriptPath][scriptRuntime].push(`scripts/${getFileNameHash(scriptType, scriptPath)}.js`);
+							}
 						}
-					}
 
 					manifest.content_scripts.push({
 						matches: [`*://banglarbhumi.gov.in/BanglarBhumi/*`],
@@ -66,12 +66,21 @@ class CreateManifestPlugin {
 						}
 					}
 
-					const resources = [];
+					let resources = [];
 
 					for (const assetName in assets) {
 						if (/^assets\/.*\.(jpg|png|gif)$/.test(assetName)) {
 							resources.push(assetName);
 						}
+					}
+
+					const injectedSharedModules = this.sortedSharedModules
+						.filter(sharedModule => this.injectedSharedModulesImportedCount[sharedModule] > 0)
+						.map(sharedModule => `shared/${getFileNameHash(sharedModule, "shared")}.js`);
+
+					if (injectedSharedModules.length > 0) {
+						resources = resources.concat(injectedSharedModules);
+						manifest.content_scripts[0].js.unshift(`shared/${getFileNameHash("injected-shared-modules", "shared")}.js`);
 					}
 
 					if (resources.length > 0) {

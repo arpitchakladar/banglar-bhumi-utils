@@ -1,5 +1,5 @@
 import { downloadPDF } from "@/shared/download-pdf";
-import getDetailsPDFContent from "@/scripts/functionality/view-khatian/download-document-content";
+import getDownloadInformationPDFPageContent from "@/scripts/functionality/view-khatian/download-information-pdf-page-content";
 
 declare function load(): void;
 
@@ -27,7 +27,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 	const downloadInformationPDF = () => {
 		let contentElement = document.getElementById(isPlotInformation ? "plotdetails" : "khdetails");
-		const documentStringContent = getDetailsPDFContent(!!isPlotInformation, contentElement!.innerHTML, {
+		const documentStringContent = getDownloadInformationPDFPageContent(!!isPlotInformation, contentElement!.innerHTML, {
 			district: getValueOfSelectElement("#lstDistrictCode1"),
 			block: getValueOfSelectElement("#lstBlockCode1"),
 			mouza: getValueOfSelectElement("#lstMouzaList")
