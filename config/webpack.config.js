@@ -84,7 +84,7 @@ const commonOptions = {
 	mode: "production",
 	target: "web",
 	resolve: {
-		extensions: [".ts", ".js"],
+		extensions: [".ts", ".js", ".html"],
 		alias: {
 			"@": global.SOURCE_DIR
 		}
@@ -97,6 +97,10 @@ const commonOptions = {
 				options: {
 					configFile: "config/tsconfig.json"
 				}
+			},
+			{
+				test: /\.html$/,
+				loader: path.resolve(CONFIG_DIR, "webpack/loader/to-string-loader.js")
 			}
 		]
 	},

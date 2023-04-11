@@ -1,0 +1,273 @@
+<div id="content">
+	<style>
+		* {
+			box-sizing: border-box !important;
+			text-decoration: none;
+			margin: 0;
+			padding: 0;
+			font-size: 16px !important;
+		}
+
+		#content {
+			width: 100%;
+			margin: 0;
+			padding: 0;
+		}
+
+		.banner {
+			width: 100%;
+		}
+
+		.details {
+			padding: 1rem;
+		}
+
+		#locater-information {
+			width: 100%;
+			margin-bottom: 1rem;
+		}
+
+		#locater-information,
+		.details#plot-information > div:nth-child(1) > div:nth-child(5) > table {
+			border-collapse: collapse;
+		}
+
+		.details#khatian-information > table,
+		.details#plot-information > div:nth-child(1) {
+			width: 100% !important;
+			border-spacing: 0;
+		}
+
+		.details#plot-information > div:nth-child(1) > div:nth-child(1) {
+			text-align: center !important;
+		}
+
+		.details#plot-information > div:nth-child(1) > div:nth-child(1) {
+			margin: 0 !important;
+		}
+
+		.details#plot-information > div > div > table tr,
+		.details#khatian-information > table > tbody > tr > td:nth-child(1) > div > table > tbody > tr,
+		.details#khatian-information > table > tbody > tr > td:nth-child(1) > div:nth-child(5) > table > tbody > tr:last-child,
+		#locater-information > tbody > tr {
+			border-bottom: 1px solid black;
+		}
+
+		.details#khatian-information > table > tbody > tr > td:nth-child(1) > div > table > tbody > tr > th:nth-child(1),
+		.details#khatian-information > table > tbody > tr > td:nth-child(1) > div > table > tbody > tr > td:nth-child(1),
+		.details#khatian-information #headertitle > tr > th:nth-child(1),
+		#locater-information > tbody > tr > td:nth-child(1),
+		.details#plot-information > div:nth-child(1) > div:nth-child(3) > table > tbody > tr > td:nth-child(1),
+		#headertitle > tr > th:nth-child(1),
+		#plot-information > div:nth-child(1) > div:nth-child(5) > table > tbody > tr > td:nth-child(1) {
+			border-left: 1px solid black !important;
+		}
+
+		.details#khatian-information > table > tbody > tr > td:nth-child(1) > div:nth-child(2) > table > tbody > tr:nth-child(1),
+		#headertitle > tr,
+		.details#plot-information > div:nth-child(1) > div:nth-child(3) > table > tbody > tr.table-text.knwurprpty_tbl_head_txt.ng-scope,
+		#headertitle,
+		#locater-information tr:nth-child(1) {
+			border-top: 1px solid black !important;
+			border-color: black !important;
+		}
+
+		.details td {
+			white-space: normal;
+		}
+
+		.details#plot-information #headertitle > tr > th,
+		.details#khatian-information > table > tbody > tr > td:nth-child(1) > div > table > tbody > tr > th,
+		.details#khatian-information > table > tbody > tr > td:nth-child(1) > div > table > tbody > tr > td,
+		.details#khatian-information #headertitle > tr > th,
+		#locater-information > tbody > tr > td,
+		.details#plot-information > div:nth-child(1) > div:nth-child(3) > table > tbody > tr > td,
+		.details#plot-information > div:nth-child(1) > div:nth-child(5) > table > tbody > tr > td,
+		.details#plot-information > div:nth-child(1) > div:nth-child(5) > table > tbody {
+			border-right: 1px solid black !important;
+		}
+
+		.details#plot-information > div:nth-child(1) > div:nth-child(3) > table {
+			border: none !important;
+		}
+
+		.details#plot-information > div:nth-child(1) > div {
+			position: initial !important;
+			left: 0 !important;
+			width: 100% !important;
+			border-left: none !important;
+			border-right: none !important;
+		}
+
+		.details#plot-information > div:nth-child(2),
+		.details#plot-information > div:nth-child(1) > div:nth-child(3) > table > tbody > tr > td:nth-child(4),
+		.details#plot-information > div:nth-child(1) > div:nth-child(3) > table > tbody > tr > th:nth-child(4),
+		.details#khatian-information > table > tbody > tr > td:nth-child(1) > p:nth-child(3),
+		.details#khatian-information > table > tbody > tr > td:nth-child(2) {
+			display: none !important;
+		}
+
+		.details#plot-information > div:nth-child(1) > div:nth-child(5) > table > tbody > tr {
+			background-color: transparent !important;
+		}
+
+		.details#khatian-information > table > tbody > tr > td:nth-child(1),
+		.details#plot-information > div:nth-child(1) > div:nth-child(3) > table {
+			width: 100% !important;
+		}
+
+		.details#khatian-information > table > tbody > tr > td:nth-child(1) > div:nth-child(1),
+		.details#khatian-information > table > tbody > tr > td:nth-child(1) > p:nth-child(4) {
+			text-align: center;
+		}
+
+		.details#khatian-information > table > tbody > tr > td:nth-child(1) > div:nth-child(2) {
+			width: 100% !important;
+			position: initial !important;
+			left: 0 !important;
+		}
+
+		.details#khatian-information > table > tbody > tr > td:nth-child(1) > div:nth-child(2) > table,
+		.details#khatian-information > table > tbody > tr > td:nth-child(1) > div:nth-child(5) > table {
+			width: 100% !important;
+			border: none !important;
+		}
+
+		.details table tbody tr tr,
+		.details table tbody tr th,
+		.details table tbody tr td {
+			background-color: transparent;
+		}
+
+		.details#khatian-information > table > tbody > tr > td:nth-child(1) > div:nth-child(2) td,
+		.details#khatian-information > table > tbody > tr > td:nth-child(1) > div:nth-child(2) th {
+			text-align: left;
+		}
+
+		.details#khatian-information > table > tbody > tr > td > div > table > tbody > tr > th,
+		.details#khatian-information > table > tbody > tr > td > div > table > tbody > tr > td,
+		.details#plot-information td {
+			padding: 0 0.2rem 0 0.2rem;
+		}
+
+		.details#khatian-information > table > tbody > tr > td:nth-child(1) > div:nth-child(2) > table > tbody > tr:nth-child(1) > th {
+			font-weight: 500;
+		}
+
+		.details#khatian-information > table > tbody > tr > td:nth-child(1) > div:nth-child(2) > table > tbody > tr > th:nth-child(1),
+		.details#khatian-information > table > tbody > tr > td:nth-child(1) > div:nth-child(2) > table > tbody > tr > td:nth-child(1),
+		#locater-information > tbody > tr > td:nth-child(1) {
+			font-weight: bold;
+		}
+
+		.details#khatian-information > table > tbody > tr > td:nth-child(1) > p:nth-child(4) {
+			margin-top: 1rem !important;
+		}
+
+		.details#khatian-information > table > tbody > tr > td:nth-child(1) > div:nth-child(5),
+		.details#plot-information > div:nth-child(1) > div:nth-child(5) {
+			position: initial !important;
+			left: 0 !important;
+			top: 0 !important;
+			margin: 0 !important;
+			width: 100% !important;
+		}
+
+		.details#plot-information > div:nth-child(1),
+		.details#khatian-information > table,
+		.details#khatian-information > table > tbody > tr > td:nth-child(1) {
+			border: none !important;
+		}
+
+		.details#khatian-information > table > tbody > tr > td:nth-child(1) > div:nth-child(2) > table > tbody > tr:nth-child(1) > th,
+		#locater-information > tbody > tr > td {
+			width: 50%;
+		}
+
+		@page {
+			size: A4;
+			margin: 0 0 5rem 0;
+		}
+
+		footer {
+			heigth: 5rem;
+			width: 100%;
+		}
+
+		footer > img {
+			width: 210mm;
+			height: 5rem !important;
+			background: transparent;
+			position: fixed;
+			bottom: 0;
+		}
+
+		@page {
+			size: A4;
+		}
+
+		body {
+			width: 210mm !important;
+			height: 297mm !important;
+			margin: 0 !important;
+			padding: 0 !important;
+		}
+	</style>
+	<img class="banner" src="https://banglarbhumi.gov.in/BanglarBhumi/images/bl.png">
+	<div class="details" id="$isPlotInformation$">$details$</div>
+	<footer>
+		<img class="footer" src="$sanghaFacilitationCentreBannerUrl$">
+	</footer>
+	<script>
+		let tableBodyElement;
+		const createTableEntry = (label, value) => {
+			const tableRowElement = document.createElement("tr");
+			const tableLabelColumnElement = document.createElement("td");
+			tableLabelColumnElement.innerHTML = label;
+			const tableValueColumnElement = document.createElement("td");
+			tableValueColumnElement.innerHTML = value;
+			tableRowElement.appendChild(tableLabelColumnElement);
+			tableRowElement.appendChild(tableValueColumnElement);
+			tableBodyElement.appendChild(tableRowElement);
+		};
+
+		if ($isPlotInformation$) {
+			const tableElement = document.createElement("table");
+			tableElement.setAttribute("id", "locater-information");
+			tableBodyElement = document.createElement("tbody");
+			tableElement.appendChild(tableBodyElement);
+			const detailsElement = document.querySelector("#plot-information > div:nth-child(1)");
+			detailsElement.insertBefore(tableElement, detailsElement.querySelector("div:nth-child(2)"));
+		} else {
+			tableBodyElement = document.querySelector(".details > table > tbody > tr > td:nth-child(1) > div:nth-child(2) > table > tbody");
+		}
+
+		createTableEntry("\u{99C}\u{9C7}\u{9B2}\u{9BE} (District):", "$district$");
+		createTableEntry("\u{9AC}\u{9CD}\u{9B2}\u{995} (Block):", "$block$");
+		createTableEntry("\u{9AE}\u{9CC}\u{99C}\u{9BE} (Mouza):", "$mouza$");
+
+		Promise.all(
+			Array.from(document.images)
+				.filter(img => !img.complete).map(img => new Promise(resolve => {
+					img.onload = img.onerror = resolve;
+				}))
+			).then(() => {
+				const rem = parseFloat(getComputedStyle(document.documentElement).fontSize);
+				const headerRowHeight = document.getElementById("headertitle").offsetHeight;
+				const footerHeight = document.querySelector("footer > img").offsetHeight;
+				const pageHeight = document.body.offsetHeight - (footerHeight + rem);
+				let offset = -document.querySelector("div > img").getBoundingClientRect().top;
+
+				for (const tableRowElement of Array.from(document.querySelectorAll($isPlotInformation$ ? "#plot-information > div:nth-child(1) > div:nth-child(5) > table > tbody > tr" : "#khatian-information > table > tbody > tr > td:nth-child(1) > div:nth-child(5) > table > tbody > tr"))) {
+					const tableRowElementDOMRect = tableRowElement.getBoundingClientRect();
+					if (tableRowElementDOMRect.y + offset + tableRowElementDOMRect.height >= pageHeight) {
+						tableRowElement.style.pageBreakBefore = "always";
+						offset -= pageHeight - (headerRowHeight + rem);
+					}
+				}
+
+				window.addEventListener("afterprint", window.close);
+				window.print();
+			});
+	</script>
+</div>

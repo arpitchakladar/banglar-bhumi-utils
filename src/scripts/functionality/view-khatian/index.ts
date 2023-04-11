@@ -1,7 +1,9 @@
-import { downloadPDF } from "@/shared/download-pdf";
-import getDownloadInformationPDFPageContent from "@/scripts/functionality/view-khatian/download-information-pdf-page-content";
+import { generateWebPage } from "@/shared/generate-web-page";
+import getDownloadInformationPDFPageContent from "@/scripts/functionality/view-khatian/download-information-pdf-page-content.html";
 
 declare function load(): void;
+
+const sanghaFacilitationCentreBannerUrl = chrome.runtime.getURL("/assets/sangha-facilitation-centre-banner.jpg");
 
 document.addEventListener("DOMContentLoaded", () => {
 	const proxiedPost = $.post;
@@ -26,13 +28,14 @@ document.addEventListener("DOMContentLoaded", () => {
 	let isPlotInformation: boolean | null = null;
 
 	const downloadInformationPDF = () => {
-		let contentElement = document.getElementById(isPlotInformation ? "plotdetails" : "khdetails");
-		const documentStringContent = getDownloadInformationPDFPageContent(!!isPlotInformation, contentElement!.innerHTML, {
+		generateWebPage(getDownloadInformationPDFPageContent({
+			sanghaFacilitationCentreBannerUrl,
+			isPlotInformation: !!isPlotInformation,
+			details: document.getElementById(isPlotInformation ? "plotdetails" : "khdetails")!.innerHTML,
 			district: getValueOfSelectElement("#lstDistrictCode1"),
 			block: getValueOfSelectElement("#lstBlockCode1"),
 			mouza: getValueOfSelectElement("#lstMouzaList")
-		});
-		downloadPDF(`<div id="content">${documentStringContent}</div>`);
+		}));
 	};
 
 	$.post = function() {
