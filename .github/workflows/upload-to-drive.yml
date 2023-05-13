@@ -1,0 +1,42 @@
+name: Upload to drive
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  upload-to-drive:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Setup node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: "16.x"
+
+      - name: Run install
+        uses: borales/actions-yarn@v4
+        with:
+          cmd: install
+
+      - name: Build production bundle
+        uses: borales/actions-yarn@v4
+        with:
+          cmd: build
+
+      - name: Make zip
+        run: |
+          sudo apt-get update
+          sudo apt-get install zip
+          zip -r extension.zip dist/*
+
+      - name: Upload to drive
+        uses: adityak74/google-drive-upload-git-action@main
+        with:
+          filename: extension.zip
+          name: extension.zip
+          folderId: ${{ secrets.folderId }}
+          credentials: ${{ secrets.credentials }}
+          overwrite: "true"
