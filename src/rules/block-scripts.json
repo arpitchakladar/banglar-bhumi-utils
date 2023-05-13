@@ -4,6 +4,6 @@
 		"type": "block"
 	},
 	"condition": {
-		"regexFilter": "^https:\/\/banglarbhumi.gov.in\/BanglarBhumi\/js\/(jquery-1.12.4|jquery.nivo.slider|bootstrap-dropdownhover).js$"
+		"regexFilter": "^https:\/\/banglarbhumi.gov.in\/BanglarBhumi\/js\/(jquery-1.12.4|bootstrap-dropdownhover).js$"
 	}
 }
