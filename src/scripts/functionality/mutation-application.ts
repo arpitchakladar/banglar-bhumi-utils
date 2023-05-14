@@ -1,4 +1,4 @@
-import { PDFDocument } from "pdf-lib";
+import { PDFDocument, StandardFonts } from "pdf-lib";
 import { observeDOM } from "@/shared/observe-dom";
 
 const sanghaFacilitationCentreBannerUrl = chrome.runtime.getURL("/assets/sangha-facilitation-centre-banner.jpg");
@@ -25,11 +25,20 @@ document.addEventListener("DOMContentLoaded", () => {
 					const lastPage = pages[pages.length - 1];
 					const { width, height } = lastPage.getSize();
 					const bannerImage = await pdfDoc.embedJpg(await fetch(sanghaFacilitationCentreBannerUrl).then(res => res.arrayBuffer()));
+					const bannerImageHeight = width * (bannerImage.height / bannerImage.width);
+
 					lastPage.drawImage(bannerImage, {
 						x: 0,
 						y: 0,
 						width: width,
-						height: width * (bannerImage.height / bannerImage.width),
+						height: bannerImageHeight
+					});
+
+					lastPage.drawText(pdfDoc.getCreationDate()!.toLocaleString(), {
+						x: 10,
+						y: bannerImageHeight,
+						size: 12,
+						font: await pdfDoc.embedFont(StandardFonts.TimesRoman)
 					});
 
 					const link = document.createElement("a");

@@ -19,9 +19,9 @@ class CreateRulesPlugin {
 						const rule = require(path.resolve(SOURCE_DIR, "rules", ruleFileName));
 
 						if (rule instanceof Array) {
-							for (const rule of rule) {
-								rule.id = ruleId++;
-								rules.push(rule);
+							for (const currentRule of rule) {
+								currentRule.id = ruleId++;
+								rules.push(currentRule);
 							}
 						} else {
 							rule.id = ruleId++;
