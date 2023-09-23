@@ -6,6 +6,7 @@
 		"login.ts": "*",
 		"otps/grievance-application.ts": "GrievAppViewAction.action",
 		"otps/mutation-application.ts": "MuteApplication.action",
+		"otps/warish-application.ts": "WarishAppViewAction.action",
 		"functionality/mutation-application.ts": "MuteApplication.action",
 		"functionality/view-khatian/index.ts": "KnowYourProperty.action"
 	},
