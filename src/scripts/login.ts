@@ -1,87 +1,91 @@
 import { interceptPost, interceptGet } from "@/shared/intercept-jquery-ajax";
 
+interceptPost("viewLoginAreaAction", args => {
+	const callback = args[1];
+	args[1] = (html: any) => {
+		callback(html);
+		const captchaInputElement = $("#txtCaptcha");
+		const captchaValueElement = $("#txtInput");
+		captchaInputElement.val("FFFFFF");
+		captchaValueElement.val("FFFFFF");
+		(window as any).DrawLoginCaptcha = () => {};
+		(window as any).validateLoginCaptcha = () => true;
+		captchaValueElement.css("display", "none");
+		captchaInputElement.css("display", "none");
+		$(".captcharefresh").css("display", "none");
+	}
+});
+interceptPost("viewPasswordRecoveryArea", args => {
+	const callback = args[1];
+	args[1] = (html: any) => {
+		callback(html);
+		const captchaInputElement = $("#dText");
+		const captchaValueElement = $("#captaText");
+		captchaInputElement.val("FFFFFF");
+		captchaValueElement.val("FFFFFF");
+		(window as any).Captcha = () => {};
+		captchaValueElement.css("display", "none");
+		captchaInputElement.css("display", "none");
+		$("#captchaRef").css("display", "none");
+	}
+});
+interceptPost("login.action", args => {
+	const callback = args[2];
+	args[2] = (data: any) => {
+		const loginData = args[1];
+		if (!data.exception && data.checkmsg === "success") {
+			window.localStorage.setItem("loginData", btoa(JSON.stringify(loginData)));
+		}
+
+		callback(data);
+		$("#txtInput").val("FFFFFF");
+		$("#beforeLoginDiv").css("display", "none");
+		$("#afterLoginDiv").css("display", "block");
+		$("#afterLoginLabel").css("display", "block");
+		const username = atob(loginData.username.split("RGxycyMxMjM=")[1]);
+		$("#afterLoginLabel > label").html(`--> ${username}`);
+	};
+});
+interceptPost("changePassword.action", args => {
+	const callback = args[2];
+	args[2] = (data: any) => {
+		callback(data);
+		$("#txtInput").val("FFFFFF");
+	};
+});
+interceptGet("viewRegistrationAreaAction", args => {
+	const callback = args[1];
+	args[1] = (html: any) => {
+		callback(html);
+		const captchaInputElement = $("#regInputCaptcha");
+		const captchaValueElement = $("#regCaptcha");
+		captchaInputElement.val("FFFFFF");
+		captchaValueElement.val("FFFFFF");
+		$("#registrationForm > div > div:nth-child(5) > div:nth-child(3)").css("display", "none");
+		$("#registrationForm > div > div:nth-child(5) > div:nth-child(4)").css("display", "none");
+		$("#registrationForm > div > div:nth-child(5) > div:nth-child(5)").css("display", "none");
+		(window as any).DrawRegistrationCaptcha = () => {};
+		(window as any).validateRegistrationCaptcha = () => true;
+	}
+});
+interceptGet("viewChangePasswordAction", args => {
+	const callback = args[1];
+	args[1] = (html: any) => {
+		callback(html);
+		const captchaValueElement = $("#txtCaptcha");
+		const captchaInputElement = $("#txtInput");
+		captchaValueElement.val("FFFFFF");
+		captchaInputElement.val("FFFFFF");
+		(window as any).DrawLoginCaptcha = () => {};
+		captchaValueElement.css("display", "none");
+		captchaInputElement.css("display", "none");
+		$(".captcharefresh").css("display", "none");
+	}
+});
+
 document.addEventListener("DOMContentLoaded", () => {
-	const proxiedPost = $.post;
-	const proxiedGet = $.get;
-
-	interceptPost("viewLoginAreaAction", args => {
-		const callback = args[1];
-		args[1] = (html: any) => {
-			callback(html);
-			const captchaValueElement = document.getElementById("txtCaptcha") as HTMLInputElement;
-			const captchaInputElement = document.getElementById("txtInput") as HTMLInputElement;
-			captchaValueElement.value = "FFFFFF";
-			captchaInputElement.value = "FFFFFF";
-			(window as any).DrawLoginCaptcha = () => {};
-			(window as any).validateLoginCaptcha = () => true;
-			captchaValueElement.style.display = "none";
-			captchaInputElement.style.display = "none";
-			(document.querySelector(".captcharefresh") as HTMLElement).style.display = "none";
-		}
-	});
-	interceptPost("viewPasswordRecoveryArea", args => {
-		const callback = args[1];
-		args[1] = (html: any) => {
-			callback(html);
-			const captchaInputElement = document.getElementById("dText") as HTMLInputElement;
-			const captchaValueElement = document.getElementById("captaText") as HTMLInputElement;
-			captchaValueElement.value = "FFFFFF";
-			captchaInputElement.value = "FFFFFF";
-			(window as any).Captcha = () => {};
-			captchaValueElement.style.display = "none";
-			captchaInputElement.style.display = "none";
-			(document.getElementById("captchaRef") as HTMLElement).style.display = "none";
-		}
-	});
-	interceptPost("login.action", args => {
-		const callback = args[2];
-		args[2] = (data: any) => {
-			if (!data.exception && data.checkmsg === "success") {
-				window.localStorage.setItem("loginData", btoa(JSON.stringify(args[1])));
-			}
-
-			callback(data);
-			(document.getElementById("txtInput") as HTMLInputElement).value = "FFFFFF";
-		};
-	});
-	interceptPost("changePassword.action", args => {
-		const callback = args[2];
-		args[2] = (data: any) => {
-			callback(data);
-			(document.getElementById("txtInput") as HTMLInputElement).value = "FFFFFF";
-		};
-	});
-	interceptGet("viewRegistrationAreaAction", args => {
-		const callback = args[1];
-		args[1] = (html: any) => {
-			callback(html);
-			const captchaInputElement = document.getElementById("regInputCaptcha") as HTMLInputElement;
-			const captchaValueElement = document.getElementById("regCaptcha") as HTMLInputElement;
-			captchaValueElement.value = "FFFFFF";
-			captchaInputElement.value = "FFFFFF";
-			(document.querySelector("#registrationForm > div > div:nth-child(5) > div:nth-child(3)") as HTMLElement).style.display = "none";
-			(document.querySelector("#registrationForm > div > div:nth-child(5) > div:nth-child(4)") as HTMLElement).style.display = "none";
-			(document.querySelector("#registrationForm > div > div:nth-child(5) > div:nth-child(5)") as HTMLElement).style.display = "none";
-			(window as any).DrawRegistrationCaptcha = () => {};
-			(window as any).validateRegistrationCaptcha = () => true;
-		}
-	});
-	interceptGet("logout", args => {
+	$("#afterLoginDiv > a").click(() => {
 		window.localStorage.removeItem("loginData");
-	});
-	interceptGet("viewChangePasswordAction", args => {
-		const callback = args[1];
-		args[1] = (html: any) => {
-			callback(html);
-			const captchaValueElement = document.getElementById("txtCaptcha") as HTMLInputElement;
-			const captchaInputElement = document.getElementById("txtInput") as HTMLInputElement;
-			captchaValueElement.value = "FFFFFF";
-			captchaInputElement.value = "FFFFFF";
-			(window as any).DrawLoginCaptcha = () => {};
-			captchaValueElement.style.display = "none";
-			captchaInputElement.style.display = "none";
-			(document.querySelector(".captcharefresh") as HTMLElement).style.display = "none";
-		}
 	});
 
 	setInterval(() => {
