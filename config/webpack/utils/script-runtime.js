@@ -1,7 +1,7 @@
 module.exports.getScriptRuntimeFromType = scriptType => {
 	switch (scriptType) {
 		case "before":
-		case "injected":
+		case "injected-after":
 		case "injected-before":
 			return "document_start";
 

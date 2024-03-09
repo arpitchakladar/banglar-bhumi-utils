@@ -45,14 +45,17 @@ for (const scriptPath in scripts) {
 	for (const scriptType in scripts[scriptPath]) {
 		const currentScripts = scripts[scriptPath][scriptType];
 		let scriptEntries;
+		let destinationFolder = "scripts";
 
 		switch (scriptType) {
-		case "injected":
+		case "injected-after":
 			scriptEntries = injectedAfterScriptEntries;
+			destinationFolder = "scripts/injected";
 			break;
 
 		case "injected-before":
 			scriptEntries = injectedBeforeScriptEntries;
+			destinationFolder = "scripts/injected";
 			break;
 
 		default:
@@ -61,7 +64,7 @@ for (const scriptPath in scripts) {
 
 		scriptEntries[`${scriptType} - "${scriptPath}"`] = {
 			import: inlineJavascript(currentScripts.map(script => `import "${path.resolve(SOURCE_DIR, "scripts", script)}";`).join("\n")),
-			filename: `scripts/${getFileNameHash(scriptType, scriptPath)}.js`
+			filename: `${destinationFolder}/${getFileNameHash(scriptType, scriptPath)}.js`
 		};
 	}
 }

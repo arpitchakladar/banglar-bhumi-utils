@@ -23,6 +23,7 @@ class CreateManifestPlugin {
 				assets => {
 					manifest.version = require(path.resolve(ROOT_DIR, "package.json")).version;
 					manifest.content_scripts = [];
+					let resources = [];
 
 					const arrangedScripts = {};
 
@@ -33,12 +34,15 @@ class CreateManifestPlugin {
 							const scriptRuntime = getScriptRuntimeFromType(scriptType);
 
 							if (typeof arrangedScripts[scriptPath][scriptRuntime] === "undefined") {
-									arrangedScripts[scriptPath][scriptRuntime] = [];
-								}
+								arrangedScripts[scriptPath][scriptRuntime] = [];
+							}
 
-								arrangedScripts[scriptPath][scriptRuntime].push(`scripts/${getFileNameHash(scriptType, scriptPath)}.js`);
+							arrangedScripts[scriptPath][scriptRuntime].push(`scripts/${getFileNameHash(scriptType, scriptPath)}.js`);
+							if (scriptType.startsWith("injected")) {
+								resources.push(`scripts/injected/${getFileNameHash(scriptType, scriptPath)}.js`);
 							}
 						}
+					}
 
 					manifest.content_scripts.push({
 						matches: [`*://banglarbhumi.gov.in/BanglarBhumi/*`],
@@ -66,8 +70,6 @@ class CreateManifestPlugin {
 						}
 					}
 
-					let resources = [];
-
 					for (const assetName in assets) {
 						if (/^assets\/.*\.(jpg|png|gif)$/.test(assetName)) {
 							resources.push(assetName);
@@ -82,6 +84,8 @@ class CreateManifestPlugin {
 						resources = resources.concat(injectedSharedModules);
 						manifest.content_scripts[0].js.unshift(`shared/${getFileNameHash("injected-shared-modules", "shared")}.js`);
 					}
+
+					manifest.content_scripts[0].js.unshift(`shared/${getFileNameHash("script-injector", "shared")}.js`);
 
 					if (resources.length > 0) {
 						manifest.web_accessible_resources = [
