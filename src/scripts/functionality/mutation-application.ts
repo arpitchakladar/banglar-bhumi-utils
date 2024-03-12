@@ -1,7 +1,7 @@
 import { PDFDocument, StandardFonts } from "pdf-lib";
 import { observeDOM } from "@/shared/observe-dom";
 
-const sanghaFacilitationCentreBannerUrl = chrome.runtime.getURL("/assets/sangha-facilitation-centre-banner.jpg");
+const sanghaFacilitationCentreBannerUrl = "$l{ /assets/sangha-facilitation-centre-banner.jpg }l$";
 
 document.addEventListener("DOMContentLoaded", () => {
 	observeDOM(() => {

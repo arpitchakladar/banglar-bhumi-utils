@@ -31,7 +31,15 @@ class CreateRulesPlugin {
 
 					compilation.emitAsset(
 						"rules.json",
-						new sources.RawSource(JSON.stringify(rules, undefined, process.env.NODE_ENV === "production" ? undefined : "\t"))
+						new sources.RawSource(
+							JSON.stringify(
+								rules,
+								undefined,
+								process.env.NODE_ENV === "production"
+									? undefined
+									: "\t"
+							)
+						)
 					);
 				}
 			);

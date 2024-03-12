@@ -98,7 +98,15 @@ class CreateManifestPlugin {
 
 					compilation.emitAsset(
 						"manifest.json",
-						new sources.RawSource(JSON.stringify(manifest, undefined, process.env.NODE_ENV === "production" ? undefined : "\t"))
+						new sources.RawSource(
+							JSON.stringify(
+								manifest,
+								undefined,
+								process.env.NODE_ENV === "production"
+									? undefined
+									: "\t"
+							)
+						)
 					);
 				}
 			);

@@ -23,7 +23,10 @@ class CreateInjectedSharedModulesPlugin {
 						.map(sharedModule => `shared/${getFileNameHash(sharedModule, "shared")}.js`);
 
 					if (injectedSharedScripts.length > 0) {
-						const injectionCode = `${injectedSharedScripts.map(injectedScript => `$${getFileNameHash("script-injector", "shared", true)}.injectScriptHead("shared/${path.basename(injectedScript)}");`).join("")}`;
+						const scriptInjectorModuleName = getFileNameHash("script-injector", "shared", true);
+						const injectionCode = injectedSharedScripts
+							.map(injectedScript => `$${scriptInjectorModuleName}.injectScriptHead("shared/${path.basename(injectedScript)}");`)
+							.join("");
 						compilation.emitAsset(
 							`shared/${getFileNameHash("injected-shared-modules", "shared")}.js`,
 							new sources.RawSource(injectionCode)

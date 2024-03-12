@@ -4,7 +4,9 @@ import getDownloadInformationPDFPageContent from "@/scripts/functionality/view-k
 
 declare function load(): void;
 
-const sanghaFacilitationCentreBannerUrl = chrome.runtime.getURL("/assets/sangha-facilitation-centre-banner.jpg");
+const sanghaFacilitationCentreBannerUrl = "$l{ /assets/sangha-facilitation-centre-banner.jpg }l$";
+// document.currentScript.getAttribute("data-banner-image-url");
+//("/assets/sangha-facilitation-centre-banner.jpg");
 
 document.addEventListener("DOMContentLoaded", () => {
 	const submitButtonElement = $("#khbutton");

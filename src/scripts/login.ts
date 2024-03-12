@@ -88,7 +88,7 @@ document.addEventListener("DOMContentLoaded", () => {
 		window.localStorage.removeItem("loginData");
 	});
 
-	setInterval(() => {
+	const login = () => {
 		let loginData = window.localStorage.getItem("loginData");
 		loginData = loginData ? JSON.parse(atob(loginData)) : null;
 
@@ -104,5 +104,9 @@ document.addEventListener("DOMContentLoaded", () => {
 				"json"
 			);
 		}
-	}, 1000 * 60 * 5);
+
+	};
+
+	login();
+	setInterval(login, 1000 * 60 * 5);
 });

@@ -12,9 +12,12 @@ if (captchaElement.length > 0) {
 	const captchaValueElement = $("#captchaText");
 	const captchaFieldElement = $("[name=txtDrawText]");
 
-	setInterval(() => {
+	const captcha = () => {
 		captchaFieldElement.val("FFFFFF");
 		captchaValueElement.val("FFFFFF");
 		captchaElement.hide();
-	}, 1000);
+	};
+
+	captcha();
+	setInterval(captcha, 1000);
 }
