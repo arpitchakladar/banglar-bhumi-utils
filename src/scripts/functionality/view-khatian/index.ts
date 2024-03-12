@@ -1,4 +1,5 @@
 import { generateWebPage } from "@/shared/generate-web-page";
+import { interceptPost } from "@/shared/intercept-jquery-ajax";
 import getDownloadInformationPDFPageContent from "@/scripts/functionality/view-khatian/download-information-pdf-page-content.html";
 
 declare function load(): void;
@@ -6,14 +7,12 @@ declare function load(): void;
 const sanghaFacilitationCentreBannerUrl = chrome.runtime.getURL("/assets/sangha-facilitation-centre-banner.jpg");
 
 document.addEventListener("DOMContentLoaded", () => {
-	const proxiedPost = $.post;
+	const submitButtonElement = $("#khbutton");
+	const separatorElement = $("#bodycover > div > form > hr:nth-child(2)");
+	const formElement = $("#bodycover > div > form");
+	let downloadPDFButton: JQuery<HTMLButtonElement> | null = null;
 
-	const submitButtonElement = document.querySelector("#khbutton") as HTMLButtonElement;
-	const separatorElement = document.querySelector("#bodycover > div > form > hr:nth-child(2)") as HTMLElement;
-	const formElement = document.querySelector("#bodycover > div > form") as HTMLElement;
-	let downloadPDFButton: HTMLButtonElement | null = null;
-
-	const submitButtonElementComputedStyles = window.getComputedStyle(submitButtonElement);
+	const submitButtonElementComputedStyles = window.getComputedStyle(submitButtonElement[0]);
 	const styles = Array.from(submitButtonElementComputedStyles)
 		.reduce(
 			(str, property) => `${str}${property}:${submitButtonElementComputedStyles.getPropertyValue(property)};`,
@@ -21,60 +20,66 @@ document.addEventListener("DOMContentLoaded", () => {
 		);
 
 	const getValueOfSelectElement = (selector: string) => {
-		const element = document.querySelector(selector) as HTMLSelectElement;
+		const element = document.querySelector<HTMLSelectElement>(selector)!;
 		return element.options[element.selectedIndex].text;
 	};
 
 	let isPlotInformation: boolean | null = null;
 
 	const downloadInformationPDF = () => {
-		generateWebPage(getDownloadInformationPDFPageContent({
-			sanghaFacilitationCentreBannerUrl,
-			isPlotInformation: !!isPlotInformation,
-			details: document.getElementById(isPlotInformation ? "plotdetails" : "khdetails")!.innerHTML,
-			district: getValueOfSelectElement("#lstDistrictCode1"),
-			block: getValueOfSelectElement("#lstBlockCode1"),
-			mouza: getValueOfSelectElement("#lstMouzaList")
-		}));
+		generateWebPage(
+			getDownloadInformationPDFPageContent({
+				sanghaFacilitationCentreBannerUrl,
+				isPlotInformation: !!isPlotInformation,
+				details: $(isPlotInformation ? "#plotdetails" : "#khdetails").html(),
+				district: getValueOfSelectElement("#lstDistrictCode1"),
+				block: getValueOfSelectElement("#lstBlockCode1"),
+				mouza: getValueOfSelectElement("#lstMouzaList")
+			}),
+			isPlotInformation
+				? "Plot Details"
+				: "Khatian Details"
+		);
 	};
 
-	$.post = function() {
-		if (arguments[0].startsWith("plotDetailsAction_LandInfo.action")) {
-			isPlotInformation = true;
-		} else if (arguments[0].startsWith("khDetailsAction_LandInfo.action")) {
-			isPlotInformation = false;
-		}
-
+	const showDownloadButton = (args: any) => {
 		if (isPlotInformation !== null) {
-			const callback = arguments[2];
-			arguments[2] = (data: any) => {
+			const callback = args[2];
+			args[2] = (data: any) => {
 				callback(data);
-				const tableElement = document.querySelector(isPlotInformation
+				const tableElement = $(isPlotInformation
 					? "#plotdetails > div:nth-child(1) > div:nth-child(4) > table > tbody"
 					: "#khdetails > table > tbody > tr > td:nth-child(1) > div:nth-child(5) > table > tbody"
-				) as HTMLElement | null;
+				);
 
-				if (tableElement) {
-					tableElement.style.height = "auto";
-					tableElement.style.width = "100%";
+				if (tableElement.length > 0) {
+					tableElement.css("height", "auto");
+					tableElement.css("width", "100%");
 
 					if (!downloadPDFButton) {
-						downloadPDFButton = document.createElement("button");
-						downloadPDFButton.innerHTML = "Download PDF";
-						downloadPDFButton.style.cssText = styles;
-						downloadPDFButton.style.width = "auto";
-						downloadPDFButton.style.marginBottom = "1rem";
-						downloadPDFButton.addEventListener("click", downloadInformationPDF);
-						formElement.insertBefore(downloadPDFButton, separatorElement);
+						downloadPDFButton = $(document.createElement("button"));
+						downloadPDFButton.html("Download PDF");
+						downloadPDFButton[0].style.cssText = styles;
+						downloadPDFButton.css("width", "auto");
+						downloadPDFButton.css("margin-bottom", "1rem");
+						downloadPDFButton.click(downloadInformationPDF);
+						formElement[0].insertBefore(downloadPDFButton[0], separatorElement[0]);
 					}
 				} else if (downloadPDFButton) {
-					formElement.removeChild(downloadPDFButton);
+					$(downloadPDFButton).remove();
 					isPlotInformation = null;
 					downloadPDFButton = null;
 				}
 			}
 		}
+	};
 
-		return proxiedPost.apply(this, Array.from(arguments) as any);
-	}
+	interceptPost("plotDetailsAction_LandInfo.action", args => {
+		isPlotInformation = true;
+		showDownloadButton(args);
+	});
+	interceptPost("plotDetailsAction_LandInfo.action", args => {
+		isPlotInformation = false;
+		showDownloadButton(args);
+	});
 });

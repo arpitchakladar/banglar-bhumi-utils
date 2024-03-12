@@ -5,11 +5,11 @@ const sanghaFacilitationCentreBannerUrl = chrome.runtime.getURL("/assets/sangha-
 
 document.addEventListener("DOMContentLoaded", () => {
 	observeDOM(() => {
-		const formElement = document.querySelector("#form_MutationApplication > div > div:nth-child(14) > div.col-sm-2.btreset > form");
-		const submitButtonElement = document.getElementById("btnDeclareForm");
-		if (formElement && submitButtonElement) {
-			formElement.removeAttribute("action");
-			submitButtonElement.addEventListener("click", e => {
+		const formElement = $("#form_MutationApplication > div > div:nth-child(14) > div.col-sm-2.btreset > form");
+		const submitButtonElement = $("#btnDeclareForm");
+		if (formElement.length > 0 && submitButtonElement.length > 0) {
+			formElement.removeAttr("action");
+			submitButtonElement.click(e => {
 				e.preventDefault();
 
 				(async () => {

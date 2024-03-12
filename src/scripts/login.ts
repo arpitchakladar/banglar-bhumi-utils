@@ -10,9 +10,9 @@ interceptPost("viewLoginAreaAction", args => {
 		captchaValueElement.val("FFFFFF");
 		(window as any).DrawLoginCaptcha = () => {};
 		(window as any).validateLoginCaptcha = () => true;
-		captchaValueElement.css("display", "none");
-		captchaInputElement.css("display", "none");
-		$(".captcharefresh").css("display", "none");
+		captchaValueElement.hide();
+		captchaInputElement.hide();
+		$(".captcharefresh").hide();
 	}
 });
 interceptPost("viewPasswordRecoveryArea", args => {
@@ -24,9 +24,9 @@ interceptPost("viewPasswordRecoveryArea", args => {
 		captchaInputElement.val("FFFFFF");
 		captchaValueElement.val("FFFFFF");
 		(window as any).Captcha = () => {};
-		captchaValueElement.css("display", "none");
-		captchaInputElement.css("display", "none");
-		$("#captchaRef").css("display", "none");
+		captchaValueElement.hide();
+		captchaInputElement.hide();
+		$("#captchaRef").hide();
 	}
 });
 interceptPost("login.action", args => {
@@ -39,7 +39,7 @@ interceptPost("login.action", args => {
 
 		callback(data);
 		$("#txtInput").val("FFFFFF");
-		$("#beforeLoginDiv").css("display", "none");
+		$("#beforeLoginDiv").hide();
 		$("#afterLoginDiv").css("display", "block");
 		$("#afterLoginLabel").css("display", "block");
 		const username = atob(loginData.username.split("RGxycyMxMjM=")[1]);
@@ -61,9 +61,9 @@ interceptGet("viewRegistrationAreaAction", args => {
 		const captchaValueElement = $("#regCaptcha");
 		captchaInputElement.val("FFFFFF");
 		captchaValueElement.val("FFFFFF");
-		$("#registrationForm > div > div:nth-child(5) > div:nth-child(3)").css("display", "none");
-		$("#registrationForm > div > div:nth-child(5) > div:nth-child(4)").css("display", "none");
-		$("#registrationForm > div > div:nth-child(5) > div:nth-child(5)").css("display", "none");
+		$("#registrationForm > div > div:nth-child(5) > div:nth-child(3)").hide();
+		$("#registrationForm > div > div:nth-child(5) > div:nth-child(4)").hide();
+		$("#registrationForm > div > div:nth-child(5) > div:nth-child(5)").hide();
 		(window as any).DrawRegistrationCaptcha = () => {};
 		(window as any).validateRegistrationCaptcha = () => true;
 	}
@@ -77,9 +77,9 @@ interceptGet("viewChangePasswordAction", args => {
 		captchaValueElement.val("FFFFFF");
 		captchaInputElement.val("FFFFFF");
 		(window as any).DrawLoginCaptcha = () => {};
-		captchaValueElement.css("display", "none");
-		captchaInputElement.css("display", "none");
-		$(".captcharefresh").css("display", "none");
+		captchaValueElement.hide();
+		captchaInputElement.hide();
+		$(".captcharefresh").hide();
 	}
 });
 

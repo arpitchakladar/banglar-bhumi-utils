@@ -1,21 +1,20 @@
-const receiptFormElement = document.getElementById("form_reprint_request") as HTMLElement;
-receiptFormElement.removeAttribute("id");
-receiptFormElement.removeAttribute("name");
-receiptFormElement.removeAttribute("onsubmit");
-receiptFormElement.removeAttribute("target");
-receiptFormElement.removeAttribute("autocomplete");
-receiptFormElement.removeAttribute("rel");
+$("#form_reprint_request")
+	.removeAttr("id")
+	.removeAttr("name")
+	.removeAttr("onsubmit")
+	.removeAttr("target")
+	.removeAttr("autocomplete")
+	.removeAttr("rel");
 
-let captchaElement = document.querySelector("#werter > div > div:nth-child(4)") as HTMLElement;
+const captchaElement = $("#werter > div > div:nth-child(4)");
 
-if (captchaElement) {
-	captchaElement = captchaElement!;
-	const captchaValueElement = document.getElementById("captchaText") as HTMLInputElement;
-	const captchaFieldElement = document.querySelector("[name=txtDrawText]") as HTMLInputElement;
-	const removeCaptcha = () => {
-		captchaFieldElement.value = captchaValueElement.value;
-		captchaElement.style.display = "none";
-		setTimeout(removeCaptcha, 1000);
-	};
-	removeCaptcha();
+if (captchaElement.length > 0) {
+	const captchaValueElement = $("#captchaText");
+	const captchaFieldElement = $("[name=txtDrawText]");
+
+	setInterval(() => {
+		captchaFieldElement.val("FFFFFF");
+		captchaValueElement.val("FFFFFF");
+		captchaElement.hide();
+	}, 1000);
 }
