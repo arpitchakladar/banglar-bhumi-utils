@@ -18,7 +18,7 @@ const CreateInjectedSharedModulesPlugin = webpackRequire("plugins/create-injecte
 
 const { inlineJavascript } = webpackRequire("utils/inline-javascript");
 const { getScriptRuntimeFromType } = webpackRequire("utils/script-runtime");
-const { getFileNameHash } = webpackRequire("utils/filename-hash");
+const { getFileName } = webpackRequire("utils/build-file");
 
 const scripts = webpackRequire("utils/scripts");
 const sharedModules = webpackRequire("utils/shared-modules");
@@ -48,13 +48,8 @@ for (const scriptPath in scripts) {
 		let destinationFolder = "scripts";
 
 		switch (scriptType) {
-		case "injected-after":
+		case "injected":
 			scriptEntries = injectedAfterScriptEntries;
-			destinationFolder = "scripts/injected";
-			break;
-
-		case "injected-before":
-			scriptEntries = injectedBeforeScriptEntries;
 			destinationFolder = "scripts/injected";
 			break;
 
@@ -64,13 +59,13 @@ for (const scriptPath in scripts) {
 
 		scriptEntries[`${scriptType} - "${scriptPath}"`] = {
 			import: inlineJavascript(currentScripts.map(script => `import "${path.resolve(SOURCE_DIR, "scripts", script)}";`).join("\n")),
-			filename: `${destinationFolder}/${getFileNameHash(scriptType, scriptPath)}.js`
+			filename: `${destinationFolder}/${getFileName(scriptType, scriptPath)}.js`
 		};
 	}
 }
 
 for (const sharedModule of sharedModules) {
-	const sharedModuleNameHash = getFileNameHash(sharedModule, "shared");
+	const sharedModuleNameHash = getFileName(sharedModule, "shared");
 	const sharedModuleGlobalVariableName = `$${sharedModuleNameHash.substring(sharedModuleNameHash.length - 16)}`;
 	sharedModuleEntries[sharedModule] = {
 		import: path.resolve(SOURCE_DIR, "shared", sharedModule),
@@ -138,23 +133,6 @@ const sharedModuleOptions = {
 	}
 };
 
-const injectedModulesOptions = {
-	externals: sharedModuleExternals,
-	externalsType: "var",
-	module: {
-		rules: [
-			{
-				test: /banglar-bhumi-utils\/src\/.*.(^.?|\.[^d]|[^.]d|[^.][^d])\.(t|j)s$/,
-				loader: path.resolve(CONFIG_DIR, "webpack/loader/count-imports-loader.js"),
-				options: {
-					sharedModulesImportedCount: injectedSharedModulesImportedCount
-				},
-				enforce: "post"
-			}
-		]
-	}
-};
-
 const uninjectedScriptConfiguration = merge(
 	commonOptions,
 	sharedModuleOptions,
@@ -163,24 +141,26 @@ const uninjectedScriptConfiguration = merge(
 	}
 );
 
-const injectedAfterScriptConfiguration = merge(
+const injectedScriptConfiguration = merge(
 	commonOptions,
-	injectedModulesOptions,
 	{
+		externals: sharedModuleExternals,
+		externalsType: "var",
+		module: {
+			rules: [
+				{
+					test: /banglar-bhumi-utils\/src\/.*.(^.?|\.[^d]|[^.]d|[^.][^d])\.(t|j)s$/,
+					loader: path.resolve(CONFIG_DIR, "webpack/loader/count-imports-loader.js"),
+					options: {
+						sharedModulesImportedCount: injectedSharedModulesImportedCount
+					},
+					enforce: "post"
+				}
+			]
+		},
 		entry: injectedAfterScriptEntries,
 		plugins: [
 			new InjectScriptPlugin()
-		]
-	}
-);
-
-const injectedBeforeScriptConfiguration = merge(
-	commonOptions,
-	injectedModulesOptions,
-	{
-		entry: injectedBeforeScriptEntries,
-		plugins: [
-			new InjectScriptPlugin(true)
 		]
 	}
 );
@@ -227,7 +207,6 @@ const sharedModulesConfiguration = merge(
 
 module.exports = [
 	uninjectedScriptConfiguration,
-	injectedAfterScriptConfiguration,
-	injectedBeforeScriptConfiguration,
+	injectedScriptConfiguration,
 	sharedModulesConfiguration
 ];

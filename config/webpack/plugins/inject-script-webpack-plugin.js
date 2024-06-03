@@ -1,14 +1,10 @@
 const { sources } = require("webpack");
 const path = require("path");
 
-const { getFileNameHash } = webpackRequire("utils/filename-hash");
+const { getFileName } = webpackRequire("utils/build-file");
 const { getInjectedCode } = webpackRequire("utils/injected-code");
 
 class InjectScriptPlugin {
-	constructor(insertedBefore = false) {
-		this.insertedBefore = insertedBefore;
-	}
-
 	apply(compiler) {
 		compiler.hooks.compilation.tap("InjectScriptPlugin", compilation => {
 			compilation.hooks.processAssets.tapPromise(
@@ -21,7 +17,7 @@ class InjectScriptPlugin {
 					for (const assetName in assets) {
 						if (/\.js$/.test(assetName)) {
 							const injectedCodeResponse = getInjectedCode(compilation.getAsset(assetName).source.source())
-							const scriptInjectorModuleName = getFileNameHash("script-injector", "shared", true);
+							const scriptInjectorModuleName = getFileName("script-injector", "shared", true);
 							compilation.updateAsset(
 								assetName,
 								new sources.RawSource(injectedCodeResponse[0])

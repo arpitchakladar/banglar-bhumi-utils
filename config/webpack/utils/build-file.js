@@ -1,6 +1,6 @@
 const crypto = require("crypto");
 
-module.exports.getFileNameHash = (fileName, prefix, justHash = false) => {
+module.exports.getFileName = (fileName, prefix, justHash = false) => {
 	let hash = crypto
 		.createHash("md5")
 		.update(`${prefix}-${fileName}`)

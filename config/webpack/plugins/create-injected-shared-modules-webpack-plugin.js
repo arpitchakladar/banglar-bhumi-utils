@@ -2,7 +2,7 @@ const path = require("path");
 const fs = require("fs");
 const { sources } = require("webpack");
 
-const { getFileNameHash } = webpackRequire("utils/filename-hash");
+const { getFileName } = webpackRequire("utils/build-file");
 
 class CreateInjectedSharedModulesPlugin {
 	constructor({ injectedSharedModulesImportedCount, sortedSharedModules }) {
@@ -20,15 +20,15 @@ class CreateInjectedSharedModulesPlugin {
 				assets => {
 					const injectedSharedScripts = this.sortedSharedModules
 						.filter(sharedModule => this.injectedSharedModulesImportedCount[sharedModule] > 0)
-						.map(sharedModule => `shared/${getFileNameHash(sharedModule, "shared")}.js`);
+						.map(sharedModule => `shared/${getFileName(sharedModule, "shared")}.js`);
 
 					if (injectedSharedScripts.length > 0) {
-						const scriptInjectorModuleName = getFileNameHash("script-injector", "shared", true);
+						const scriptInjectorModuleName = getFileName("script-injector", "shared", true);
 						const injectionCode = injectedSharedScripts
 							.map(injectedScript => `$${scriptInjectorModuleName}.injectScriptHead("shared/${path.basename(injectedScript)}");`)
 							.join("");
 						compilation.emitAsset(
-							`shared/${getFileNameHash("injected-shared-modules", "shared")}.js`,
+							`shared/${getFileName("injected-shared-modules", "shared")}.js`,
 							new sources.RawSource(injectionCode)
 						);
 					}

@@ -2,11 +2,7 @@ import { generateWebPage } from "@/shared/generate-web-page";
 import { interceptPost } from "@/shared/intercept-jquery-ajax";
 import getDownloadInformationPDFPageContent from "@/scripts/functionality/view-khatian/download-information-pdf-page-content.html";
 
-declare function load(): void;
-
 const sanghaFacilitationCentreBannerUrl = "$l{ /assets/sangha-facilitation-centre-banner.jpg }l$";
-// document.currentScript.getAttribute("data-banner-image-url");
-//("/assets/sangha-facilitation-centre-banner.jpg");
 
 document.addEventListener("DOMContentLoaded", () => {
 	const submitButtonElement = $("#khbutton");

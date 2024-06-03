@@ -2,7 +2,7 @@ const { sources } = require("webpack");
 const path = require("path");
 
 const { getScriptRuntimeFromType } = webpackRequire("utils/script-runtime");
-const { getFileNameHash } = webpackRequire("utils/filename-hash");
+const { getFileName } = webpackRequire("utils/build-file");
 const scripts = webpackRequire("utils/scripts");
 const manifest = webpackRequire("plugins/create-manifest-webpack-plugin/manifest-template.json");
 
@@ -37,9 +37,9 @@ class CreateManifestPlugin {
 								arrangedScripts[scriptPath][scriptRuntime] = [];
 							}
 
-							arrangedScripts[scriptPath][scriptRuntime].push(`scripts/${getFileNameHash(scriptType, scriptPath)}.js`);
+							arrangedScripts[scriptPath][scriptRuntime].push(`scripts/${getFileName(scriptType, scriptPath)}.js`);
 							if (scriptType.startsWith("injected")) {
-								resources.push(`scripts/injected/${getFileNameHash(scriptType, scriptPath)}.js`);
+								resources.push(`scripts/injected/${getFileName(scriptType, scriptPath)}.js`);
 							}
 						}
 					}
@@ -48,8 +48,9 @@ class CreateManifestPlugin {
 						matches: [`*://banglarbhumi.gov.in/BanglarBhumi/*`],
 						js: this.sortedSharedModules
 							.filter(sharedModule => this.sharedModulesImportedCount[sharedModule] > 0)
-							.map(sharedModule => `shared/${getFileNameHash(sharedModule, "shared")}.js`)
-							.concat(arrangedScripts["*"]["document_start"]),
+							.map(sharedModule => `shared/${getFileName(sharedModule, "shared")}.js`)
+							.concat(arrangedScripts["*"]["document_start"])
+							.filter(x => x != null),
 						run_at: "document_start"
 					});
 
@@ -78,14 +79,14 @@ class CreateManifestPlugin {
 
 					const injectedSharedModules = this.sortedSharedModules
 						.filter(sharedModule => this.injectedSharedModulesImportedCount[sharedModule] > 0)
-						.map(sharedModule => `shared/${getFileNameHash(sharedModule, "shared")}.js`);
+						.map(sharedModule => `shared/${getFileName(sharedModule, "shared")}.js`);
 
 					if (injectedSharedModules.length > 0) {
 						resources = resources.concat(injectedSharedModules);
-						manifest.content_scripts[0].js.unshift(`shared/${getFileNameHash("injected-shared-modules", "shared")}.js`);
+						manifest.content_scripts[0].js.unshift(`shared/${getFileName("injected-shared-modules", "shared")}.js`);
 					}
 
-					manifest.content_scripts[0].js.unshift(`shared/${getFileNameHash("script-injector", "shared")}.js`);
+					manifest.content_scripts[0].js.unshift(`shared/${getFileName("script-injector", "shared")}.js`);
 
 					if (resources.length > 0) {
 						manifest.web_accessible_resources = [
