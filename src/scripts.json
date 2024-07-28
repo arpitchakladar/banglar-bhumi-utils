@@ -7,8 +7,8 @@
 		"otps/warish-application.ts": "WarishAppViewAction.action",
 		"functionality/mutation-application.ts": "MuteApplication.action",
 		"functionality/view-khatian/index.ts": "KnowYourProperty.action",
-		"functionality/grn-search.ts": "appGrnSrch",
 		"captcha/know-your-property.ts": "KnowYourProperty.action",
-		"captcha/application-receipt.ts": "Apprecrep.action"
+		"captcha/application-receipt.ts": "Apprecrep.action",
+		"functionality/sheet-map.ts": "SheetMapViewAction.action?lstSheetNo=0"
 	}
 }

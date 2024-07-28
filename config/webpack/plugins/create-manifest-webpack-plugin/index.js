@@ -57,10 +57,10 @@ class CreateManifestPlugin {
 					delete arrangedScripts["*"]["document_start"];
 
 					for (const scriptPath in arrangedScripts) {
-						const matches = [`*://banglarbhumi.gov.in/BanglarBhumi/${scriptPath}`];
+						const matches = [`*://banglarbhumi.gov.in/BanglarBhumi/${scriptPath}*`];
 
 						if (scriptPath === "Home")
-							matches.push(`*://banglarbhumi.gov.in/BanglarBhumi/${scriptPath}.action`);
+							matches.push(`*://banglarbhumi.gov.in/BanglarBhumi/${scriptPath}.action*`);
 
 						for (const scriptRuntime in arrangedScripts[scriptPath]) {
 							manifest.content_scripts.push({

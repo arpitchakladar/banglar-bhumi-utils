@@ -211,7 +211,8 @@
 		}
 	</style>
 	<img class="banner" src="https://banglarbhumi.gov.in/BanglarBhumi/images/bl.png">
-	<div class="details" id="$isPlotInformation$">$details$</div>
+	<!--<button id="print-button">Print</button>-->
+	<div class="details">$details$</div>
 	<footer>
 		<img class="footer" src="$sanghaFacilitationCentreBannerUrl$">
 	</footer>
@@ -229,20 +230,21 @@
 		};
 
 		if ($isPlotInformation$) {
+			document.querySelector(".details").setAttribute("id", "plot-information");
 			const tableElement = document.createElement("table");
 			tableElement.setAttribute("id", "locater-information");
 			tableBodyElement = document.createElement("tbody");
 			tableElement.appendChild(tableBodyElement);
-			const detailsElement = document.querySelector("#plot-information > div:nth-child(1)");
+			const detailsElement = document.querySelector(".details > div:nth-child(1)");
 			detailsElement.insertBefore(tableElement, detailsElement.querySelector("div:nth-child(2)"));
 		} else {
+			document.querySelector(".details").setAttribute("id", "khatian-information");
 			tableBodyElement = document.querySelector(".details > table > tbody > tr > td:nth-child(1) > div:nth-child(2) > table > tbody");
 		}
 
 		createTableEntry("\u{99C}\u{9C7}\u{9B2}\u{9BE} (District):", "$district$");
 		createTableEntry("\u{9AC}\u{9CD}\u{9B2}\u{995} (Block):", "$block$");
 		createTableEntry("\u{9AE}\u{9CC}\u{99C}\u{9BE} (Mouza):", "$mouza$");
-
 		Promise.all(
 			Array.from(document.images)
 				.filter(img => !img.complete).map(img => new Promise(resolve => {
