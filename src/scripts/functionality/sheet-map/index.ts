@@ -1,58 +1,71 @@
 import { generateWebPage } from "@/shared/generate-web-page";
 import getDownloadMapPDFPageContent from "@/scripts/functionality/sheet-map/download-map-pdf-page-content.html";
-import getMapSVGPathElementContent from "@/scripts/functionality/sheet-map/map-svg-path-element.html";
-import getMapPlotLabelElementContent from "@/scripts/functionality/sheet-map/map-svg-plot-label-element.html";
+import getMapPlotPolygonPathElement from "@/scripts/functionality/sheet-map/map-plot-polygon-path-element.html";
+import getMapPlotNumberLabelTextElement from "@/scripts/functionality/sheet-map/map-plot-number-label-text-element.html";
+import getPlotInformationElement from "@/scripts/functionality/sheet-map/plot-information-element.html";
 
-interface PlotDetail {
+interface PlotPolygon {
 	plotArea: number;
 	plotno: string;
 	polygon: string;
 };
 
-interface PlotLabel {
+interface PlotNumberLabel {
 	plotno: string;
 	point: string;
 }
 
-const downloadSVGButtonContainer = document.createElement("td");
-const downloadSVGButton = document.createElement("button");
-const downloadPDFButtonContainer = document.createElement("td");
-const downloadPDFButton = document.createElement("button");
-const downloadPDFWithOutLabelButtonContainer = document.createElement("td");
-const downloadPDFWithOutLabelButton = document.createElement("button");
-downloadSVGButton.innerHTML = "DOWNLOAD SVG";
-downloadPDFButton.innerHTML = "DOWNLOAD PDF";
-downloadPDFWithOutLabelButton.innerHTML = "DOWNLOAD PDF (NO LABELS)";
-downloadSVGButtonContainer.appendChild(downloadSVGButton);
-downloadPDFButtonContainer.appendChild(downloadPDFButton);
-downloadPDFWithOutLabelButtonContainer.appendChild(downloadPDFWithOutLabelButton);
-const svgElement = document.querySelector("svg");
-document.querySelector("#headerTable > tbody > tr")!.appendChild(downloadSVGButtonContainer);
-document.querySelector("#headerTable > tbody > tr")!.appendChild(downloadPDFButtonContainer);
-document.querySelector("#headerTable > tbody > tr")!.appendChild(downloadPDFWithOutLabelButtonContainer);
-const resetZoomButton = document.querySelector<HTMLButtonElement>("#btnResetZoom")!;
+const headerElement = document.querySelector("#headerTable > tbody > tr")!;
 const plotNumberInput = document.querySelector<HTMLInputElement>("#txtPlotNo")!;
 const plotInformation = document.createElement("div") as HTMLDivElement;
+let plotPolygonPathElements = "";
+let plotNumberLabelTextElements = "";
+
 document.body.appendChild(plotInformation);
 
-const setPlotInformation = (plotDetail: PlotDetail | null | undefined = null) => {
-	if (plotDetail) {
-		plotInformation.innerHTML = "<div>Plot Number: " + plotDetail.plotno + "</div><div>Area: " + (plotDetail.plotArea/1000).toFixed(3) + " acres</div>";
+const createHeaderButton = (text: string) => {
+	const buttonContainer = document.createElement("td");
+	const button = document.createElement("button");
+	button.innerHTML = text;
+	button.style.display = "none";
+	buttonContainer.appendChild(button);
+	headerElement.appendChild(buttonContainer);
+	return button;
+};
+
+const setPlotInformation = (plotPolygon: PlotPolygon | null | undefined = null) => {
+	if (plotPolygon) {
+		plotInformation.innerHTML = getPlotInformationElement({
+			area: (plotPolygon.plotArea/1000).toFixed(3),
+			plotNumber: plotPolygon.plotno
+		});
 	} else {
-		plotInformation.innerHTML = "<div>Plot Number: </div><div>Area: 0.000 acres</div>";
+		plotInformation.innerHTML = getPlotInformationElement({
+			area: "0.000",
+			plotNumber: ""
+		});
 	}
 };
-setPlotInformation();
 
-let plotDetailContent = "";
-let plotLabelContent = "";
+const downloadPDF = (labelPoints: boolean = true) => {
+	generateWebPage(
+		getDownloadMapPDFPageContent({
+			mapContent: plotPolygonPathElements + (labelPoints ? plotNumberLabelTextElements : "")
+		}),
+		"map"
+	);
+};
+
+const downloadSVGButton = createHeaderButton("SAVE SVG");
+const downloadPDFButton = createHeaderButton("SAVE PDF");
+const downloadPDFNoLabelButton = createHeaderButton("SAVE PDF (NO LABEL)");
 
 downloadSVGButton.addEventListener("click", e => {
 	e.preventDefault();
 	const element = document.createElement("a");
 	element.setAttribute(
 		"href",
-		"data:text/plain;charset=utf-8," + encodeURIComponent(plotDetailContent + plotLabelContent)
+		"data:text/plain;charset=utf-8," + encodeURIComponent(plotPolygonPathElements + plotNumberLabelTextElements)
 	);
 	element.setAttribute("download", "map.svg");
 	element.style.display = "none";
@@ -61,24 +74,17 @@ downloadSVGButton.addEventListener("click", e => {
 	document.body.removeChild(element);
 });
 
-const downloadPDF = (labelPoints: boolean = true) => {
-	generateWebPage(
-		getDownloadMapPDFPageContent({
-			mapContent: plotDetailContent + (labelPoints ? plotLabelContent : "")
-		}),
-		"map"
-	);
-};
-
 downloadPDFButton.addEventListener("click", e => {
 	e.preventDefault();
 	downloadPDF();
 });
 
-downloadPDFWithOutLabelButton.addEventListener("click", e => {
+downloadPDFNoLabelButton.addEventListener("click", e => {
 	e.preventDefault();
 	downloadPDF(false);
 });
+
+setPlotInformation();
 
 (async () => {
 	const searchParams = new URLSearchParams(window.location.search);
@@ -87,40 +93,44 @@ downloadPDFWithOutLabelButton.addEventListener("click", e => {
 		{
 			method: "POST"
 		});
-	const plotDetailList: PlotDetail[] = (await response1.json()).features;
+	const plotPolygonList: PlotPolygon[] = (await response1.json()).features;
 	const response2 = await fetch(
 		"/BanglarBhumi/sheetMap_populateCentroidData?lstSheetNo=" + searchParams.get("lstSheetNo"),
 		{
 			method: "POST"
 		});
-	const plotLabelList: PlotLabel[] = (await response2.json()).features;
-	let plotDetails: { [key: string]: PlotDetail } = {};
+	const plotNumberLabelList: PlotNumberLabel[] = (await response2.json()).features;
+	let plotPolygons: { [key: string]: PlotPolygon } = {};
 
-	for (const plotDetail of plotDetailList) {
-		const plotPolygonPoints = plotDetail.polygon.split("(((")[1].split(")))")[0];
-		plotDetailContent += getMapSVGPathElementContent({
-			polygonData: plotPolygonPoints
+	for (const plotPolygon of plotPolygonList) {
+		const plotPolygonPoints = plotPolygon.polygon.split("(((")[1].split(")))")[0];
+		plotPolygonPathElements += getMapPlotPolygonPathElement({
+			polygonVertices: plotPolygonPoints
 		});
 	}
 
-	for (const plotLabel of plotLabelList) {
-		const plotLabelPoint = plotLabel.point.split("(")[1].split(")")[0].split(" ");
-		plotLabelContent += getMapPlotLabelElementContent({
-			plotLabelX: plotLabelPoint[0],
-			plotLabelY: plotLabelPoint[1],
-			plotNumber: plotLabel.plotno
+	for (const plotNumberLabel of plotNumberLabelList) {
+		const plotNumberLabelPoint = plotNumberLabel.point.split("(")[1].split(")")[0].split(" ");
+		plotNumberLabelTextElements += getMapPlotNumberLabelTextElement({
+			x: plotNumberLabelPoint[0],
+			y: plotNumberLabelPoint[1],
+			plotNumber: plotNumberLabel.plotno
 		});
 	}
+
+	downloadSVGButton.style.display = "inherit";
+	downloadPDFButton.style.display = "inherit";
+	downloadPDFNoLabelButton.style.display = "inherit";
 
 	document.querySelector("#btnSearch")!.addEventListener("click", () => {
-		let plotDetail;
-		for (const p of plotDetailList) {
+		let plotPolygon;
+		for (const p of plotPolygonList) {
 			if (p.plotno === plotNumberInput.value) {
-				plotDetail = p;
+				plotPolygon = p;
 				break;
 			}
 		}
-		setPlotInformation(plotDetail);
+		setPlotInformation(plotPolygon);
 	});
 
 	await new Promise<void>((resolve, reject) => {
@@ -130,15 +140,15 @@ downloadPDFWithOutLabelButton.addEventListener("click", e => {
 			if (plotElements.length) {
 				clearInterval(plotElementIdsControl);
 				for (let i = 0; i < plotElements.length; i++) {
-					plotDetails[plotElements[i].id] = plotDetailList[i];
+					plotPolygons[plotElements[i].id] = plotPolygonList[i];
 				}
 				resolve();
 			}
-		}, 300);
+		}, 50);
 	});
 
 	setInterval(() => {
-		for (const plotElementId in plotDetails) {
+		for (const plotElementId in plotPolygons) {
 			const e = document.getElementById(plotElementId);
 			if (e) {
 				e.removeEventListener("click", handlePlotClick);
@@ -155,6 +165,6 @@ downloadPDFWithOutLabelButton.addEventListener("click", e => {
 		const target = e.target as SVGPathElement;
 
 		target.setAttribute("fill", "#8aeeef");
-		setPlotInformation(plotDetails[target.id]);
+		setPlotInformation(plotPolygons[target.id]);
 	};
 })();

@@ -8,6 +8,23 @@
 		max-width: 100%;
 		max-height: 100%;
 	}
+	text {
+		font-family: "BNB-TTBidisha", sans-serif;
+		font-weight: bold;
+		font-size: 2;
+		fill: blue;
+		text-anchor: middle;
+	}
+	path {
+		fill-rule: evenodd;
+		fill: #ffcc66;
+		fill-opacity: 0.8;
+		stroke: #cc6633;
+		stroke-opacity: 0.8;
+		stroke-width: 0.2;
+		stroke-linecap: round;
+		stroke-linejoin: round;
+	}
 </style>
 <svg>
 	$mapContent$
@@ -17,30 +34,34 @@
 	let miny = Infinity;
 	let maxx = 0;
 	let maxy = 0;
+	const paths = document.querySelectorAll("path");
 
-	for (const p of document.querySelectorAll("path")) {
+	for (const p of paths) {
 		const b = p.getBBox();
-		if (b.x < minx) {
-			minx = b.x;
-		}
-		if (b.y < miny) {
-			miny = b.y;
-		}
-		if (maxx < b.x + b.width) {
-			maxx = b.x + b.width;
-		}
-		if (maxy < b.y + b.height) {
-			maxy = b.y + b.height;
-		}
+		minx = b.x < minx ? b.x : minx;
+		miny = b.y < miny ? b.y : miny;
+		maxx = maxx < b.x + b.width ? b.x + b.width : maxx;
+		maxy = maxy < b.y + b.height ? b.y + b.height : maxy;
 	}
 
-	const viewBoxWidth = maxx - minx;
-	const viewBoxHeight = maxy - miny;
+	for (const p of paths) {
+		const m = "M " + p.getAttribute("d").substr(2).split(",").map(cood => {
+			cood = cood.trim().split(" ");
+			return cood[0] + " " + (miny + maxy - parseFloat(cood[1])).toString();
+		}).join(", ");
+		p.setAttribute("d", m);
+	}
 
-	document.querySelectorAll("text").forEach(e => {
-		e.setAttribute("font-size", (Math.min(viewBoxWidth, viewBoxHeight)/200).toString())
-	});
-	document.querySelector("svg").setAttribute("viewBox", [minx, miny, viewBoxWidth, viewBoxHeight].map(e => e.toString()).join(" "));
+	for (const t of document.querySelectorAll("text")) {
+		t.setAttribute("y", (miny + maxy - parseFloat(t.getAttribute("y"))).toString());
+	}
+
+	document.querySelector("svg")
+		.setAttribute(
+			"viewBox",
+			[minx, miny, maxx - minx, maxy - miny]
+				.map(e => e.toString()).join(" ")
+		);
 	window.addEventListener("afterprint", window.close);
 	window.print();
 </script>

@@ -104,9 +104,8 @@ document.addEventListener("DOMContentLoaded", () => {
 				"json"
 			);
 		}
-
 	};
 
 	login();
-	setInterval(login, 1000 * 60 * 5);
+	setInterval(login, 1000 * 60);
 });
