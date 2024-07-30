@@ -44,8 +44,18 @@ const setPlotInformation = (plotPolygon: PlotPolygon | null | undefined = null) 
 };
 
 const downloadPDF = (labelPoints: boolean = true) => {
+	const _getMapDetail = (i: number) => {
+		const detail = document.querySelector(`#headerTable > tbody > tr > td:nth-child(${i})`)!
+			.innerHTML
+			.split("[")[1]
+			.trim();
+		return detail.substr(0, detail.length - 1);
+	};
 	generateWebPage(
 		getDownloadMapPDFPageContent({
+			district: _getMapDetail(1),
+			block: _getMapDetail(2),
+			mouza: _getMapDetail(3),
 			mapContent: plotPolygonPathElements + (labelPoints ? plotNumberLabelTextElements : "")
 		}),
 		"map"
