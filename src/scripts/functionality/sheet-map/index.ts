@@ -34,17 +34,13 @@ const createHeaderButton = (text: string) => {
 };
 
 const setPlotInformation = (plotPolygon: PlotPolygon | null | undefined = null) => {
-	if (plotPolygon) {
-		plotInformation.innerHTML = getPlotInformationElement({
-			area: (plotPolygon.plotArea/1000).toFixed(3),
-			plotNumber: plotPolygon.plotno
-		});
-	} else {
-		plotInformation.innerHTML = getPlotInformationElement({
-			area: "0.000",
-			plotNumber: ""
-		});
-	}
+	plotInformation.innerHTML = plotPolygon ? getPlotInformationElement({
+		area: (plotPolygon.plotArea/1000).toFixed(3),
+		plotNumber: plotPolygon.plotno
+	}) : getPlotInformationElement({
+		area: "0.000",
+		plotNumber: ""
+	});
 };
 
 const downloadPDF = (labelPoints: boolean = true) => {
@@ -56,23 +52,8 @@ const downloadPDF = (labelPoints: boolean = true) => {
 	);
 };
 
-const downloadSVGButton = createHeaderButton("SAVE SVG");
 const downloadPDFButton = createHeaderButton("SAVE PDF");
 const downloadPDFNoLabelButton = createHeaderButton("SAVE PDF (NO LABEL)");
-
-downloadSVGButton.addEventListener("click", e => {
-	e.preventDefault();
-	const element = document.createElement("a");
-	element.setAttribute(
-		"href",
-		"data:text/plain;charset=utf-8," + encodeURIComponent(plotPolygonPathElements + plotNumberLabelTextElements)
-	);
-	element.setAttribute("download", "map.svg");
-	element.style.display = "none";
-	document.body.appendChild(element);
-	element.click();
-	document.body.removeChild(element);
-});
 
 downloadPDFButton.addEventListener("click", e => {
 	e.preventDefault();
@@ -118,7 +99,6 @@ setPlotInformation();
 		});
 	}
 
-	downloadSVGButton.style.display = "inherit";
 	downloadPDFButton.style.display = "inherit";
 	downloadPDFNoLabelButton.style.display = "inherit";
 
