@@ -190,19 +190,6 @@
 			width: 50%;
 		}
 
-		footer {
-			heigth: 5rem;
-			width: 100%;
-		}
-
-		footer > img {
-			width: 210mm;
-			height: 5rem !important;
-			background: transparent;
-			position: fixed;
-			bottom: 0;
-		}
-
 		body {
 			width: 210mm !important;
 			height: 297mm !important;
@@ -212,9 +199,6 @@
 	</style>
 	<img class="banner" src="https://banglarbhumi.gov.in/BanglarBhumi/images/bl.png">
 	<div class="details">$details$</div>
-	<footer>
-		<img class="footer" src="$sanghaFacilitationCentreBannerUrl$">
-	</footer>
 	<script>
 		let tableBodyElement;
 		const createTableEntry = (label, value) => {
@@ -250,20 +234,6 @@
 					img.onload = img.onerror = resolve;
 				}))
 			).then(() => {
-				const rem = parseFloat(getComputedStyle(document.documentElement).fontSize);
-				const headerRowHeight = document.getElementById("headertitle").offsetHeight;
-				const footerHeight = document.querySelector("footer > img").offsetHeight;
-				const pageHeight = document.body.offsetHeight - (footerHeight + rem);
-				let offset = -document.querySelector("div > img").getBoundingClientRect().top;
-
-				for (const tableRowElement of Array.from(document.querySelectorAll($isPlotInformation$ ? "#plot-information > div:nth-child(1) > div:nth-child(5) > table > tbody > tr" : "#khatian-information > table > tbody > tr > td:nth-child(1) > div:nth-child(5) > table > tbody > tr"))) {
-					const tableRowElementDOMRect = tableRowElement.getBoundingClientRect();
-					if (tableRowElementDOMRect.y + offset + tableRowElementDOMRect.height >= pageHeight) {
-						tableRowElement.style.pageBreakBefore = "always";
-						offset -= pageHeight - (headerRowHeight + rem);
-					}
-				}
-
 				window.addEventListener("afterprint", window.close);
 				window.print();
 			});
