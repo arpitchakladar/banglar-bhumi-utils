@@ -1,0 +1,46 @@
+<style>
+	body {
+		margin: 0;
+		padding: 0;
+	}
+	svg {
+		display: block;
+		max-width: 100%;
+		max-height: 100%;
+	}
+</style>
+<svg>
+	$mapContent$
+</svg>
+<script>
+	let minx = Infinity;
+	let miny = Infinity;
+	let maxx = 0;
+	let maxy = 0;
+
+	for (const p of document.querySelectorAll("path")) {
+		const b = p.getBBox();
+		if (b.x < minx) {
+			minx = b.x;
+		}
+		if (b.y < miny) {
+			miny = b.y;
+		}
+		if (maxx < b.x + b.width) {
+			maxx = b.x + b.width;
+		}
+		if (maxy < b.y + b.height) {
+			maxy = b.y + b.height;
+		}
+	}
+
+	const viewBoxWidth = maxx - minx;
+	const viewBoxHeight = maxy - miny;
+
+	document.querySelectorAll("text").forEach(e => {
+		e.setAttribute("font-size", (Math.min(viewBoxWidth, viewBoxHeight)/200).toString())
+	});
+	document.querySelector("svg").setAttribute("viewBox", [minx, miny, viewBoxWidth, viewBoxHeight].map(e => e.toString()).join(" "));
+	window.addEventListener("afterprint", window.close);
+	window.print();
+</script>

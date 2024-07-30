@@ -9,6 +9,6 @@
 		"functionality/view-khatian/index.ts": "KnowYourProperty.action",
 		"captcha/know-your-property.ts": "KnowYourProperty.action",
 		"captcha/application-receipt.ts": "Apprecrep.action",
-		"functionality/sheet-map.ts": "SheetMapViewAction.action?lstSheetNo=0"
+		"functionality/sheet-map/index.ts": "SheetMapViewAction.action"
 	}
 }
