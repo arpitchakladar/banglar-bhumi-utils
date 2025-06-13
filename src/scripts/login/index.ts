@@ -84,12 +84,7 @@ const observer = new MutationObserver((mutationsList, obs) => {
 					prepareCaptcha(ctx, canvas.width, canvas.height);
 					canvas.style.display = "";
 					const dataURL = canvas.toDataURL("image/png");
-					Tesseract.recognize(canvas, 'eng', {
-						logger: console.log
-					}).then(({ data: { text, confidence } }) => {
-						console.log("OCR Result:", text);
-						console.log("OCR confidence:", confidence);
-					});
+					chrome.runtime.sendMessage({ type: "ping", data: "hello background" }).then(console.log);
 					// TODO: Perform OCR
 					// window.postMessage({
 					// 	type: "RUN_OCR",
