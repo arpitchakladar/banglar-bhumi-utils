@@ -27,7 +27,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 				});
 
 				if (offscreenResponse && offscreenResponse.success) {
-					sendResponse({ success: true, text: offscreenResponse.text });
+					sendResponse(offscreenResponse);
 				} else {
 					sendResponse({ success: false, error: offscreenResponse?.error || "Unknown OCR error" });
 				}

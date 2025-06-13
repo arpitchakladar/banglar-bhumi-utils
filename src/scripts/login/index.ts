@@ -89,11 +89,12 @@ const observer = new MutationObserver((mutationsList, obs) => {
 						{ type: "OCR", dataURL },
 						({ success, text, confidence }) => {
 							if (success) {
-								if (confidence < 85) {
+								const textResult = text.trim();
+								if (confidence < 80 || textResult.length !== 6) {
 									// Reset the captcha if confidence is low
 									img.src = "generateCaptcha?" + new Date().getTime();
 								} else {
-									captchaInput.value = text;
+									captchaInput.value = textResult;
 								}
 							}
 						},
