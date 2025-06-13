@@ -1,4 +1,4 @@
-module.exports = function(source) {
+export default function(source) {
 	source = source
 		.replaceAll("\\", "\\\\")
 		.replaceAll("`","\\`")

@@ -1,10 +1,9 @@
-const path = require("path");
+import path from "path";
+import { ImportManager } from "import-manager";
 
-const { ImportManager } = require("import-manager");
+import sharedModules from "../utils/shared-modules.js";
 
-const sharedModules = webpackRequire("utils/shared-modules.js");
-
-module.exports = function(source) {
+export default function(source) {
 	const currentSharedModuleName = path.basename(this.resourcePath.substring(0, this.resourcePath.length - 3));
 
 	if (sharedModules.includes(currentSharedModuleName)) {

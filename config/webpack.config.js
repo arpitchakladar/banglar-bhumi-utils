@@ -1,27 +1,29 @@
-const path = require("path");
-const fs = require("fs");
-const webpack = require("webpack");
-const { merge } = require("webpack-merge");
-const CopyPlugin = require("copy-webpack-plugin");
+import path from "path";
+import fs from "fs";
+import { fileURLToPath } from "url";
+import webpack from "webpack";
+import { merge } from "webpack-merge";
+import CopyPlugin from "copy-webpack-plugin";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 global.ROOT_DIR = path.resolve(__dirname, "..");
 global.CONFIG_DIR = path.resolve(ROOT_DIR, "config");
 global.SOURCE_DIR = path.resolve(ROOT_DIR, "src");
 global.production = process.env.NODE_ENV === "production";
 
-global.webpackRequire = modulePath => require(path.resolve(CONFIG_DIR, "webpack", modulePath));
+import CreateManifestPlugin from "./webpack/plugins/create-manifest-webpack-plugin/index.js";
+import CreateRulesPlugin from "./webpack/plugins/create-rules-webpack-plugin.js";
+import InjectScriptPlugin from "./webpack/plugins/inject-script-webpack-plugin.js";
+import CreateInjectedSharedModulesPlugin from "./webpack/plugins/create-injected-shared-modules-webpack-plugin.js";
 
-const CreateManifestPlugin = webpackRequire("plugins/create-manifest-webpack-plugin");
-const CreateRulesPlugin = webpackRequire("plugins/create-rules-webpack-plugin");
-const InjectScriptPlugin = webpackRequire("plugins/inject-script-webpack-plugin");
-const CreateInjectedSharedModulesPlugin = webpackRequire("plugins/create-injected-shared-modules-webpack-plugin");
+import { inlineJavascript } from "./webpack/utils/inline-javascript.js";
+import { getScriptRuntimeFromType } from "./webpack/utils/script-runtime.js";
+import { getFileName } from "./webpack/utils/build-file.js";
 
-const { inlineJavascript } = webpackRequire("utils/inline-javascript");
-const { getScriptRuntimeFromType } = webpackRequire("utils/script-runtime");
-const { getFileName } = webpackRequire("utils/build-file");
-
-const scripts = webpackRequire("utils/scripts");
-const sharedModules = webpackRequire("utils/shared-modules");
+import scripts from "./webpack/utils/scripts.js";
+import sharedModules from "./webpack/utils/shared-modules.js";
 
 const sharedModulesImportedCount = {};
 
@@ -222,7 +224,7 @@ const sharedModulesConfiguration = merge(
 	}
 );
 
-module.exports = [
+export default [
 	backgroundScriptConfiguration,
 	uninjectedScriptConfiguration,
 	injectedScriptConfiguration,

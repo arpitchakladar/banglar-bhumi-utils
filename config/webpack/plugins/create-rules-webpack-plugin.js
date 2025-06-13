@@ -1,6 +1,6 @@
-const path = require("path");
-const fs = require("fs");
-const { sources } = require("webpack");
+import path from "path";
+import fs from "fs";
+import webpack from "webpack";
 
 class CreateRulesPlugin {
 	apply(compiler) {
@@ -16,7 +16,7 @@ class CreateRulesPlugin {
 					let ruleId = 1;
 
 					for (const ruleFileName of ruleFileNames) {
-						const rule = require(path.resolve(SOURCE_DIR, "rules", ruleFileName));
+						const rule = JSON.parse(fs.readFileSync(path.resolve("src/rules", ruleFileName)));
 
 						if (rule instanceof Array) {
 							for (const currentRule of rule) {
@@ -31,7 +31,7 @@ class CreateRulesPlugin {
 
 					compilation.emitAsset(
 						"rules.json",
-						new sources.RawSource(
+						new webpack.sources.RawSource(
 							JSON.stringify(
 								rules,
 								undefined,
@@ -47,4 +47,4 @@ class CreateRulesPlugin {
 	}
 }
 
-module.exports = CreateRulesPlugin;
+export default CreateRulesPlugin;

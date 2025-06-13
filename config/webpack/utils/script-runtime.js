@@ -1,4 +1,4 @@
-module.exports.getScriptRuntimeFromType = scriptType => {
+export const getScriptRuntimeFromType = scriptType => {
 	switch (scriptType) {
 		case "before":
 		case "injected-after":

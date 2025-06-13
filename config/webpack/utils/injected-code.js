@@ -1,4 +1,4 @@
-const crypto = require("crypto");
+import crypto from "crypto";
 
 const getHash = url =>
 	crypto
@@ -7,7 +7,7 @@ const getHash = url =>
 		.digest("hex")
 		.substring(16);
 
-module.exports.getInjectedCode = code => {
+export const getInjectedCode = code => {
 	const extensionAssets = {};
 	let i = 0;
 

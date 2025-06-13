@@ -1,8 +1,8 @@
-const path = require("path");
-const fs = require("fs");
-const { sources } = require("webpack");
+import path from "path";
+import fs from "fs";
+import webpack from "webpack";
 
-const { getFileName } = webpackRequire("utils/build-file");
+import { getFileName } from "../utils/build-file.js";
 
 class CreateInjectedSharedModulesPlugin {
 	constructor({ injectedSharedModulesImportedCount, sortedSharedModules }) {
@@ -29,7 +29,7 @@ class CreateInjectedSharedModulesPlugin {
 							.join("");
 						compilation.emitAsset(
 							`shared/${getFileName("injected-shared-modules", "shared")}.js`,
-							new sources.RawSource(injectionCode)
+							new webpack.sources.RawSource(injectionCode)
 						);
 					}
 				}
@@ -38,4 +38,4 @@ class CreateInjectedSharedModulesPlugin {
 	}
 }
 
-module.exports = CreateInjectedSharedModulesPlugin;
+export default CreateInjectedSharedModulesPlugin;
