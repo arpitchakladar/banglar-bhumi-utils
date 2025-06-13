@@ -1,7 +1,7 @@
 {
 	"injected": {
 		"stop-blocking.ts": "*",
-		"login.ts": "*",
+		"login/index.ts": "*",
 		"otps/grievance-application.ts": "GrievAppViewAction.action",
 		"otps/mutation-application.ts": "MuteApplication.action",
 		"otps/warish-application.ts": "WarishAppViewAction.action",
