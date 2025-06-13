@@ -54,7 +54,7 @@ const observer = new MutationObserver((mutationsList, obs) => {
 		for (const node of mutation.addedNodes) {
 			if ((node as any).nodeType === 1 && (node as any).id === "loginform") {
 				const img = (node as HTMLFormElement).querySelector("#captchaImg") as HTMLImageElement;
-				const captchaInput = (node as HTMLFormElement).querySelector("txtInput") as HTMLInputElement;
+				const captchaInput = (node as HTMLFormElement).querySelector("#txtInput") as HTMLInputElement;
 
 				// Wait for image to load to get correct dimensions
 				img.addEventListener("load", async () => {
@@ -83,26 +83,21 @@ const observer = new MutationObserver((mutationsList, obs) => {
 					prepareCaptcha(ctx, canvas.width, canvas.height);
 					canvas.style.display = "";
 					const dataURL = canvas.toDataURL("image/png");
-					chrome.runtime.sendMessage({ type: "OCR", dataURL }, console.log);
-					// TODO: Perform OCR
-					// window.postMessage({
-					// 	type: "RUN_OCR",
-					// 	dataURL: dataURL
-					// }, "*");
-					//
-					// // Listen for OCR result
-					// function recieveOCRResult(event: any) {
-					// 	if (event.data.type === "OCR_RESULT") {
-					// 		console.log("Tesseract result:", event.data.text, "Confidence:", event.data.confidence);
-					// 		window.removeEventListener("message", recieveOCRResult);
-					// 		if (event.data.confidence < 80 || event.data.text.length !== 6) {
-					// 			img.src = "generateCaptcha?" + new Date().getTime();
-					// 		} else {
-					// 			captchaInput.value = event.data.text;
-					// 		}
-					// 	}
-					// }
-					// window.addEventListener("message", recieveOCRResult);
+
+					// Perform OCR
+					chrome.runtime.sendMessage(
+						{ type: "OCR", dataURL },
+						({ success, text, confidence }) => {
+							if (success) {
+								if (confidence < 85) {
+									// Reset the captcha if confidence is low
+									img.src = "generateCaptcha?" + new Date().getTime();
+								} else {
+									captchaInput.value = text;
+								}
+							}
+						},
+					);
 				});
 			}
 		}

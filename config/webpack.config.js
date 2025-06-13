@@ -193,10 +193,16 @@ const sharedModulesConfiguration = merge(
 		entry: sharedModuleEntries,
 		plugins: [
 			new CopyPlugin({
-				patterns: [{
-					from: path.resolve(ROOT_DIR, "static"),
-					to: "./"
-				}]
+				patterns: [
+					{
+						from: path.resolve("static"),
+						to: "./",
+					},
+					{
+						from: path.resolve("src/offscreen"),
+						to: "./offscreen",
+					},
+				],
 			}),
 			new CreateInjectedSharedModulesPlugin({
 				injectedSharedModulesImportedCount,

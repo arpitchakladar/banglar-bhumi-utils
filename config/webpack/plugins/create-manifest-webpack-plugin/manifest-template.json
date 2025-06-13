@@ -1,7 +1,7 @@
 {
 	"manifest_version": 3,
 	"name": "Banglar Bhumi Utils",
-	"permissions": ["scripting", "declarativeNetRequest"],
+	"permissions": ["offscreen", "scripting", "declarativeNetRequest"],
 	"description": "A chrome extension to improve functionality of the banglarbhumi.gov.in website.",
 	"icons": {
 		"512": "icon512.png"
@@ -12,5 +12,8 @@
 			"enabled": true,
 			"path": "rules.json"
 		}]
+	},
+	"content_security_policy": {
+		"extension_pages": "script-src 'self' 'wasm-unsafe-eval'; object-src 'self';"
 	}
 }

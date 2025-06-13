@@ -123,3 +123,4 @@ class CreateManifestPlugin {
 }
 
 export default CreateManifestPlugin;
+
