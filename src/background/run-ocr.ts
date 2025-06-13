@@ -1,7 +1,15 @@
-chrome.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
-	if (message.type === "ping") {
-		console.log("Received ping from content script");
-		console.log(message.data);
-		sendResponse({ text: "pong" });
+import Tesseract from "tesseract.js";
+
+chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+	if (message.type === "OCR") {
+		(async () => {
+			const { data: { text, confidence } } = await Tesseract.recognize(message.dataURL, "eng+osd", {
+				logger: m => console.log(m),
+			});
+			sendResponse({ text, confidence });
+		})();
+		return true;
 	}
+
+	return false;
 });
