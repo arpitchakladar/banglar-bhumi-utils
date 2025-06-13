@@ -35,11 +35,20 @@ for (const sharedModule of sharedModules) {
 	injectedSharedModulesImportedCount[sharedModule] = 0;
 }
 
+const backgroundScriptEntries = {};
 const uninjectedScriptEntries = {};
 const injectedAfterScriptEntries = {};
 const injectedBeforeScriptEntries = {};
 const sharedModuleEntries = {};
 const sharedModuleExternals = {};
+
+const backgroundScriptImports = fs.readdirSync(path.resolve(SOURCE_DIR, "background"))
+	.map(scriptName => `import "${path.resolve(SOURCE_DIR, "background", scriptName)}";`)
+	.join("\n");
+backgroundScriptEntries["background script"] = {
+	import: inlineJavascript(backgroundScriptImports),
+	filename: "background.js"
+};
 
 for (const scriptPath in scripts) {
 	for (const scriptType in scripts[scriptPath]) {
@@ -84,8 +93,8 @@ const commonOptions = {
 	resolve: {
 		extensions: [".ts", ".js", ".html"],
 		alias: {
-			"@": global.SOURCE_DIR
-		}
+			"@": global.SOURCE_DIR,
+		},
 	},
 	module: {
 		rules: [
@@ -93,27 +102,27 @@ const commonOptions = {
 				test: /\.ts$/,
 				loader: "ts-loader",
 				options: {
-					configFile: "config/tsconfig.json"
+					configFile: "config/tsconfig.json",
 				}
 			},
 			{
 				test: /\.html$/,
-				loader: path.resolve(CONFIG_DIR, "webpack/loader/to-string-loader.js")
-			}
-		]
+				loader: path.resolve(CONFIG_DIR, "webpack/loader/to-string-loader.js"),
+			},
+		],
 	},
 	optimization: {
 		minimize: process.env.NODE_ENV === "production",
-		runtimeChunk: false
+		runtimeChunk: false,
 	},
 	output: {
-		iife: true
+		iife: true,
 	},
 	plugins: [
 		new webpack.optimize.LimitChunkCountPlugin({
-			maxChunks: 1
-		})
-	]
+			maxChunks: 1,
+		}),
+	],
 };
 
 const sharedModuleOptions = {
@@ -125,13 +134,21 @@ const sharedModuleOptions = {
 				test: /banglar-bhumi-utils\/src\/.*.(^.?|\.[^d]|[^.]d|[^.][^d])\.(t|j)s$/,
 				loader: path.resolve(CONFIG_DIR, "webpack/loader/count-imports-loader.js"),
 				options: {
-					sharedModulesImportedCount
+					sharedModulesImportedCount,
 				},
-				enforce: "post"
+				enforce: "post",
 			}
 		]
 	}
 };
+
+const backgroundScriptConfiguration = merge(
+	commonOptions,
+	sharedModuleOptions,
+	{
+		entry: backgroundScriptEntries,
+	},
+);
 
 const uninjectedScriptConfiguration = merge(
 	commonOptions,
@@ -206,6 +223,7 @@ const sharedModulesConfiguration = merge(
 );
 
 module.exports = [
+	backgroundScriptConfiguration,
 	uninjectedScriptConfiguration,
 	injectedScriptConfiguration,
 	sharedModulesConfiguration

@@ -1,3 +1,4 @@
+import Tesseract from "tesseract.js";
 import { interceptPost, interceptGet } from "@/shared/intercept-jquery-ajax";
 
 function prepareCaptcha(ctx: CanvasRenderingContext2D, width: number, height: number) {
@@ -83,6 +84,12 @@ const observer = new MutationObserver((mutationsList, obs) => {
 					prepareCaptcha(ctx, canvas.width, canvas.height);
 					canvas.style.display = "";
 					const dataURL = canvas.toDataURL("image/png");
+					Tesseract.recognize(canvas, 'eng', {
+						logger: console.log
+					}).then(({ data: { text, confidence } }) => {
+						console.log("OCR Result:", text);
+						console.log("OCR confidence:", confidence);
+					});
 					// TODO: Perform OCR
 					// window.postMessage({
 					// 	type: "RUN_OCR",

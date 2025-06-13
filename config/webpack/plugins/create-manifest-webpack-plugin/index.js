@@ -97,6 +97,8 @@ class CreateManifestPlugin {
 						];
 					}
 
+					manifest.background = { service_worker: "background.js" };
+
 					compilation.emitAsset(
 						"manifest.json",
 						new sources.RawSource(
