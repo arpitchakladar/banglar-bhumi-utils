@@ -1,7 +1,6 @@
 {
 	"injected": {
 		"stop-blocking.ts": "*",
-		"login.ts": "*",
 		"otps/grievance-application.ts": "GrievAppViewAction.action",
 		"otps/mutation-application.ts": "MuteApplication.action",
 		"otps/warish-application.ts": "WarishAppViewAction.action",
@@ -10,5 +9,8 @@
 		"captcha/know-your-property.ts": "KnowYourProperty.action",
 		"captcha/application-receipt.ts": "Apprecrep.action",
 		"functionality/sheet-map/index.ts": "SheetMapViewAction.action"
+	},
+	"after": {
+		"login/index.ts": "*"
 	}
 }

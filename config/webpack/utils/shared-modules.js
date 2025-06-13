@@ -1,6 +1,6 @@
-const path = require("path");
-const fs = require("fs");
+import path from "path";
+import fs from "fs";
 
-module.exports = fs.readdirSync(path.resolve(SOURCE_DIR, "shared"))
+export default fs.readdirSync(path.resolve("src/shared"))
 	.filter(sharedModule => !sharedModule.endsWith("import-shared.js"))
 	.map(sharedModule => sharedModule.substring(0, sharedModule.length - 3));

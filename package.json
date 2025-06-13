@@ -1,6 +1,8 @@
 {
 	"name": "banglar-bhumi-utils",
 	"version": "1.1.0",
+	"mode": "browser",
+	"type": "module",
 	"description": "A chrome extension to improve functionality of the banglarbhumi.gov.in website.",
 	"main": "dist/index.js",
 	"repository": "https://github.com/arpitchakladar/banglar-bhumi-utils",

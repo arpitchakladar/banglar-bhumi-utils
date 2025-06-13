@@ -1,10 +1,15 @@
-const { sources } = require("webpack");
-const path = require("path");
+import webpack from "webpack";
+import path from "path";
+import fs from "fs";
 
-const { getScriptRuntimeFromType } = webpackRequire("utils/script-runtime");
-const { getFileName } = webpackRequire("utils/build-file");
-const scripts = webpackRequire("utils/scripts");
-const manifest = webpackRequire("plugins/create-manifest-webpack-plugin/manifest-template.json");
+import { getScriptRuntimeFromType } from "../../utils/script-runtime.js";
+import { getFileName } from "../../utils/build-file.js";
+import scripts from "../../utils/scripts.js";
+const manifest = JSON.parse(
+	fs.readFileSync(
+		path.resolve("config/webpack/plugins/create-manifest-webpack-plugin/manifest-template.json"),
+	),
+);
 
 class CreateManifestPlugin {
 	constructor({ sharedModulesImportedCount, injectedSharedModulesImportedCount, sortedSharedModules }) {
@@ -21,7 +26,7 @@ class CreateManifestPlugin {
 					stage: compiler.webpack.Compilation.PROCESS_ASSETS_STAGE_ADDITIONAL
 				},
 				assets => {
-					manifest.version = require(path.resolve(ROOT_DIR, "package.json")).version;
+					manifest.version = JSON.parse(fs.readFileSync((path.resolve(ROOT_DIR, "package.json")))).version;
 					manifest.content_scripts = [];
 					let resources = [];
 
@@ -97,9 +102,11 @@ class CreateManifestPlugin {
 						];
 					}
 
+					manifest.background = { service_worker: "background.js" };
+
 					compilation.emitAsset(
 						"manifest.json",
-						new sources.RawSource(
+						new webpack.sources.RawSource(
 							JSON.stringify(
 								manifest,
 								undefined,
@@ -115,4 +122,5 @@ class CreateManifestPlugin {
 	}
 }
 
-module.exports = CreateManifestPlugin;
+export default CreateManifestPlugin;
+

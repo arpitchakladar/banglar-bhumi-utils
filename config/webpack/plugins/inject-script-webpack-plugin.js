@@ -1,8 +1,8 @@
-const { sources } = require("webpack");
-const path = require("path");
+import webpack from "webpack";
+import path from "path";
 
-const { getFileName } = webpackRequire("utils/build-file");
-const { getInjectedCode } = webpackRequire("utils/injected-code");
+import { getFileName } from "../utils/build-file.js";
+import { getInjectedCode } from "../utils/injected-code.js";
 
 class InjectScriptPlugin {
 	apply(compiler) {
@@ -20,9 +20,9 @@ class InjectScriptPlugin {
 							const scriptInjectorModuleName = getFileName("script-injector", "shared", true);
 							compilation.updateAsset(
 								assetName,
-								new sources.RawSource(injectedCodeResponse[0])
+								new webpack.sources.RawSource(injectedCodeResponse[0])
 							);
-							assets["scripts/" + path.basename(assetName)] = new sources.RawSource(
+							assets["scripts/" + path.basename(assetName)] = new webpack.sources.RawSource(
 								`$${scriptInjectorModuleName}.injectScriptHead("scripts/injected/${path.basename(assetName)}", ${injectedCodeResponse[1]});`
 							);
 						}
@@ -33,4 +33,4 @@ class InjectScriptPlugin {
 	}
 }
 
-module.exports = InjectScriptPlugin;
+export default InjectScriptPlugin;

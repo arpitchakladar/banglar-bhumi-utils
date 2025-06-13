@@ -1,8 +1,7 @@
-const { ImportManager } = require("import-manager");
+import { ImportManager } from "import-manager";
+import sharedModules from "../utils/shared-modules.js";
 
-const sharedModules = webpackRequire("utils/shared-modules.js");
-
-module.exports = function(source) {
+export default function(source) {
 	const { sharedModulesImportedCount } = this.getOptions();
 	const manager = new ImportManager(source);
 

@@ -1,5 +1,11 @@
-const path = require("path");
-const scripts = require(path.resolve(SOURCE_DIR, "scripts.json"));
+import path from "path";
+import fs from "fs";
+
+const scripts = JSON.parse(
+	fs.readFileSync(
+		path.resolve("./src/scripts.json"),
+	),
+);
 
 const formattedScripts = {};
 
@@ -14,4 +20,4 @@ for (const scriptType in scripts) {
 	}
 }
 
-module.exports = formattedScripts;
+export default formattedScripts;
