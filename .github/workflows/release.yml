@@ -1,0 +1,77 @@
+name: Release Workflow
+
+on:
+  push:
+    tags:
+      - 'v*' # Trigger on pushes to tags like v1.0.0, v1.0.0-beta, etc.
+
+jobs:
+  build-and-release:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write # Grant write permissions for creating releases and uploading assets
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4 # Action to check out your repository code
+
+      - name: Setup Node.js (if applicable)
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22' # Specify your Node.js version
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build project
+        run: npm run build
+
+      - name: Create Release Directory
+        run: mkdir release_artifact # Create a temporary directory for the release files
+
+      - name: Copy build artifacts to release directory
+        run: |
+          # Replace 'dist' with the directory where your build output is located
+          cp -r dist/* release_artifact/
+          cp LICENSE release_artifact/
+
+      - name: Create Release ZIP
+        run: |
+          cd release_artifact
+          zip -r ../banglar-bhumi-utils-${{ github.ref_name }}.zip ./*
+          # The resulting zip will be named like 'my-project-release-v1.0.0.zip' and located in the root of the runner's workspace.
+          # For tar.gz, use: tar -czvf ../my-project-release-${{ github.ref_name }}.tar.gz ./*
+
+      - name: Get Release Title and Body
+        id: release_notes
+        uses: actions/changelog-reader@v1 # Example: use a marketplace action to read changelog
+        with:
+          version: ${{ github.ref_name }} # Pass the tag name as the version
+
+      - name: Create GitHub Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref }} # The tag that triggered the workflow (e.g., refs/tags/v1.0.0)
+           # Display name for the release (e.g., Release v1.0.0)
+          release_name: Banglar Bhumi Utils ${{ github.ref_name }}
+          body: |
+            Automated release for version ${{ github.ref_name }}.
+            
+            # Changelog
+            ${{ steps.release_notes.outputs.changelog }} # Use the output from the changelog reader
+          draft: false # Set to true if you want to create a draft release first
+          prerelease: false # Set to true for pre-release versions (e.g., v1.0.0-beta)
+
+      - name: Upload Release Asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }} # URL to upload assets
+          asset_path: ./banglar-bhumi-utils-${{ github.ref_name }}.zip # Path to your created ZIP file
+          asset_name: banglar-bhumi-utils-${{ github.ref_name }}.zip # Name of the asset in the release
+          asset_content_type: application/zip # MIME type of the asset
