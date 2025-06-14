@@ -1,12 +1,14 @@
 import Tesseract from "./tesseract.esm.min.js";
 
 let ocrWorker = null;
+const WORKER_PATH = chrome.runtime.getURL("/offscreen/ocr/static/worker.min.js");
+const CORE_PATH = chrome.runtime.getURL("/offscreen/ocr/static");
 
 async function performOcrInOffscreen(dataURL) {
 	if (!ocrWorker) {
 		ocrWorker = await Tesseract.createWorker("eng", 1, {
-			workerPath: chrome.runtime.getURL("/offscreen/ocr/worker.min.js"),
-			corePath: chrome.runtime.getURL("/offscreen/ocr"),
+			workerPath: WORKER_PATH,
+			corePath: CORE_PATH,
 			workerBlobURL: false,
 		});
 
