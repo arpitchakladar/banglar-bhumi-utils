@@ -1,4 +1,4 @@
-export const styles = (selector: string, styles: { [key: string]: string }) => {
+export function styles(selector: string, styles: Record<string, string>) {
 	const  elements = Array.from(document.querySelectorAll(selector)) as HTMLElement[];
 
 	for (const element of elements) {

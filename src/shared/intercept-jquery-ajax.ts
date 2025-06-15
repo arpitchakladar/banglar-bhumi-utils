@@ -32,10 +32,10 @@ document.addEventListener("DOMContentLoaded", () => {
 	};
 });
 
-export const interceptPost = (url: string, callback: InterceptJqueryAjaxCallback) => {
+export function interceptPost(url: string, callback: InterceptJqueryAjaxCallback) {
 	postIntercepts.push({ url, callback });
 };
 
-export const interceptGet = (url: string, callback: InterceptJqueryAjaxCallback) => {
+export function interceptGet(url: string, callback: InterceptJqueryAjaxCallback) {
 	getIntercepts.push({ url, callback });
 };

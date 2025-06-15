@@ -24,6 +24,6 @@ observer.observe(document, {
 	subtree: true
 });
 
-export const observeDOM = (callback: ObserveDOMCallback) => {
+export function observeDOM(callback: ObserveDOMCallback) {
 	callbacks.push(callback);
 };

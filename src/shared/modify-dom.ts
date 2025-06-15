@@ -45,6 +45,6 @@ observeDOM(() => {
 	return false;
 });
 
-export const modifyDOM = (modificationRules: DOMModificationRules) => {
+export function modifyDOM(modificationRules: DOMModificationRules) {
 	domModificationRules = domModificationRules.concat(modificationRules);
 };

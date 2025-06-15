@@ -1,8 +1,8 @@
 import Tesseract from "./tesseract.esm.min.js";
 
 let ocrWorker = null;
-const WORKER_PATH = chrome.runtime.getURL("/offscreen/ocr/static/worker.min.js");
-const CORE_PATH = chrome.runtime.getURL("/offscreen/ocr/static");
+const WORKER_PATH = chrome.runtime.getURL("offscreen/ocr/static/worker.min.js");
+const CORE_PATH = chrome.runtime.getURL("offscreen/ocr/static");
 
 async function performOcrInOffscreen(dataURL) {
 	if (!ocrWorker) {
