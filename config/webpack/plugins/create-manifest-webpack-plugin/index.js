@@ -11,13 +11,32 @@ const manifest = JSON.parse(
 	),
 );
 
+/**
+ * Webpack plugin that dynamically generates the extension's
+ * `manifest.json` asset.  It reads the template, resolves the
+ * current version from `package.json`, and builds `content_scripts`
+ * entries by matching script definitions from `scripts.json` against
+ * page URL patterns.  Shared modules, injected scripts, and
+ * web-accessible resources are added automatically based on import
+ * counts collected during the build.
+ */
 class CreateManifestPlugin {
+	/**
+	 * @param {{
+	 *   sharedModulesImportedCount: Record<string, number>,
+	 *   injectedSharedModulesImportedCount: Record<string, number>,
+	 *   sortedSharedModules: string[]
+	 * }} options
+	 */
 	constructor({ sharedModulesImportedCount, injectedSharedModulesImportedCount, sortedSharedModules }) {
 		this.sharedModulesImportedCount = sharedModulesImportedCount;
 		this.injectedSharedModulesImportedCount = injectedSharedModulesImportedCount;
 		this.sortedSharedModules = sortedSharedModules;
 	}
 
+	/**
+	 * @param {import("webpack").Compiler} compiler
+	 */
 	apply(compiler) {
 		compiler.hooks.compilation.tap("CreateManifestPlugin", compilation => {
 			compilation.hooks.processAssets.tap(

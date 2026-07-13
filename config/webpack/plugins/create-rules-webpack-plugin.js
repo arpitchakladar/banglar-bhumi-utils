@@ -2,7 +2,15 @@ import path from "path";
 import fs from "fs";
 import webpack from "webpack";
 
+/**
+ * Webpack plugin that reads all JSON rule files from `src/rules/`,
+ * assigns sequential IDs to each rule, and emits a single `rules.json`
+ * asset used by `declarativeNetRequest`.
+ */
 class CreateRulesPlugin {
+	/**
+	 * @param {import("webpack").Compiler} compiler
+	 */
 	apply(compiler) {
 		compiler.hooks.compilation.tap("CreateRulesPlugin", compilation => {
 			compilation.hooks.processAssets.tap(

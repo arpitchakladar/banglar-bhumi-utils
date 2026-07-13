@@ -1,3 +1,14 @@
+/**
+ * Maps a human-readable script type to a Chrome content-script
+ * `run_at` value.
+ *
+ * - `"before"`, `"injected-after"`, `"injected-before"` → `document_start`
+ * - `"rendered"` → `document_end`
+ * - `"loaded"` (or unknown) → `document_idle`
+ *
+ * @param {string} scriptType - The script type from scripts.json.
+ * @returns {string} The corresponding `run_at` value.
+ */
 export const getScriptRuntimeFromType = scriptType => {
 	switch (scriptType) {
 		case "before":

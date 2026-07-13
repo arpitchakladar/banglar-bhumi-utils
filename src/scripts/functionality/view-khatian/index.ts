@@ -14,6 +14,12 @@ const styles = Array.from(submitButtonElementComputedStyles)
 		""
 	);
 
+/**
+ * Reads the currently selected text from a `<select>` element.
+ *
+ * @param selector - CSS selector for the select element.
+ * @returns The text of the selected option.
+ */
 const getValueOfSelectElement = (selector: string) => {
 	const element = document.querySelector<HTMLSelectElement>(selector)!;
 	return element.options[element.selectedIndex].text;
@@ -21,6 +27,10 @@ const getValueOfSelectElement = (selector: string) => {
 
 let isPlotInformation: boolean | null = null;
 
+/**
+ * Opens a new window with a printable PDF view of the current khatian
+ * or plot details, including district/block/mouza info.
+ */
 const downloadInformationPDF = () => {
 	generateWebPage(
 		getDownloadInformationPDFPageContent({
@@ -36,6 +46,13 @@ const downloadInformationPDF = () => {
 	);
 };
 
+/**
+ * Intercepts the success callback of a jQuery AJAX call.  When a valid
+ * details table is returned, it inserts a "Download PDF" button;
+ * otherwise it removes an existing button.
+ *
+ * @param args - The `arguments` object from the intercepted `$.post` call.
+ */
 const showDownloadButton = (args: any) => {
 	if (isPlotInformation !== null) {
 		const callback = args[2];

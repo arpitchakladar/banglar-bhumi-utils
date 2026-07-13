@@ -4,7 +4,16 @@ import path from "path";
 import { getFileName } from "../utils/build-file.js";
 import { getInjectedCode } from "../utils/injected-code.js";
 
+/**
+ * Webpack plugin that post-processes every `.js` asset to replace
+ * extension-asset URL placeholders with runtime lookup code, and
+ * emits an additional "injected" script that the content script
+ * injects into the page via the script-injector module.
+ */
 class InjectScriptPlugin {
+	/**
+	 * @param {import("webpack").Compiler} compiler
+	 */
 	apply(compiler) {
 		compiler.hooks.compilation.tap("InjectScriptPlugin", compilation => {
 			compilation.hooks.processAssets.tapPromise(

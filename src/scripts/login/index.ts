@@ -1,18 +1,33 @@
 import { interceptPost, interceptGet } from "@/shared/intercept-jquery-ajax";
 
+/**
+ * Pre-processes a CAPTCHA image on a canvas by removing grayish
+ * background noise while preserving dark pixels, producing a clean
+ * binary image suitable for OCR.
+ *
+ * @param ctx    - The 2D rendering context of the canvas.
+ * @param width  - Canvas width in pixels.
+ * @param height - Canvas height in pixels.
+ */
 function prepareCaptcha(ctx: CanvasRenderingContext2D, width: number, height: number) {
 	const imgData = ctx.getImageData(0, 0, width, height);
 	const data = imgData.data;
 	const radius = 1;
 
+	/** Returns true when all three channels are below 50 (very dark). */
 	function isBlack(r: number, g: number, b: number) {
 		return r < 50 && g < 50 && b < 50;
 	}
 
+	/** Returns true when the colour is a mid-range grey (no strong hue). */
 	function isGrayish(r: number, g: number, b: number) {
 		return Math.abs(r - g) < 15 && Math.abs(g - b) < 15 && r > 100 && r < 200;
 	}
 
+	/**
+	 * Checks whether a black pixel exists within `radius` pixels of (x, y).
+	 * Used to preserve dark structures when removing grey noise.
+	 */
 	function hasNearbyBlack(x: number, y: number) {
 		for (let dx = -radius; dx <= radius; dx++) {
 			for (let dy = -radius; dy <= radius; dy++) {

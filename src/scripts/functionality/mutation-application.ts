@@ -3,6 +3,12 @@ import { observeDOM } from "@/shared/observe-dom";
 
 const sanghaFacilitationCentreBannerUrl = "$l{ /assets/sangha-facilitation-centre-banner.jpg }l$";
 
+/**
+ * On the Mutation Application form, removes the form action (to prevent
+ * the default server-side submit) and attaches a custom click handler
+ * that fetches the declaration PDF, overlays a banner image and date
+ * stamp on the last page, then triggers a download.
+ */
 document.addEventListener("DOMContentLoaded", () => {
 	observeDOM(() => {
 		const formElement = $("#form_MutationApplication > div > div:nth-child(14) > div.col-sm-2.btreset > form");

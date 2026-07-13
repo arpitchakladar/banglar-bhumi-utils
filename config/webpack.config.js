@@ -1,3 +1,17 @@
+/**
+ * Webpack configuration for the Banglar Bhumi Utils Chrome extension.
+ *
+ * Produces four separate bundles:
+ *  1. **Background script**  – service worker entry point.
+ *  2. **Uninjected scripts** – content scripts that run as-is.
+ *  3. **Injected scripts**   – content scripts that are further processed
+ *     so they can be injected into the page DOM.
+ *  4. **Shared modules**     – libraries compiled as standalone files and
+ *     referenced via global variables (`$<hash>`).
+ *
+ * Custom loaders and plugins handle dependency ordering, import counting,
+ * asset-URL rewriting, manifest generation, and declarative-net-rule creation.
+ */
 import path from "path";
 import fs from "fs";
 import { fileURLToPath } from "url";

@@ -23,6 +23,13 @@ let plotNumberLabelTextElements = "";
 
 document.body.appendChild(plotInformation);
 
+/**
+ * Creates a header toolbar button and appends it to the page header.
+ * The button starts hidden and is shown when data is ready.
+ *
+ * @param text - The button label text.
+ * @returns The created button element.
+ */
 const createHeaderButton = (text: string) => {
 	const buttonContainer = document.createElement("td");
 	const button = document.createElement("button");
@@ -33,6 +40,12 @@ const createHeaderButton = (text: string) => {
 	return button;
 };
 
+/**
+ * Displays the area and plot number for the given polygon in a floating
+ * info panel, or shows "0.000" / empty if no polygon is selected.
+ *
+ * @param plotPolygon - The selected plot's data, or `null`/`undefined` to clear.
+ */
 const setPlotInformation = (plotPolygon: PlotPolygon | null | undefined = null) => {
 	plotInformation.innerHTML = plotPolygon ? getPlotInformationElement({
 		area: (plotPolygon.plotArea/1000).toFixed(3),
@@ -43,7 +56,14 @@ const setPlotInformation = (plotPolygon: PlotPolygon | null | undefined = null) 
 	});
 };
 
+/**
+ * Opens a new window with a printable PDF view of the map, optionally
+ * including plot-number labels.
+ *
+ * @param labelPoints - Whether to include plot number text labels.
+ */
 const downloadPDF = (labelPoints: boolean = true) => {
+	/** Extracts a detail value (district/block/mouza) from the header table by column index. */
 	const _getMapDetail = (i: number) => {
 		const detail = document.querySelector(`#headerTable > tbody > tr > td:nth-child(${i})`)!
 			.innerHTML
@@ -147,6 +167,12 @@ setPlotInformation();
 		}
 	}, 300);
 
+	/**
+	 * Highlights the clicked plot on the SVG map and shows its
+	 * information in the info panel.
+	 *
+	 * @param e - The mouse click event.
+	 */
 	const handlePlotClick = (e: MouseEvent) => {
 		document.querySelectorAll("path").forEach(e => {
 			e.setAttribute("fill", "#ffcc66");

@@ -3,6 +3,15 @@ import { ImportManager } from "import-manager";
 
 import sharedModules from "../utils/shared-modules.js";
 
+/**
+ * Webpack loader that arranges shared modules in dependency order.
+ * As each shared module is processed, its own shared-module dependencies
+ * are inserted before it in the global `sortedSharedModules` array so that
+ * the final output respects the import graph.
+ *
+ * @param {string} source - The source code of the current module.
+ * @returns {string} The unmodified source (this loader is side-effect only).
+ */
 export default function(source) {
 	const currentSharedModuleName = path.basename(this.resourcePath.substring(0, this.resourcePath.length - 3));
 
