@@ -1,6 +1,4 @@
-type DataType = {
-	[key: string]: string
-};
+type DataType = Record<string, string>;
 
 /**
  * Injects a `<script>` element into the document head (or `<html>`) with
@@ -11,11 +9,11 @@ type DataType = {
  * @param src  - The extension-relative script path.
  * @param data - Optional key/value pairs to set as `data-*` attributes.
  */
-export function injectScriptHead(src: string, data: DataType = {}) {
-	const s = document.createElement("script") as HTMLScriptElement;
+export function injectScriptHead(src: string, data: DataType = {}): void {
+	const s = document.createElement("script");
 	s.src = chrome.runtime.getURL(src);
 	for (const i in data) {
 		s.setAttribute(`data-${i}`, data[i]);
 	}
-	(document.head || document.documentElement).append(s);
+	document.head.append(s);
 };

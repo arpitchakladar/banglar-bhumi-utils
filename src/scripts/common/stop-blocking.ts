@@ -13,7 +13,7 @@ document.addEventListener("DOMContentLoaded", () => {
 		}
 
 		return proxiedBind.apply(this, Array.from(arguments) as any);
-	}
+	};
 
 	const proxiedKeydown = $.prototype.keydown;
 	/** Proxies jQuery `.keydown()` so all key presses are allowed. */
@@ -21,7 +21,7 @@ document.addEventListener("DOMContentLoaded", () => {
 		arguments[0] = (_: any) => true;
 
 		return proxiedKeydown.apply(this, Array.from(arguments) as any);
-	}
+	};
 
 	$.prototype.bind = proxiedBind;
 	$.prototype.keydown = proxiedKeydown;

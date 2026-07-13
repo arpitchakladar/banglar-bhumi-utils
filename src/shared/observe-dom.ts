@@ -1,6 +1,6 @@
 type ObserveDOMCallback = () => boolean;
 
-let callbacks: ObserveDOMCallback[] = [];
+const callbacks: ObserveDOMCallback[] = [];
 
 /**
  * Starts a MutationObserver on the document that invokes each
@@ -11,9 +11,8 @@ let callbacks: ObserveDOMCallback[] = [];
 const observer = new MutationObserver(() => {
 	for (let i = 0; i < callbacks.length; i++) {
 		const callback = callbacks[i];
-		if (callback && callback()) {
+		if (callback())
 			callbacks.splice(i, 1);
-		}
 
 		if (callbacks.length <= 0) {
 			observer.disconnect();
@@ -36,6 +35,6 @@ observer.observe(document, {
  *
  * @param callback - Function that returns `true` when done.
  */
-export function observeDOM(callback: ObserveDOMCallback) {
+export function observeDOM(callback: ObserveDOMCallback): void {
 	callbacks.push(callback);
 };

@@ -1,5 +1,6 @@
-import webpack from "webpack";
 import path from "path";
+
+import webpack from "webpack";
 
 import { getFileName } from "../utils/build-file.js";
 import { getInjectedCode } from "../utils/injected-code.js";
@@ -15,17 +16,17 @@ class InjectScriptPlugin {
 	 * @param {import("webpack").Compiler} compiler
 	 */
 	apply(compiler) {
-		compiler.hooks.compilation.tap("InjectScriptPlugin", compilation => {
+		compiler.hooks.compilation.tap("InjectScriptPlugin", (compilation) => {
 			compilation.hooks.processAssets.tapPromise(
 				{
 					name: "InjectScriptPlugin",
 					stage: compiler.webpack.Compilation.PROCESS_ASSETS_STAGE_ADDITIONAL,
 					additionalAssets: true
 				},
-				async (assets) => {
+				async(assets) => {
 					for (const assetName in assets) {
 						if (/\.js$/.test(assetName)) {
-							const injectedCodeResponse = getInjectedCode(compilation.getAsset(assetName).source.source())
+							const injectedCodeResponse = getInjectedCode(compilation.getAsset(assetName).source.source());
 							const scriptInjectorModuleName = getFileName("script-injector", "shared", true);
 							compilation.updateAsset(
 								assetName,

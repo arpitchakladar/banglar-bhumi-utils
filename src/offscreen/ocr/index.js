@@ -18,12 +18,12 @@ async function performOcrInOffscreen(dataURL) {
 		ocrWorker = await Tesseract.createWorker("eng", 1, {
 			workerPath: WORKER_PATH,
 			corePath: CORE_PATH,
-			workerBlobURL: false,
+			workerBlobURL: false
 		});
 
 		await ocrWorker.setParameters({
 			// The only characters that appears
-			tessedit_char_whitelist: "ABCDEFGHJKLMNPQRSTUVWXYZ23456789",
+			tessedit_char_whitelist: "ABCDEFGHJKLMNPQRSTUVWXYZ23456789"
 		});
 	}
 
@@ -40,10 +40,10 @@ async function performOcrInOffscreen(dataURL) {
 chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
 	if (message.type === "OFFSCREEN_OCR_REQUEST" && message.dataURL) {
 		performOcrInOffscreen(message.dataURL)
-			.then(({ text, confidence }) => {
+			.then(function({ text, confidence }) {
 				sendResponse({ success: true, text, confidence });
 			})
-			.catch(error => {
+			.catch(function(error) {
 				sendResponse({ success: false, error: error.message });
 			});
 		return true;

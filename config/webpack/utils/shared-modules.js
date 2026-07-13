@@ -1,5 +1,5 @@
-import path from "path";
 import fs from "fs";
+import path from "path";
 
 /**
  * Scans `src/shared/` and returns the list of shared module filenames
@@ -8,5 +8,5 @@ import fs from "fs";
  * @returns {string[]} e.g. `["generate-web-page", "intercept-jquery-ajax", …]`
  */
 export default fs.readdirSync(path.resolve("src/shared"))
-	.filter(sharedModule => !sharedModule.endsWith("import-shared.js"))
-	.map(sharedModule => sharedModule.substring(0, sharedModule.length - 3));
+	.filter((sharedModule) => !sharedModule.endsWith("import-shared.js"))
+	.map((sharedModule) => sharedModule.substring(0, sharedModule.length - 3));

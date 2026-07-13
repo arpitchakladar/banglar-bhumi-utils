@@ -11,7 +11,7 @@
 export default function(source) {
 	source = source
 		.replaceAll("\\", "\\\\")
-		.replaceAll("`","\\`")
+		.replaceAll("`", "\\`")
 		.replaceAll("${", "\\${");
 
 	const replacements = {};

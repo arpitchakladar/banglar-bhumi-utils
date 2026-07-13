@@ -1,23 +1,23 @@
-import { generateWebPage } from "@/shared/generate-web-page";
 import getDownloadMapPDFPageContent from "@/scripts/pages/sheet-map/download-map-pdf-page-content.html";
-import getMapPlotPolygonPathElement from "@/scripts/pages/sheet-map/map-plot-polygon-path-element.html";
 import getMapPlotNumberLabelTextElement from "@/scripts/pages/sheet-map/map-plot-number-label-text-element.html";
+import getMapPlotPolygonPathElement from "@/scripts/pages/sheet-map/map-plot-polygon-path-element.html";
 import getPlotInformationElement from "@/scripts/pages/sheet-map/plot-information-element.html";
+import { generateWebPage } from "@/shared/generate-web-page";
 
-interface PlotPolygon {
+type PlotPolygon = {
 	plotArea: number;
 	plotno: string;
-	polygon: string;
+	polygon: string
 };
 
-interface PlotNumberLabel {
+type PlotNumberLabel = {
 	plotno: string;
-	point: string;
-}
+	point: string
+};
 
-const headerElement = document.querySelector("#headerTable > tbody > tr")!;
-const plotNumberInput = document.querySelector<HTMLInputElement>("#txtPlotNo")!;
-const plotInformation = document.createElement("div") as HTMLDivElement;
+const headerElement = document.querySelector<HTMLTableRowElement>("#headerTable > tbody > tr");
+const plotNumberInput = document.querySelector<HTMLInputElement>("#txtPlotNo");
+const plotInformation = document.createElement("div");
 let plotPolygonPathElements = "";
 let plotNumberLabelTextElements = "";
 
@@ -30,13 +30,14 @@ document.body.appendChild(plotInformation);
  * @param text - The button label text.
  * @returns The created button element.
  */
-const createHeaderButton = (text: string) => {
+function createHeaderButton(text: string): HTMLButtonElement {
 	const buttonContainer = document.createElement("td");
 	const button = document.createElement("button");
 	button.innerHTML = text;
 	button.style.display = "none";
 	buttonContainer.appendChild(button);
-	headerElement.appendChild(buttonContainer);
+	if (headerElement)
+		headerElement.appendChild(buttonContainer);
 	return button;
 };
 
@@ -46,14 +47,16 @@ const createHeaderButton = (text: string) => {
  *
  * @param plotPolygon - The selected plot's data, or `null`/`undefined` to clear.
  */
-const setPlotInformation = (plotPolygon: PlotPolygon | null | undefined = null) => {
-	plotInformation.innerHTML = plotPolygon ? getPlotInformationElement({
-		area: (plotPolygon.plotArea/1000).toFixed(3),
-		plotNumber: plotPolygon.plotno
-	}) : getPlotInformationElement({
-		area: "0.000",
-		plotNumber: ""
-	});
+function setPlotInformation(plotPolygon: PlotPolygon | null | undefined = null): void {
+	plotInformation.innerHTML = plotPolygon
+		? getPlotInformationElement({
+			area: (plotPolygon.plotArea / 1000).toFixed(3),
+			plotNumber: plotPolygon.plotno
+		})
+		: getPlotInformationElement({
+			area: "0.000",
+			plotNumber: ""
+		});
 };
 
 /**
@@ -62,11 +65,10 @@ const setPlotInformation = (plotPolygon: PlotPolygon | null | undefined = null) 
  *
  * @param labelPoints - Whether to include plot number text labels.
  */
-const downloadPDF = (labelPoints: boolean = true) => {
+function downloadPDF(labelPoints = true): void {
 	/** Extracts a detail value (district/block/mouza) from the header table by column index. */
-	const _getMapDetail = (i: number) => {
-		const detail = document.querySelector(`#headerTable > tbody > tr > td:nth-child(${i})`)!
-			.innerHTML
+	function _getMapDetail(i: number): string {
+		const detail = (document.querySelector<HTMLTableCellElement>(`#headerTable > tbody > tr > td:nth-child(${i.toString()})`)?.innerHTML ?? "")
 			.split("[")[1]
 			.trim();
 		return detail.substring(0, detail.length - 1);
@@ -85,33 +87,43 @@ const downloadPDF = (labelPoints: boolean = true) => {
 const downloadPDFButton = createHeaderButton("SAVE PDF");
 const downloadPDFNoLabelButton = createHeaderButton("SAVE PDF (NO LABEL)");
 
-downloadPDFButton.addEventListener("click", e => {
+downloadPDFButton.addEventListener("click", (e) => {
 	e.preventDefault();
 	downloadPDF();
 });
 
-downloadPDFNoLabelButton.addEventListener("click", e => {
+downloadPDFNoLabelButton.addEventListener("click", (e) => {
 	e.preventDefault();
 	downloadPDF(false);
 });
 
 setPlotInformation();
 
-(async () => {
+void (async function(): Promise<void> {
 	const searchParams = new URLSearchParams(window.location.search);
-	const response1 = await fetch(
-		"/BanglarBhumi/sheetMap_populateLayerData?lstSheetNo=" + searchParams.get("lstSheetNo"),
+	const sheetMapLayerDataResponse = await fetch(
+		`/BanglarBhumi/sheetMap_populateLayerData?lstSheetNo=${searchParams.get("lstSheetNo")?.toString() ?? ""}`,
 		{
 			method: "POST"
 		});
-	const plotPolygonList: PlotPolygon[] = (await response1.json()).features;
-	const response2 = await fetch(
-		"/BanglarBhumi/sheetMap_populateCentroidData?lstSheetNo=" + searchParams.get("lstSheetNo"),
+	type SheetMapLayerDataResponseType = {
+		features: PlotPolygon[]
+	};
+	const sheetMapLayerDataResponseJson
+		=	await sheetMapLayerDataResponse.json() as SheetMapLayerDataResponseType;
+	const plotPolygonList: PlotPolygon[] = sheetMapLayerDataResponseJson.features;
+	const sheetMapCentroidDataResponse = await fetch(
+		`/BanglarBhumi/sheetMap_populateCentroidData?lstSheetNo=${searchParams.get("lstSheetNo")?.toString() ?? ""}`,
 		{
 			method: "POST"
 		});
-	const plotNumberLabelList: PlotNumberLabel[] = (await response2.json()).features;
-	let plotPolygons: { [key: string]: PlotPolygon } = {};
+	type SheetMapCentroidDataResponseType = {
+		features: PlotNumberLabel[]
+	};
+	const sheetMapCentroidDataResponseJson
+		= await sheetMapCentroidDataResponse.json() as SheetMapCentroidDataResponseType;
+	const plotNumberLabelList: PlotNumberLabel[] = sheetMapCentroidDataResponseJson.features;
+	const plotPolygons: Record<string, PlotPolygon> = {};
 
 	for (const plotPolygon of plotPolygonList) {
 		const plotPolygonPoints = plotPolygon.polygon.split("(((")[1].split(")))")[0];
@@ -132,10 +144,10 @@ setPlotInformation();
 	downloadPDFButton.style.display = "inherit";
 	downloadPDFNoLabelButton.style.display = "inherit";
 
-	document.querySelector("#btnSearch")!.addEventListener("click", () => {
+	document.querySelector<HTMLButtonElement>("#btnSearch")?.addEventListener("click", () => {
 		let plotPolygon;
 		for (const p of plotPolygonList) {
-			if (p.plotno === plotNumberInput.value) {
+			if (p.plotno === plotNumberInput?.value) {
 				plotPolygon = p;
 				break;
 			}
@@ -145,7 +157,7 @@ setPlotInformation();
 
 	await new Promise<void>((resolve, _reject) => {
 		const plotElementIdsControl = setInterval(() => {
-			let plotElements = document.querySelector("#OpenLayers_Layer_Vector_25_vroot")?.children || [];
+			const plotElements = document.querySelector("#OpenLayers_Layer_Vector_25_vroot")?.children ?? [];
 			if (plotElements.length) {
 				clearInterval(plotElementIdsControl);
 				for (let i = 0; i < plotElements.length; i++) {
@@ -172,8 +184,8 @@ setPlotInformation();
 	 *
 	 * @param e - The mouse click event.
 	 */
-	const handlePlotClick = (e: MouseEvent) => {
-		document.querySelectorAll("path").forEach(e => {
+	function handlePlotClick(e: MouseEvent): void {
+		document.querySelectorAll("path").forEach((e) => {
 			e.setAttribute("fill", "#ffcc66");
 		});
 

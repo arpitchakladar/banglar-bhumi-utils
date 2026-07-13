@@ -1,1 +1,1 @@
-import "@/scripts/login/captcha";
+import "@/scripts/common/login/captcha";

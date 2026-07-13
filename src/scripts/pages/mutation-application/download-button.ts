@@ -1,4 +1,5 @@
 import { PDFDocument, StandardFonts } from "pdf-lib";
+
 import { observeDOM } from "@/shared/observe-dom";
 
 const sanghaFacilitationCentreBannerUrl = "$l{ /assets/sangha-facilitation-centre-banner.jpg }l$";
@@ -17,7 +18,7 @@ observeDOM(() => {
 		submitButtonElement.on("click", (submitButtonClickEvent) => {
 			submitButtonClickEvent.preventDefault();
 
-			(async () => {
+			void (async function(): Promise<void> {
 				const pdfDoc = await PDFDocument.load(await fetch("/BanglarBhumi/MutationDeclarationForm.action", {
 					method: "post",
 					credentials: "same-origin",
@@ -25,11 +26,13 @@ observeDOM(() => {
 						"Content-Type": "application/x-www-form-urlencoded"
 					},
 					body: "hdnAppNo="
-				}).then(res => res.arrayBuffer()));
+				}).then((res) => res.arrayBuffer()));
 				const pages = pdfDoc.getPages();
 				const lastPage = pages[pages.length - 1];
-				const { width, height: _ } = lastPage.getSize();
-				const bannerImage = await pdfDoc.embedJpg(await fetch(sanghaFacilitationCentreBannerUrl).then(res => res.arrayBuffer()));
+				const { width } = lastPage.getSize();
+				const bannerImage
+					= await pdfDoc.embedJpg(await fetch(sanghaFacilitationCentreBannerUrl)
+						.then((res) => res.arrayBuffer()));
 				const bannerImageHeight = width * (bannerImage.height / bannerImage.width);
 
 				lastPage.drawImage(bannerImage, {
@@ -39,7 +42,7 @@ observeDOM(() => {
 					height: bannerImageHeight
 				});
 
-				lastPage.drawText(pdfDoc.getCreationDate()!.toLocaleString(), {
+				lastPage.drawText(pdfDoc.getCreationDate()?.toLocaleString() ?? "", {
 					x: 10,
 					y: bannerImageHeight,
 					size: 12,
@@ -47,7 +50,7 @@ observeDOM(() => {
 				});
 
 				const link = document.createElement("a");
-				link.href = window.URL.createObjectURL(new Blob([new Uint8Array(await pdfDoc.save())], {type: "application/pdf"}));
+				link.href = window.URL.createObjectURL(new Blob([new Uint8Array(await pdfDoc.save())], { type: "application/pdf" }));
 				link.download = "Declaration.pdf";
 				link.click();
 			})();

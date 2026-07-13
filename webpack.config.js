@@ -12,12 +12,22 @@
  * Custom loaders and plugins handle dependency ordering, import counting,
  * asset-URL rewriting, manifest generation, and declarative-net-rule creation.
  */
-import path from "path";
 import fs from "fs";
+import path from "path";
 import { fileURLToPath } from "url";
+
+import CopyPlugin from "copy-webpack-plugin";
 import webpack from "webpack";
 import { merge } from "webpack-merge";
-import CopyPlugin from "copy-webpack-plugin";
+
+import CreateInjectedSharedModulesPlugin from "./config/webpack/plugins/create-injected-shared-modules-webpack-plugin.js";
+import CreateManifestPlugin from "./config/webpack/plugins/create-manifest-webpack-plugin/index.js";
+import CreateRulesPlugin from "./config/webpack/plugins/create-rules-webpack-plugin.js";
+import InjectScriptPlugin from "./config/webpack/plugins/inject-script-webpack-plugin.js";
+import { getFileName } from "./config/webpack/utils/build-file.js";
+import { inlineJavascript } from "./config/webpack/utils/inline-javascript.js";
+import scripts from "./config/webpack/utils/scripts.js";
+import sharedModules from "./config/webpack/utils/shared-modules.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -26,17 +36,6 @@ global.ROOT_DIR = path.resolve(__dirname);
 global.CONFIG_DIR = path.resolve(ROOT_DIR, "config");
 global.SOURCE_DIR = path.resolve(ROOT_DIR, "src");
 global.production = process.env.NODE_ENV === "production";
-
-import CreateManifestPlugin from "./config/webpack/plugins/create-manifest-webpack-plugin/index.js";
-import CreateRulesPlugin from "./config/webpack/plugins/create-rules-webpack-plugin.js";
-import InjectScriptPlugin from "./config/webpack/plugins/inject-script-webpack-plugin.js";
-import CreateInjectedSharedModulesPlugin from "./config/webpack/plugins/create-injected-shared-modules-webpack-plugin.js";
-
-import { inlineJavascript } from "./config/webpack/utils/inline-javascript.js";
-import { getFileName } from "./config/webpack/utils/build-file.js";
-
-import scripts from "./config/webpack/utils/scripts.js";
-import sharedModules from "./config/webpack/utils/shared-modules.js";
 
 const sharedModulesImportedCount = {};
 
@@ -57,7 +56,7 @@ const sharedModuleEntries = {};
 const sharedModuleExternals = {};
 
 const backgroundScriptImports = fs.readdirSync(path.resolve(SOURCE_DIR, "background"))
-	.map(scriptName => `import "${path.resolve(SOURCE_DIR, "background", scriptName)}";`)
+	.map((scriptName) => `import "${path.resolve(SOURCE_DIR, "background", scriptName)}";`)
 	.join("\n");
 backgroundScriptEntries["background script"] = {
 	import: inlineJavascript(backgroundScriptImports),
@@ -71,17 +70,17 @@ for (const scriptPath in scripts) {
 		let destinationFolder = "scripts";
 
 		switch (scriptType) {
-		case "injected":
-			scriptEntries = injectedAfterScriptEntries;
-			destinationFolder = "scripts/injected";
-			break;
+			case "injected":
+				scriptEntries = injectedAfterScriptEntries;
+				destinationFolder = "scripts/injected";
+				break;
 
-		default:
-			scriptEntries = uninjectedScriptEntries;
+			default:
+				scriptEntries = uninjectedScriptEntries;
 		}
 
 		scriptEntries[`${scriptType} - "${scriptPath}"`] = {
-			import: inlineJavascript(currentScripts.map(script => `import "${path.resolve(SOURCE_DIR, "scripts", script)}";`).join("\n")),
+			import: inlineJavascript(currentScripts.map((script) => `import "${path.resolve(SOURCE_DIR, "scripts", script)}";`).join("\n")),
 			filename: `${destinationFolder}/${getFileName(scriptType, scriptPath)}.js`
 		};
 	}
@@ -107,8 +106,8 @@ const commonOptions = {
 	resolve: {
 		extensions: [".ts", ".js", ".html"],
 		alias: {
-			"@": global.SOURCE_DIR,
-		},
+			"@": global.SOURCE_DIR
+		}
 	},
 	module: {
 		rules: [
@@ -116,27 +115,27 @@ const commonOptions = {
 				test: /\.ts$/,
 				loader: "ts-loader",
 				options: {
-					configFile: "tsconfig.json",
+					configFile: "tsconfig.json"
 				}
 			},
 			{
 				test: /\.html$/,
-				loader: path.resolve(CONFIG_DIR, "webpack/loader/to-string-loader.js"),
-			},
-		],
+				loader: path.resolve(CONFIG_DIR, "webpack/loader/to-string-loader.js")
+			}
+		]
 	},
 	optimization: {
 		minimize: process.env.NODE_ENV === "production",
-		runtimeChunk: false,
+		runtimeChunk: false
 	},
 	output: {
-		iife: true,
+		iife: true
 	},
 	plugins: [
 		new webpack.optimize.LimitChunkCountPlugin({
-			maxChunks: 1,
-		}),
-	],
+			maxChunks: 1
+		})
+	]
 };
 
 const sharedModuleOptions = {
@@ -148,9 +147,9 @@ const sharedModuleOptions = {
 				test: /banglar-bhumi-utils\/src\/.*.(^.?|\.[^d]|[^.]d|[^.][^d])\.(t|j)s$/,
 				loader: path.resolve(CONFIG_DIR, "webpack/loader/count-imports-loader.js"),
 				options: {
-					sharedModulesImportedCount,
+					sharedModulesImportedCount
 				},
-				enforce: "post",
+				enforce: "post"
 			}
 		]
 	}
@@ -160,8 +159,8 @@ const backgroundScriptConfiguration = merge(
 	commonOptions,
 	sharedModuleOptions,
 	{
-		entry: backgroundScriptEntries,
-	},
+		entry: backgroundScriptEntries
+	}
 );
 
 const uninjectedScriptConfiguration = merge(
@@ -196,7 +195,7 @@ const injectedScriptConfiguration = merge(
 	}
 );
 
-const sortedSharedModules = []
+const sortedSharedModules = [];
 
 const sharedModulesConfiguration = merge(
 	commonOptions,
@@ -208,13 +207,13 @@ const sharedModulesConfiguration = merge(
 				patterns: [
 					{
 						from: path.resolve("static"),
-						to: "./",
+						to: "./"
 					},
 					{
 						from: path.resolve("src/offscreen"),
-						to: "./offscreen",
-					},
-				],
+						to: "./offscreen"
+					}
+				]
 			}),
 			new CreateInjectedSharedModulesPlugin({
 				injectedSharedModulesImportedCount,

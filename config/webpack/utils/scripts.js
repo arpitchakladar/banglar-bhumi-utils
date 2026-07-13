@@ -1,5 +1,5 @@
-import path from "path";
 import fs from "fs";
+import path from "path";
 
 /**
  * Reads `src/scripts.json` and re-indexes it so the outer key is the
@@ -11,8 +11,8 @@ import fs from "fs";
  */
 const scripts = JSON.parse(
 	fs.readFileSync(
-		path.resolve("./src/scripts.json"),
-	),
+		path.resolve("./src/scripts.json")
+	)
 );
 
 const formattedScripts = {};

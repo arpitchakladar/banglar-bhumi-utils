@@ -7,7 +7,7 @@ import crypto from "crypto";
  * @param {string} url - The URL to hash.
  * @returns {string} A 16-character hex hash.
  */
-const getHash = url =>
+const getHash = (url) =>
 	crypto
 		.createHash("md5")
 		.update(url)
@@ -50,7 +50,7 @@ export function getInjectedCode(code) {
 	}
 
 	const extensionAssetsCode = Object.entries(extensionAssets).map(
-		asset => `"${asset[0]}": chrome.runtime.getURL("${asset[1]}")`
+		(asset) => `"${asset[0]}": chrome.runtime.getURL("${asset[1]}")`
 	).join(",");
 
 	return [code, `{${extensionAssetsCode}}`];

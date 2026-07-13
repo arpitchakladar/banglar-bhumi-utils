@@ -1,5 +1,6 @@
-import path from "path";
 import fs from "fs";
+import path from "path";
+
 import webpack from "webpack";
 
 /**
@@ -12,7 +13,7 @@ class CreateRulesPlugin {
 	 * @param {import("webpack").Compiler} compiler
 	 */
 	apply(compiler) {
-		compiler.hooks.compilation.tap("CreateRulesPlugin", compilation => {
+		compiler.hooks.compilation.tap("CreateRulesPlugin", (compilation) => {
 			compilation.hooks.processAssets.tap(
 				{
 					name: "CreateRulesPlugin",
