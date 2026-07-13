@@ -69,7 +69,7 @@ const downloadPDF = (labelPoints: boolean = true) => {
 			.innerHTML
 			.split("[")[1]
 			.trim();
-		return detail.substr(0, detail.length - 1);
+		return detail.substring(0, detail.length - 1);
 	};
 	generateWebPage(
 		getDownloadMapPDFPageContent({
@@ -143,9 +143,8 @@ setPlotInformation();
 		setPlotInformation(plotPolygon);
 	});
 
-	await new Promise<void>((resolve, reject) => {
+	await new Promise<void>((resolve, _reject) => {
 		const plotElementIdsControl = setInterval(() => {
-			let i = 0;
 			let plotElements = document.querySelector("#OpenLayers_Layer_Vector_25_vroot")?.children || [];
 			if (plotElements.length) {
 				clearInterval(plotElementIdsControl);

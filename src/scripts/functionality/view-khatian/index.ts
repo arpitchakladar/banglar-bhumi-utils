@@ -73,7 +73,7 @@ const showDownloadButton = (args: any) => {
 					downloadPDFButton[0].style.cssText = styles;
 					downloadPDFButton.css("width", "auto");
 					downloadPDFButton.css("margin-bottom", "1rem");
-					downloadPDFButton.click(downloadInformationPDF);
+					downloadPDFButton.on("click", downloadInformationPDF);
 					formElement[0].insertBefore(downloadPDFButton[0], separatorElement[0]);
 				}
 			} else if (downloadPDFButton) {

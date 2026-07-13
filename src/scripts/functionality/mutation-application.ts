@@ -15,8 +15,8 @@ document.addEventListener("DOMContentLoaded", () => {
 		const submitButtonElement = $("#btnDeclareForm");
 		if (formElement.length > 0 && submitButtonElement.length > 0) {
 			formElement.removeAttr("action");
-			submitButtonElement.click(e => {
-				e.preventDefault();
+			submitButtonElement.on("click", (submitButtonClickEvent) => {
+				submitButtonClickEvent.preventDefault();
 
 				(async () => {
 					const pdfDoc = await PDFDocument.load(await fetch("/BanglarBhumi/MutationDeclarationForm.action", {
@@ -29,7 +29,7 @@ document.addEventListener("DOMContentLoaded", () => {
 					}).then(res => res.arrayBuffer()));
 					const pages = pdfDoc.getPages();
 					const lastPage = pages[pages.length - 1];
-					const { width, height } = lastPage.getSize();
+					const { width, height: _ } = lastPage.getSize();
 					const bannerImage = await pdfDoc.embedJpg(await fetch(sanghaFacilitationCentreBannerUrl).then(res => res.arrayBuffer()));
 					const bannerImageHeight = width * (bannerImage.height / bannerImage.width);
 

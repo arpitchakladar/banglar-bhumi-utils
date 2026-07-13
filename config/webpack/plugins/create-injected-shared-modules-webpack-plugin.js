@@ -1,5 +1,4 @@
 import path from "path";
-import fs from "fs";
 import webpack from "webpack";
 
 import { getFileName } from "../utils/build-file.js";

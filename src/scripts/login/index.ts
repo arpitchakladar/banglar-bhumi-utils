@@ -1,5 +1,3 @@
-import { interceptPost, interceptGet } from "@/shared/intercept-jquery-ajax";
-
 /**
  * Pre-processes a CAPTCHA image on a canvas by removing grayish
  * background noise while preserving dark pixels, producing a clean
@@ -64,7 +62,8 @@ function prepareCaptcha(ctx: CanvasRenderingContext2D, width: number, height: nu
 	ctx.putImageData(imgData, 0, 0);
 }
 
-const observer = new MutationObserver((mutationsList, obs) => {
+// TODO: use observe dom instead
+const observer = new MutationObserver((mutationsList, _obs) => {
 	for (const mutation of mutationsList) {
 		for (const node of mutation.addedNodes) {
 			if ((node as any).nodeType === 1 && (node as any).id === "loginform") {

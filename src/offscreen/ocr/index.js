@@ -1,4 +1,4 @@
-import Tesseract from "./tesseract.esm.min.js";
+import Tesseract from "./static/tesseract.esm.min.js";
 
 let ocrWorker = null;
 const WORKER_PATH = chrome.runtime.getURL("offscreen/ocr/static/worker.min.js");
@@ -37,7 +37,7 @@ async function performOcrInOffscreen(dataURL) {
  * - `"OFFSCREEN_OCR_REQUEST"`: runs OCR on the supplied data URL.
  * - `"OFFSCREEN_TERMINATE_OCR_WORKER"`: terminates the worker to free memory.
  */
-chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
 	if (message.type === "OFFSCREEN_OCR_REQUEST" && message.dataURL) {
 		performOcrInOffscreen(message.dataURL)
 			.then(({ text, confidence }) => {

@@ -11,8 +11,10 @@ export function generateWebPage(content: string, title: string = "Banglar Bhumi"
 		return;
 	}
 
-	tab.document.write(content);
-	tab.document.close();
-	tab.document.title = title;
+	tab.addEventListener("DOMContentLoaded", () => {
+		tab.document.body.innerHTML = content;
+		tab.document.title = title;
+		tab.document.close();
+	});
 	tab.focus();
 };

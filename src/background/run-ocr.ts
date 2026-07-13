@@ -22,7 +22,7 @@ async function setupOffscreenDocument() {
  * image data URL to an offscreen document for Tesseract.js processing
  * and sends the recognised text back to the caller.
  */
-chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
 	if (message.type === "OCR" && message.dataURL) {
 		(async () => {
 			try {
