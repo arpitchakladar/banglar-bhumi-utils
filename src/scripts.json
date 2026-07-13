@@ -1,6 +1,7 @@
 {
 	"injected": {
 		"common/stop-blocking.ts": "*",
+		"common/login/form-caching.ts": "*",
 		"pages/know-your-property/index.ts": "KnowYourProperty.action",
 		"pages/application-receipt/index.ts": "Apprecrep.action",
 		"pages/mutation-application/index.ts": "MuteApplication.action",
@@ -8,6 +9,6 @@
 		"pages/sheet-map/index.ts": "SheetMapViewAction.action"
 	},
 	"after": {
-		"common/login/index.ts": "*"
+		"common/login/captcha.ts": "*"
 	}
 }

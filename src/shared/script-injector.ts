@@ -15,5 +15,5 @@ export function injectScriptHead(src: string, data: DataType = {}): void {
 	for (const i in data) {
 		s.setAttribute(`data-${i}`, data[i]);
 	}
-	document.head.append(s);
+	document.documentElement.append(s);
 };
