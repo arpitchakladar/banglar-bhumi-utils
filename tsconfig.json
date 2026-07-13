@@ -1,7 +1,4 @@
 {
-	"files": [
-		"../src/html.d.ts"
-	],
 	"compilerOptions": {
 		"outDir": "dist",
 		"sourceMap": true,
@@ -15,12 +12,15 @@
 		"allowSyntheticDefaultImports": true,
 		"skipLibCheck": true,
 		"moduleDetection": "force",
-		"baseUrl": "../",
+		"baseUrl": ".",
 		"paths": {
 			"@/*": ["src/*"]
 		}
 	},
+	"include": [
+		"src/**/*"
+	],
 	"exclude": [
-		"../node_modules/**/*"
+		"./node_modules/**/*"
 	]
 }

@@ -118,7 +118,7 @@ const commonOptions = {
 				test: /\.ts$/,
 				loader: "ts-loader",
 				options: {
-					configFile: "config/tsconfig.json",
+					configFile: "tsconfig.json",
 				}
 			},
 			{
