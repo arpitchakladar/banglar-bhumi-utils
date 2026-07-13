@@ -22,7 +22,7 @@ class InjectScriptPlugin {
 					stage: compiler.webpack.Compilation.PROCESS_ASSETS_STAGE_ADDITIONAL,
 					additionalAssets: true
 				},
-				async assets => {
+				async (assets) => {
 					for (const assetName in assets) {
 						if (/\.js$/.test(assetName)) {
 							const injectedCodeResponse = getInjectedCode(compilation.getAsset(assetName).source.source())

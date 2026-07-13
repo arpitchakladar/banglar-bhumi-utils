@@ -28,7 +28,7 @@ class CreateInjectedSharedModulesPlugin {
 					name: "CreateInjectedSharedModulesPlugin",
 					stage: compiler.webpack.Compilation.PROCESS_ASSETS_STAGE_ADDITIONAL
 				},
-				assets => {
+				(_assets) => {
 					const injectedSharedScripts = this.sortedSharedModules
 						.filter(sharedModule => this.injectedSharedModulesImportedCount[sharedModule] > 0)
 						.map(sharedModule => `shared/${getFileName(sharedModule, "shared")}.js`);

@@ -18,7 +18,7 @@ class CreateRulesPlugin {
 					name: "CreateRulesPlugin",
 					stage: compiler.webpack.Compilation.PROCESS_ASSETS_STAGE_ADDITIONAL
 				},
-				assets => {
+				(_assets) => {
 					const ruleFileNames = fs.readdirSync(path.resolve(SOURCE_DIR, "rules"));
 					const rules = [];
 					let ruleId = 1;

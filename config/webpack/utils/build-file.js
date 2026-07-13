@@ -10,7 +10,7 @@ import crypto from "crypto";
  * @param {boolean} justHash  - When true, always return only the hash part.
  * @returns {string} The transformed filename.
  */
-export const getFileName = (fileName, prefix, justHash = false) => {
+export function getFileName(fileName, prefix, justHash = false) {
 	let hash = crypto
 		.createHash("md5")
 		.update(`${prefix}-${fileName}`)

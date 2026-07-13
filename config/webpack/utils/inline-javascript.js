@@ -5,4 +5,6 @@
  * @param {string} code - The JavaScript source to inline.
  * @returns {string} A `data:text/javascript;base64,…` URI.
  */
-export const inlineJavascript = code => `data:text/javascript;base64,${Buffer.from(code).toString("base64")}`;
+export function inlineJavascript(code) {
+	return `data:text/javascript;base64,${Buffer.from(code).toString("base64")}`;
+}

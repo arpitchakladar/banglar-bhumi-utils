@@ -22,22 +22,21 @@ import CopyPlugin from "copy-webpack-plugin";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-global.ROOT_DIR = path.resolve(__dirname, "..");
+global.ROOT_DIR = path.resolve(__dirname);
 global.CONFIG_DIR = path.resolve(ROOT_DIR, "config");
 global.SOURCE_DIR = path.resolve(ROOT_DIR, "src");
 global.production = process.env.NODE_ENV === "production";
 
-import CreateManifestPlugin from "./webpack/plugins/create-manifest-webpack-plugin/index.js";
-import CreateRulesPlugin from "./webpack/plugins/create-rules-webpack-plugin.js";
-import InjectScriptPlugin from "./webpack/plugins/inject-script-webpack-plugin.js";
-import CreateInjectedSharedModulesPlugin from "./webpack/plugins/create-injected-shared-modules-webpack-plugin.js";
+import CreateManifestPlugin from "./config/webpack/plugins/create-manifest-webpack-plugin/index.js";
+import CreateRulesPlugin from "./config/webpack/plugins/create-rules-webpack-plugin.js";
+import InjectScriptPlugin from "./config/webpack/plugins/inject-script-webpack-plugin.js";
+import CreateInjectedSharedModulesPlugin from "./config/webpack/plugins/create-injected-shared-modules-webpack-plugin.js";
 
-import { inlineJavascript } from "./webpack/utils/inline-javascript.js";
-import { getScriptRuntimeFromType } from "./webpack/utils/script-runtime.js";
-import { getFileName } from "./webpack/utils/build-file.js";
+import { inlineJavascript } from "./config/webpack/utils/inline-javascript.js";
+import { getFileName } from "./config/webpack/utils/build-file.js";
 
-import scripts from "./webpack/utils/scripts.js";
-import sharedModules from "./webpack/utils/shared-modules.js";
+import scripts from "./config/webpack/utils/scripts.js";
+import sharedModules from "./config/webpack/utils/shared-modules.js";
 
 const sharedModulesImportedCount = {};
 
@@ -54,7 +53,6 @@ for (const sharedModule of sharedModules) {
 const backgroundScriptEntries = {};
 const uninjectedScriptEntries = {};
 const injectedAfterScriptEntries = {};
-const injectedBeforeScriptEntries = {};
 const sharedModuleEntries = {};
 const sharedModuleExternals = {};
 

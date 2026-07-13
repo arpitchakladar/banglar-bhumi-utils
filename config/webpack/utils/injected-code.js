@@ -23,7 +23,7 @@ const getHash = url =>
  * @param {string} code - The compiled JavaScript bundle.
  * @returns {[string, string]} A tuple of [transformedCode, extensionAssetsJSON].
  */
-export const getInjectedCode = code => {
+export function getInjectedCode(code) {
 	const extensionAssets = {};
 	let i = 0;
 

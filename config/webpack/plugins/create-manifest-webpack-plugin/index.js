@@ -38,7 +38,7 @@ class CreateManifestPlugin {
 	 * @param {import("webpack").Compiler} compiler
 	 */
 	apply(compiler) {
-		compiler.hooks.compilation.tap("CreateManifestPlugin", compilation => {
+		compiler.hooks.compilation.tap("CreateManifestPlugin", (compilation) => {
 			compilation.hooks.processAssets.tap(
 				{
 					name: "CreateManifestPlugin",

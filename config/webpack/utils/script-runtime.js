@@ -9,7 +9,7 @@
  * @param {string} scriptType - The script type from scripts.json.
  * @returns {string} The corresponding `run_at` value.
  */
-export const getScriptRuntimeFromType = scriptType => {
+export function getScriptRuntimeFromType(scriptType) {
 	switch (scriptType) {
 		case "before":
 		case "injected-after":
