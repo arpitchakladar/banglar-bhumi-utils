@@ -1,3 +1,5 @@
+import { observeDOM } from "@/shared/observe-dom";
+
 /**
  * Pre-processes a CAPTCHA image on a canvas by removing grayish
  * background noise while preserving dark pixels, producing a clean
@@ -62,62 +64,59 @@ function prepareCaptcha(ctx: CanvasRenderingContext2D, width: number, height: nu
 	ctx.putImageData(imgData, 0, 0);
 }
 
-// TODO: use observe dom instead
-const observer = new MutationObserver((mutationsList, _obs) => {
-	for (const mutation of mutationsList) {
-		for (const node of mutation.addedNodes) {
-			if ((node as any).nodeType === 1 && (node as any).id === "loginform") {
-				const img = (node as HTMLFormElement).querySelector("#captchaImg") as HTMLImageElement;
-				const captchaInput = (node as HTMLFormElement).querySelector("#txtInput") as HTMLInputElement;
+observeDOM(() => {
+	const loginFormElement = document.querySelector("#loginform") as (HTMLFormElement | undefined);
 
-				// Wait for image to load to get correct dimensions
-				img.addEventListener("load", async () => {
-					const { width, height } = img;
+	if (loginFormElement) {
+		const captchaImg = loginFormElement.querySelector("#captchaImg") as HTMLImageElement;
+		const captchaInput = loginFormElement.querySelector("#txtInput") as HTMLInputElement;
 
-					// 1. Create canvas
-					const canvas = document.createElement("canvas");
-					canvas.width = width;
-					canvas.height = height;
-					canvas.style.display = "block";
+		// Wait for image to load to get correct dimensions
+		captchaImg.addEventListener("load", async () => {
+			const { width, height } = captchaImg;
 
-					// 2. Copy styles (optional)
-					canvas.style.cssText = getComputedStyle(img).cssText;
-					canvas.style.display = "none";
+			// 1. Create canvas
+			const canvas = document.createElement("canvas");
+			canvas.width = width;
+			canvas.height = height;
+			canvas.style.display = "block";
 
-					// 3. Insert canvas before image
-					img.parentNode!.querySelectorAll("canvas").forEach(c => c.remove());
-					img.parentNode!.insertBefore(canvas, img);
+			// 2. Copy styles (optional)
+			canvas.style.cssText = getComputedStyle(captchaImg).cssText;
+			canvas.style.display = "none";
 
-					// 4. Hide image
-					img.style.display = "none";
+			// 3. Insert canvas before image
+			captchaImg.parentNode!.querySelectorAll("canvas").forEach(c => c.remove());
+			captchaImg.parentNode!.insertBefore(canvas, captchaImg);
 
-					// 5. Draw the image onto the canvas
-					const ctx = canvas.getContext("2d")!;
-					ctx.drawImage(img, 0, 0);
-					prepareCaptcha(ctx, canvas.width, canvas.height);
-					canvas.style.display = "";
-					const dataURL = canvas.toDataURL("image/png");
+			// 4. Hide image
+			captchaImg.style.display = "none";
 
-					// Perform OCR
-					chrome.runtime.sendMessage(
-						{ type: "OCR", dataURL },
-						({ success, text, confidence }) => {
-							if (success) {
-								const textResult = text.trim();
-								if (confidence < 80 || textResult.length !== 6) {
-									// Reset the captcha if confidence is low
-									img.src = "generateCaptcha?" + new Date().getTime();
-								} else {
-									captchaInput.value = textResult;
-								}
-							}
-						},
-					);
-				});
-			}
-		}
+			// 5. Draw the image onto the canvas
+			const ctx = canvas.getContext("2d")!;
+			ctx.drawImage(captchaImg, 0, 0);
+			prepareCaptcha(ctx, canvas.width, canvas.height);
+			canvas.style.display = "";
+			const dataURL = canvas.toDataURL("image/png");
+
+			// Perform OCR
+			chrome.runtime.sendMessage(
+				{ type: "OCR", dataURL },
+				({ success, text, confidence }) => {
+					if (success) {
+						const textResult = text.trim();
+						if (confidence < 80 || textResult.length !== 6) {
+							// Reset the captcha if confidence is low
+							captchaImg.src = "generateCaptcha?" + new Date().getTime();
+						} else {
+							captchaInput.value = textResult;
+						}
+					}
+				},
+			);
+		});
 	}
-});
 
-// Start observing the body
-observer.observe(document.body, { childList: true, subtree: true });
+	// This runs forever
+	return false;
+});
