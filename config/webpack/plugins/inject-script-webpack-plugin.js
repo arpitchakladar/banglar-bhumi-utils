@@ -14,6 +14,7 @@ import { getInjectedCode } from "../utils/injected-code.js";
 class InjectScriptPlugin {
 	/**
 	 * @param {import("webpack").Compiler} compiler
+	 * @returns {void}
 	 */
 	apply(compiler) {
 		compiler.hooks.compilation.tap("InjectScriptPlugin", (compilation) => {
@@ -26,14 +27,16 @@ class InjectScriptPlugin {
 				async(assets) => {
 					for (const assetName in assets) {
 						if (/\.js$/.test(assetName)) {
-							const injectedCodeResponse = getInjectedCode(compilation.getAsset(assetName).source.source());
+							const assetSource = compilation.getAsset(assetName).source.source();
+							const injectedCodeResponse = getInjectedCode(assetSource);
 							const scriptInjectorModuleName = getFileName("script-injector", "shared", true);
 							compilation.updateAsset(
 								assetName,
 								new webpack.sources.RawSource(injectedCodeResponse[0])
 							);
+							const injectedFileName = `scripts/injected/${path.basename(assetName)}`;
 							assets["scripts/" + path.basename(assetName)] = new webpack.sources.RawSource(
-								`$${scriptInjectorModuleName}.injectScriptHead("scripts/injected/${path.basename(assetName)}", ${injectedCodeResponse[1]});`
+								`$${scriptInjectorModuleName}.injectScriptHead("${injectedFileName}", ${injectedCodeResponse[1]});`
 							);
 						}
 					}

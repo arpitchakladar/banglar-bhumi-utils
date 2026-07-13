@@ -4,26 +4,49 @@
  * is disabled.  Reverts the prototypes after patching to avoid
  * interfering with other code.
  */
+
+type JQueryBindFn = (
+	eventName: string,
+	handler: (event: JQuery.Event) => unknown
+) => JQuery;
+
+type JQueryKeydownFn = (
+	handler: (event: JQuery.Event) => unknown
+) => JQuery;
+
+type JQueryPrototypeShape = {
+	bind: JQueryBindFn;
+	keydown: JQueryKeydownFn
+};
+
+const jQueryPrototype = $.prototype as unknown as JQueryPrototypeShape;
+
 document.addEventListener("DOMContentLoaded", () => {
-	const proxiedBind = $.prototype.bind;
+	const proxiedBind = jQueryPrototype.bind;
 	/** Proxies jQuery `.bind()` to no-op the `"cut copy paste"` event. */
-	$.prototype.bind = function() {
-		if (arguments[0].trim() === "cut copy paste") {
-			arguments[1] = (_: any) => {};
-		}
-
-		return proxiedBind.apply(this, Array.from(arguments) as any);
+	jQueryPrototype.bind = function(
+		this: JQuery,
+		...args: Parameters<JQueryBindFn>
+	): JQuery {
+		const [eventName, handler] = args;
+		const noop = (): undefined => undefined;
+		return proxiedBind.call(
+			this,
+			eventName,
+			eventName.trim() === "cut copy paste" ? noop : handler
+		);
 	};
 
-	const proxiedKeydown = $.prototype.keydown;
+	const proxiedKeydown = jQueryPrototype.keydown;
 	/** Proxies jQuery `.keydown()` so all key presses are allowed. */
-	$.prototype.keydown = function() {
-		arguments[0] = (_: any) => true;
-
-		return proxiedKeydown.apply(this, Array.from(arguments) as any);
+	jQueryPrototype.keydown = function(
+		this: JQuery,
+		..._args: Parameters<JQueryKeydownFn>
+	): JQuery {
+		return proxiedKeydown.call(this, () => true);
 	};
 
-	$.prototype.bind = proxiedBind;
-	$.prototype.keydown = proxiedKeydown;
-	document.oncontextmenu = () => true;
+	jQueryPrototype.bind = proxiedBind;
+	jQueryPrototype.keydown = proxiedKeydown;
+	document.oncontextmenu = (): boolean => true;
 });

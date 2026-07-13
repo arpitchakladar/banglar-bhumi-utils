@@ -11,6 +11,7 @@ import webpack from "webpack";
 class CreateRulesPlugin {
 	/**
 	 * @param {import("webpack").Compiler} compiler
+	 * @returns {void}
 	 */
 	apply(compiler) {
 		compiler.hooks.compilation.tap("CreateRulesPlugin", (compilation) => {

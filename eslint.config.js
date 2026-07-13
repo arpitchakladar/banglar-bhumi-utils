@@ -75,11 +75,16 @@ export default tseslint.config(
 
 	{
 		files: ["**/*.js"],
-		...tseslint.configs.disableTypeChecked
+		...tseslint.configs.disableTypeChecked,
+		rules: {
+			...tseslint.configs.disableTypeChecked.rules,
+			"@typescript-eslint/explicit-function-return-type": "off"
+		}
 	},
 
 	{
 		files: ["webpack.config.js", "config/**/*.js"],
+		...tseslint.configs.disableTypeChecked,
 		languageOptions: {
 			globals: {
 				...globals.node,
@@ -90,7 +95,9 @@ export default tseslint.config(
 			}
 		},
 		rules: {
-			"no-console": "off"
+			...tseslint.configs.disableTypeChecked.rules,
+			"no-console": "off",
+			"@typescript-eslint/explicit-function-return-type": "off"
 		}
 	}
 );

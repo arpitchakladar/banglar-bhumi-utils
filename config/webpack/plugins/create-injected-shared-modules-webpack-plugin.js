@@ -21,6 +21,7 @@ class CreateInjectedSharedModulesPlugin {
 
 	/**
 	 * @param {import("webpack").Compiler} compiler
+	 * @returns {void}
 	 */
 	apply(compiler) {
 		compiler.hooks.compilation.tap("CreateInjectedSharedModulesPlugin", (compilation) => {

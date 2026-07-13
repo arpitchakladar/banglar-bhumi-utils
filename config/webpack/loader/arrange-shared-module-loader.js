@@ -27,7 +27,11 @@ export default function(source) {
 			if (moduleIndex >= 0) {
 				const currentSharedModuleName = sharedModules[moduleIndex];
 
-				if (!(sortedSharedModules.includes(currentSharedModuleName) || modulesToBeIncluded.includes(currentSharedModuleName))) {
+				const alreadyIncluded = (
+					sortedSharedModules.includes(currentSharedModuleName)
+					|| modulesToBeIncluded.includes(currentSharedModuleName));
+
+				if (!alreadyIncluded) {
 					modulesToBeIncluded.push(currentSharedModuleName);
 				}
 			}
