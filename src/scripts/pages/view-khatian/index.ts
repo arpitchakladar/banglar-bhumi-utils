@@ -1,6 +1,6 @@
 import { generateWebPage } from "@/shared/generate-web-page";
 import { interceptPost } from "@/shared/intercept-jquery-ajax";
-import getDownloadInformationPDFPageContent from "@/scripts/functionality/view-khatian/download-information-pdf-page-content.html";
+import getDownloadInformationPDFPageContent from "@/scripts/pages/view-khatian/download-information-pdf-page-content.html";
 
 const submitButtonElement = $("#khbutton");
 const separatorElement = $("#bodycover > div > form > hr:nth-child(2)");

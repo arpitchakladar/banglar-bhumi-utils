@@ -9,7 +9,7 @@ import { observeDOM } from "@/shared/observe-dom";
  * @param width  - Canvas width in pixels.
  * @param height - Canvas height in pixels.
  */
-function prepareCaptcha(ctx: CanvasRenderingContext2D, width: number, height: number) {
+export function prepareCaptcha(ctx: CanvasRenderingContext2D, width: number, height: number) {
 	const imgData = ctx.getImageData(0, 0, width, height);
 	const data = imgData.data;
 	const radius = 1;

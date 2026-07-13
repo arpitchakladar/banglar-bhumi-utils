@@ -1,13 +1,13 @@
 {
 	"injected": {
-		"stop-blocking.ts": "*",
-		"functionality/mutation-application.ts": "MuteApplication.action",
-		"functionality/view-khatian/index.ts": "KnowYourProperty.action",
-		"captcha/know-your-property.ts": "KnowYourProperty.action",
-		"captcha/application-receipt.ts": "Apprecrep.action",
-		"functionality/sheet-map/index.ts": "SheetMapViewAction.action"
+		"common/stop-blocking.ts": "*",
+		"pages/know-your-property/index.ts": "KnowYourProperty.action",
+		"pages/application-receipt/index.ts": "Apprecrep.action",
+		"pages/mutation-application/index.ts": "MuteApplication.action",
+		"pages/view-khatian/index.ts": "KnowYourProperty.action",
+		"pages/sheet-map/index.ts": "SheetMapViewAction.action"
 	},
 	"after": {
-		"login/index.ts": "*"
+		"common/login/index.ts": "*"
 	}
 }

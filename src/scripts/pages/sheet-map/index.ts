@@ -1,8 +1,8 @@
 import { generateWebPage } from "@/shared/generate-web-page";
-import getDownloadMapPDFPageContent from "@/scripts/functionality/sheet-map/download-map-pdf-page-content.html";
-import getMapPlotPolygonPathElement from "@/scripts/functionality/sheet-map/map-plot-polygon-path-element.html";
-import getMapPlotNumberLabelTextElement from "@/scripts/functionality/sheet-map/map-plot-number-label-text-element.html";
-import getPlotInformationElement from "@/scripts/functionality/sheet-map/plot-information-element.html";
+import getDownloadMapPDFPageContent from "@/scripts/pages/sheet-map/download-map-pdf-page-content.html";
+import getMapPlotPolygonPathElement from "@/scripts/pages/sheet-map/map-plot-polygon-path-element.html";
+import getMapPlotNumberLabelTextElement from "@/scripts/pages/sheet-map/map-plot-number-label-text-element.html";
+import getPlotInformationElement from "@/scripts/pages/sheet-map/plot-information-element.html";
 
 interface PlotPolygon {
 	plotArea: number;
