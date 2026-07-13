@@ -1,7 +1,17 @@
+/**
+ * Webpack loader that converts HTML template files into JavaScript modules.
+ * It escapes template literals and replaces `$name$` placeholders with
+ * `${name}` interpolation syntax so the exported function can accept a
+ * replacements object.
+ *
+ * @param {string} source - Raw HTML file content.
+ * @returns {string} A JS module that exports a function accepting
+ *   replacement values and returning the interpolated HTML string.
+ */
 export default function(source) {
 	source = source
 		.replaceAll("\\", "\\\\")
-		.replaceAll("`","\\`")
+		.replaceAll("`", "\\`")
 		.replaceAll("${", "\\${");
 
 	const replacements = {};

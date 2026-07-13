@@ -1,3 +1,4 @@
 declare module "*.html" {
-	export default (replacements: any) => string;
+	function content(_replacements: Record<string, unknown>): string;
+	export default content;
 }

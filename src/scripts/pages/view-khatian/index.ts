@@ -1,6 +1,6 @@
+import getDownloadInformationPDFPageContent from "@/scripts/pages/view-khatian/download-information-pdf-page-content.html";
 import { generateWebPage } from "@/shared/generate-web-page";
-import { interceptPost } from "@/shared/intercept-jquery-ajax";
-import getDownloadInformationPDFPageContent from "@/scripts/functionality/view-khatian/download-information-pdf-page-content.html";
+import { addPostInterceptor, JQueryAjaxArgs } from "@/shared/intercept-jquery-ajax";
 
 const submitButtonElement = $("#khbutton");
 const separatorElement = $("#bodycover > div > form > hr:nth-child(2)");
@@ -14,18 +14,28 @@ const styles = Array.from(submitButtonElementComputedStyles)
 		""
 	);
 
-const getValueOfSelectElement = (selector: string) => {
-	const element = document.querySelector<HTMLSelectElement>(selector)!;
-	return element.options[element.selectedIndex].text;
+/**
+ * Reads the currently selected text from a `<select>` element.
+ *
+ * @param selector - CSS selector for the select element.
+ * @returns The text of the selected option.
+ */
+function getValueOfSelectElement(selector: string): string {
+	const element = document.querySelector<HTMLSelectElement>(selector);
+	return element?.options[element.selectedIndex].text ?? "";
 };
 
 let isPlotInformation: boolean | null = null;
 
-const downloadInformationPDF = () => {
+/**
+ * Opens a new window with a printable PDF view of the current khatian
+ * or plot details, including district/block/mouza info.
+ */
+function downloadInformationPDF(): void {
 	generateWebPage(
 		getDownloadInformationPDFPageContent({
 			isPlotInformation: !!isPlotInformation,
-			details: $(isPlotInformation ? "#plotdetails" : "#khdetails").html(),
+			details: $(isPlotInformation ? "#plotdetails" : "#khdetails").html() || "",
 			district: getValueOfSelectElement("#lstDistrictCode1"),
 			block: getValueOfSelectElement("#lstBlockCode1"),
 			mouza: getValueOfSelectElement("#lstMouzaList")
@@ -36,11 +46,18 @@ const downloadInformationPDF = () => {
 	);
 };
 
-const showDownloadButton = (args: any) => {
+/**
+ * Intercepts the success callback of a jQuery AJAX call.  When a valid
+ * details table is returned, it inserts a "Download PDF" button;
+ * otherwise it removes an existing button.
+ *
+ * @param args - The `arguments` object from the intercepted `$.post` call.
+ */
+function showDownloadButton(args: JQueryAjaxArgs): void {
 	if (isPlotInformation !== null) {
 		const callback = args[2];
-		args[2] = (data: any) => {
-			callback(data);
+		args[2] = (...data) => {
+			callback(...data);
 			const tableElement = $(isPlotInformation
 				? "#plotdetails > div:nth-child(1) > div:nth-child(4) > table > tbody"
 				: "#khdetails > table > tbody > tr > td:nth-child(1) > div:nth-child(5) > table > tbody"
@@ -56,23 +73,23 @@ const showDownloadButton = (args: any) => {
 					downloadPDFButton[0].style.cssText = styles;
 					downloadPDFButton.css("width", "auto");
 					downloadPDFButton.css("margin-bottom", "1rem");
-					downloadPDFButton.click(downloadInformationPDF);
+					downloadPDFButton.on("click", downloadInformationPDF);
 					formElement[0].insertBefore(downloadPDFButton[0], separatorElement[0]);
 				}
 			} else if (downloadPDFButton) {
-				($(downloadPDFButton as any) as any).remove();
+				($(downloadPDFButton)).remove();
 				isPlotInformation = null;
 				downloadPDFButton = null;
 			}
-		}
+		};
 	}
 };
 
-interceptPost("plotDetailsAction_LandInfo.action", args => {
+addPostInterceptor("plotDetailsAction_LandInfo.action", (args: JQueryAjaxArgs) => {
 	isPlotInformation = true;
 	showDownloadButton(args);
 });
-interceptPost("khDetailsAction_LandInfo.action", args => {
+addPostInterceptor("khDetailsAction_LandInfo.action", (args: JQueryAjaxArgs) => {
 	isPlotInformation = false;
 	showDownloadButton(args);
 });

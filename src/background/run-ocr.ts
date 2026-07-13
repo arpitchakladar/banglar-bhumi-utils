@@ -1,7 +1,13 @@
+import { OCRRequest, OCRResponse } from "@/shared/ocr-request";
+
 const OFFSCREEN_DOCUMENT_PATH = "offscreen/ocr/index.html";
 
 // Function to ensure the offscreen document is open
-async function setupOffscreenDocument() {
+/**
+ * Ensures the offscreen OCR document is open.  If it already exists
+ * this is a no-op.
+ */
+async function setupOffscreenDocument(): Promise<void> {
 	if (await chrome.offscreen.hasDocument()) {
 		return; // Offscreen document already open
 	}
@@ -13,25 +19,26 @@ async function setupOffscreenDocument() {
 }
 
 // Listen for messages from content scripts (and popup if applicable)
-chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+/**
+ * Listens for `"OCR"` messages from content scripts.  Forwards the
+ * image data URL to an offscreen document for Tesseract.js processing
+ * and sends the recognised text back to the caller.
+ */
+chrome.runtime.onMessage.addListener(function(message: OCRRequest, _sender, sendResponse): boolean {
 	if (message.type === "OCR" && message.dataURL) {
-		(async () => {
+		void (async function(): Promise<void> {
 			try {
 				// Ensure the offscreen document is open
 				await setupOffscreenDocument();
 
 				// Send the OCR request to the offscreen document
-				const offscreenResponse = await chrome.runtime.sendMessage({
+				const offscreenResponse = await chrome.runtime.sendMessage<OCRRequest, OCRResponse>({
 					type: "OFFSCREEN_OCR_REQUEST",
 					dataURL: message.dataURL
 				});
 
-				if (offscreenResponse && offscreenResponse.success) {
-					sendResponse(offscreenResponse);
-				} else {
-					sendResponse({ success: false, error: offscreenResponse?.error || "Unknown OCR error" });
-				}
-			} catch (error) {
+				sendResponse(offscreenResponse);
+			} catch(error) {
 				sendResponse({ success: false, error: (error as Error).message });
 			}
 		})();

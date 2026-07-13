@@ -1,31 +1,53 @@
-import webpack from "webpack";
-import path from "path";
 import fs from "fs";
+import path from "path";
 
-import { getScriptRuntimeFromType } from "../../utils/script-runtime.js";
+import webpack from "webpack";
+
 import { getFileName } from "../../utils/build-file.js";
+import { getScriptRuntimeFromType } from "../../utils/script-runtime.js";
 import scripts from "../../utils/scripts.js";
+
 const manifest = JSON.parse(
 	fs.readFileSync(
-		path.resolve("config/webpack/plugins/create-manifest-webpack-plugin/manifest-template.json"),
-	),
+		path.resolve("config/webpack/plugins/create-manifest-webpack-plugin/manifest-template.json")
+	)
 );
 
+/**
+ * Webpack plugin that dynamically generates the extension's
+ * `manifest.json` asset.  It reads the template, resolves the
+ * current version from `package.json`, and builds `content_scripts`
+ * entries by matching script definitions from `scripts.json` against
+ * page URL patterns.  Shared modules, injected scripts, and
+ * web-accessible resources are added automatically based on import
+ * counts collected during the build.
+ */
 class CreateManifestPlugin {
+	/**
+	 * @param {{
+	 *   sharedModulesImportedCount: Record<string, number>,
+	 *   injectedSharedModulesImportedCount: Record<string, number>,
+	 *   sortedSharedModules: string[]
+	 * }} options
+	 */
 	constructor({ sharedModulesImportedCount, injectedSharedModulesImportedCount, sortedSharedModules }) {
 		this.sharedModulesImportedCount = sharedModulesImportedCount;
 		this.injectedSharedModulesImportedCount = injectedSharedModulesImportedCount;
 		this.sortedSharedModules = sortedSharedModules;
 	}
 
+	/**
+	 * @param {import("webpack").Compiler} compiler
+	 * @returns {void}
+	 */
 	apply(compiler) {
-		compiler.hooks.compilation.tap("CreateManifestPlugin", compilation => {
+		compiler.hooks.compilation.tap("CreateManifestPlugin", (compilation) => {
 			compilation.hooks.processAssets.tap(
 				{
 					name: "CreateManifestPlugin",
 					stage: compiler.webpack.Compilation.PROCESS_ASSETS_STAGE_ADDITIONAL
 				},
-				assets => {
+				(assets) => {
 					manifest.version = JSON.parse(fs.readFileSync((path.resolve(ROOT_DIR, "package.json")))).version;
 					manifest.content_scripts = [];
 					let resources = [];
@@ -50,12 +72,12 @@ class CreateManifestPlugin {
 					}
 
 					manifest.content_scripts.push({
-						matches: [`*://banglarbhumi.gov.in/BanglarBhumi/*`],
+						matches: ["*://banglarbhumi.gov.in/BanglarBhumi/*"],
 						js: this.sortedSharedModules
-							.filter(sharedModule => this.sharedModulesImportedCount[sharedModule] > 0)
-							.map(sharedModule => `shared/${getFileName(sharedModule, "shared")}.js`)
+							.filter((sharedModule) => this.sharedModulesImportedCount[sharedModule] > 0)
+							.map((sharedModule) => `shared/${getFileName(sharedModule, "shared")}.js`)
 							.concat(arrangedScripts["*"]["document_start"])
-							.filter(x => x != null),
+							.filter((x) => x != null),
 						run_at: "document_start"
 					});
 
@@ -83,8 +105,8 @@ class CreateManifestPlugin {
 					}
 
 					const injectedSharedModules = this.sortedSharedModules
-						.filter(sharedModule => this.injectedSharedModulesImportedCount[sharedModule] > 0)
-						.map(sharedModule => `shared/${getFileName(sharedModule, "shared")}.js`);
+						.filter((sharedModule) => this.injectedSharedModulesImportedCount[sharedModule] > 0)
+						.map((sharedModule) => `shared/${getFileName(sharedModule, "shared")}.js`);
 
 					if (injectedSharedModules.length > 0) {
 						resources = resources.concat(injectedSharedModules);

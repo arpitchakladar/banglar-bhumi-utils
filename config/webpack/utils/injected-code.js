@@ -1,13 +1,29 @@
 import crypto from "crypto";
 
-const getHash = url =>
+/**
+ * Computes an MD5 hash suffix (last 16 hex characters) for a given URL.
+ * Used to create unique attribute names for injected script data.
+ *
+ * @param {string} url - The URL to hash.
+ * @returns {string} A 16-character hex hash.
+ */
+const getHash = (url) =>
 	crypto
 		.createHash("md5")
 		.update(url)
 		.digest("hex")
 		.substring(16);
 
-export const getInjectedCode = code => {
+/**
+ * Transforms extension asset URL placeholders (`"$l{ url }l$"`) in the
+ * compiled JavaScript into `document.currentScript.getAttribute("data-<hash>")`
+ * lookups.  The mapping of hashes to resolved `chrome.runtime.getURL()` calls
+ * is returned separately so the injector script can embed it as data attributes.
+ *
+ * @param {string} code - The compiled JavaScript bundle.
+ * @returns {[string, string]} A tuple of [transformedCode, extensionAssetsJSON].
+ */
+export function getInjectedCode(code) {
 	const extensionAssets = {};
 	let i = 0;
 
@@ -34,7 +50,7 @@ export const getInjectedCode = code => {
 	}
 
 	const extensionAssetsCode = Object.entries(extensionAssets).map(
-		asset => `"${asset[0]}": chrome.runtime.getURL("${asset[1]}")`
+		(asset) => `"${asset[0]}": chrome.runtime.getURL("${asset[1]}")`
 	).join(",");
 
 	return [code, `{${extensionAssetsCode}}`];
