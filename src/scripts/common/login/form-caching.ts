@@ -1,7 +1,7 @@
 import { addPostListener, addPostResponder, JQueryAjaxResponse } from "@/shared/intercept-jquery-ajax";
 
 /** Caches the login area HTML to avoid re-fetching it on subsequent requests. */
-let loginAreaHTML: string | null = null;
+let loginAreaHTML: JQueryAjaxResponse | null = null;
 
 /**
  * Intercepts `viewLoginAreaAction` AJAX requests and serves the cached HTML
@@ -9,12 +9,8 @@ let loginAreaHTML: string | null = null;
  */
 addPostResponder(
 	"viewLoginAreaAction",
-	function(_args): JQueryAjaxResponse | undefined | null {
-		return loginAreaHTML
-			? {
-				data: loginAreaHTML
-			}
-			: null;
+	function(_args): JQueryAjaxResponse | null {
+		return loginAreaHTML;
 	}
 );
 
@@ -25,7 +21,8 @@ addPostResponder(
 addPostListener(
 	"viewLoginAreaAction",
 	function(_args, result): void {
-		loginAreaHTML = result.data?.toString() ?? null;
+		if (result.textStatus === "success")
+			loginAreaHTML = result;
 	},
 	false
 );
