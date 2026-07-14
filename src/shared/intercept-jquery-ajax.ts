@@ -15,7 +15,8 @@ const getInterceptors: InterceptorRegistration[] = [];
 /** Data a responder wants to resolve the "request" with, instead of hitting the network. */
 export type JQueryAjaxResponse = {
 	data: unknown;
-	textStatus?: string
+	textStatus?: string;
+	jqXHR?: JQuery.jqXHR
 };
 
 /**
@@ -73,6 +74,22 @@ function extractUrl(args: unknown[]): string | null {
 }
 
 /**
+ * Finds the success callback in `$.post`/`$.get` args, regardless of which
+ * overload was used:
+ *   $.post(url, success)
+ *   $.post(url, data, success)
+ *   $.post(url, data, success, dataType)
+ * The callback is always the first function-typed positional argument —
+ * it is NOT reliably at a fixed index, since `data` is optional.
+ */
+function extractCallback(args: unknown[]): JQueryAjaxArgs[2] | undefined {
+	for (const arg of args) {
+		if (typeof arg === "function") return arg as JQueryAjaxArgs[2];
+	}
+	return undefined;
+}
+
+/**
  * Invokes any registered listeners whose `urlSuffix` matches the request URL.
  * `fromResponder` indicates whether this result came from a short-circuited
  * responder rather than a genuine network response, so listeners registered
@@ -96,11 +113,14 @@ function runListeners(
 
 /**
  * Checks registered responders for a match. If one matches and returns a
- * response, synthesizes a resolved jqXHR-like object, invokes the caller's
- * own success callback (3rd positional arg) to preserve `$.post`/`$.get`
- * shorthand semantics, fires any matching listeners, and returns the jqXHR
- * so the real ajax call can be skipped. Returns `null` if no responder
- * handled the request.
+ * response, synthesizes a resolved jqXHR-like object and — asynchronously,
+ * to mirror real `$.post`/`$.get` semantics where the success callback
+ * never fires synchronously — invokes the caller's own success callback
+ * (found via `extractCallback`, since its positional index varies by
+ * overload), resolves the deferred, and fires any matching listeners.
+ * Returns the jqXHR immediately (still pending) so the caller gets a real
+ * promise-like object to attach `.done`/`.fail` to, and the real ajax call
+ * can be skipped. Returns `null` if no responder handled the request.
  */
 function tryRespond(
 	responders: ResponderRegistration[],
@@ -120,13 +140,18 @@ function tryRespond(
 		const deferred = $.Deferred();
 		const jqXHR = deferred.promise() as unknown as JQuery.jqXHR;
 
-		const callback = args[2];
-		if (typeof callback === "function") {
-			(callback as JQueryAjaxArgs[2])(data, textStatus, jqXHR);
-		}
-		deferred.resolve(data, textStatus, jqXHR);
+		// Defer to the next tick so callers can rely on the same
+		// "callback never fires before $.post/$.get returns" guarantee
+		// that the real jQuery methods provide.
+		setTimeout(function() {
+			const callback = extractCallback(args);
+			if (callback) {
+				callback(data, textStatus, jqXHR);
+			}
+			deferred.resolve(data, textStatus, jqXHR);
 
-		runListeners(listeners, args, { data, textStatus, jqXHR }, /* fromResponder */ true);
+			runListeners(listeners, args, { data, textStatus, jqXHR }, /* fromResponder */ true);
+		}, 0);
 
 		return jqXHR;
 	}
@@ -167,15 +192,15 @@ document.addEventListener("DOMContentLoaded", function() {
 
 		// Use our strict signature instead of `Function` to satisfy ESLint
 		const jqXHR = (originalPost as unknown as OriginalJQueryAjaxMethod)(...args);
-		jqXHR.done((data: unknown, textStatus: string, doneJqXHR: JQuery.jqXHR) => {
+		jqXHR.done(function(data: unknown, textStatus: string, doneJqXHR: JQuery.jqXHR): void {
 			runListeners(postListeners, args, { data, textStatus, jqXHR: doneJqXHR }, /* fromResponder */ false);
 		});
-		jqXHR.fail((failJqXHR: JQuery.jqXHR, textStatus: string) => {
+		jqXHR.fail(function(failJqXHR: JQuery.jqXHR, textStatus: string): void {
 			runListeners(
 				postListeners,
 				args,
 				{ data: failJqXHR.responseJSON ?? failJqXHR.responseText, textStatus, jqXHR: failJqXHR },
-				/* fromResponder */ false
+				false
 			);
 		});
 		return jqXHR;
@@ -199,10 +224,10 @@ document.addEventListener("DOMContentLoaded", function() {
 		if (shortCircuited) return shortCircuited;
 
 		const jqXHR = (originalGet as unknown as OriginalJQueryAjaxMethod)(...args);
-		jqXHR.done((data: unknown, textStatus: string, doneJqXHR: JQuery.jqXHR) => {
+		jqXHR.done(function(data: unknown, textStatus: string, doneJqXHR: JQuery.jqXHR): void {
 			runListeners(getListeners, args, { data, textStatus, jqXHR: doneJqXHR }, /* fromResponder */ false);
 		});
-		jqXHR.fail((failJqXHR: JQuery.jqXHR, textStatus: string) => {
+		jqXHR.fail(function(failJqXHR: JQuery.jqXHR, textStatus: string): void {
 			runListeners(
 				getListeners,
 				args,
