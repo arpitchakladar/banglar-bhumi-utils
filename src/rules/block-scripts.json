@@ -1,9 +1,0 @@
-{
-	"priority": 1,
-	"action": {
-		"type": "block"
-	},
-	"condition": {
-		"regexFilter": "^https:\/\/banglarbhumi.gov.in\/BanglarBhumi\/(js\/(jquery-1.12.4|bootstrap-dropdownhover).js|images\/Bhumi2.gif)$"
-	}
-}
