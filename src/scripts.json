@@ -8,7 +8,5 @@
 		"pages/view-khatian/index.ts": "KnowYourProperty.action",
 		"pages/sheet-map/index.ts": "SheetMapViewAction.action"
 	},
-	"after": {
-		"common/login/captcha.ts": "*"
-	}
+	"after": {}
 }
