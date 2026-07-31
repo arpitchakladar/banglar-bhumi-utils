@@ -1,18 +1,16 @@
 /**
  * Webpack configuration for the Banglar Bhumi Utils Chrome extension.
  *
- * Produces four separate bundles:
- *  1. **Background script**  – service worker entry point.
- *  2. **Uninjected scripts** – content scripts that run as-is.
- *  3. **Injected scripts**   – content scripts that are further processed
+ * Produces three separate bundles:
+ *  1. **Uninjected scripts** – content scripts that run as-is.
+ *  2. **Injected scripts**   – content scripts that are further processed
  *     so they can be injected into the page DOM.
- *  4. **Shared modules**     – libraries compiled as standalone files and
+ *  3. **Shared modules**     – libraries compiled as standalone files and
  *     referenced via global variables (`$<hash>`).
  *
  * Custom loaders and plugins handle dependency ordering, import counting,
  * asset-URL rewriting, manifest generation, and declarative-net-rule creation.
  */
-import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
 
@@ -49,19 +47,10 @@ for (const sharedModule of sharedModules) {
 	injectedSharedModulesImportedCount[sharedModule] = 0;
 }
 
-const backgroundScriptEntries = {};
 const uninjectedScriptEntries = {};
 const injectedAfterScriptEntries = {};
 const sharedModuleEntries = {};
 const sharedModuleExternals = {};
-
-const backgroundScriptImports = fs.readdirSync(path.resolve(SOURCE_DIR, "background"))
-	.map((scriptName) => `import "${path.resolve(SOURCE_DIR, "background", scriptName)}";`)
-	.join("\n");
-backgroundScriptEntries["background script"] = {
-	import: inlineJavascript(backgroundScriptImports),
-	filename: "background.js"
-};
 
 for (const scriptPath in scripts) {
 	for (const scriptType in scripts[scriptPath]) {
@@ -155,14 +144,6 @@ const sharedModuleOptions = {
 	}
 };
 
-const backgroundScriptConfiguration = merge(
-	commonOptions,
-	sharedModuleOptions,
-	{
-		entry: backgroundScriptEntries
-	}
-);
-
 const uninjectedScriptConfiguration = merge(
 	commonOptions,
 	sharedModuleOptions,
@@ -208,10 +189,6 @@ const sharedModulesConfiguration = merge(
 					{
 						from: path.resolve("static"),
 						to: "./"
-					},
-					{
-						from: path.resolve("src/offscreen"),
-						to: "./offscreen"
 					}
 				]
 			}),
@@ -242,7 +219,6 @@ const sharedModulesConfiguration = merge(
 );
 
 export default [
-	backgroundScriptConfiguration,
 	uninjectedScriptConfiguration,
 	injectedScriptConfiguration,
 	sharedModulesConfiguration
